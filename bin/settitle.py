@@ -24,7 +24,7 @@ def parse_song(song):
 
 def main():
     dummy = '--dummy' in sys.argv
-    mp3s = glob.glob('*.mp3')
+    mp3s = glob.glob('*.mp3') + glob.glob('*.MP3')
     mp3s.sort()
     artist, album, songs = read_titles()
     if len(mp3s) != len(songs):

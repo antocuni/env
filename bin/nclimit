@@ -1,0 +1,4 @@
+#!/bin/bash
+max_rate=$1
+shift
+exec pv -q -L $max_rate | nc "$@"
