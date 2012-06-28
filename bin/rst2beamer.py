@@ -80,6 +80,47 @@ pygments_directive.options = dict([(key, directives.flag) for key in VARIANTS])
 
 directives.register_directive('sourcecode', pygments_directive)
 
+
+## multiple images as a single animation
+
+"""
+        .. animage:: foo-p*.pdf
+           :align: center
+           :scale: 50%
+"""
+
+from glob import glob
+import copy
+from docutils.parsers.rst import directives
+from docutils.parsers.rst.directives.images import Image
+import docutils
+
+class Animage(Image): # Animated Image :-)
+    
+    def run(self):
+        def raw(text):
+            return docutils.nodes.raw('', text, format='latex')
+        
+        nodes = Image.run(self)
+        img = nodes[0]
+        if not isinstance(img, docutils.nodes.image):
+            return nodes # not an image, WTF?
+        newnodes = []
+        pattern = img.attributes['uri']
+        filenames = sorted(glob(pattern))
+        for i, filename in enumerate(filenames):
+            newimg = copy.deepcopy(img)
+            newimg.attributes['uri'] = filename
+            newnodes += [raw(r'\only<%d>{' % (i+1)),
+                         newimg,
+                         raw('}')]
+        return newnodes
+
+directives.register_directive('animage', Animage)
+
+
+
+
 ## CONSTANTS & DEFINES: ###
 
 BEAMER_SPEC =   (
