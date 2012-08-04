@@ -26,7 +26,7 @@ progress =
 rebase = 
 hgbb = /home/antocuni/env/src/hgbb/hgbb.py
 share=
-activity=/tmp/Hgactivity/activity.py
+#activity=/tmp/Hgactivity/activity.py
 churn=
 
 [pager]
