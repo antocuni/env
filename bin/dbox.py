@@ -6,7 +6,7 @@ from glob import glob
 import re
 import shutil
 from collections import defaultdict
-from opster import command, dispatch, Abort, ParseError
+from opster import command, dispatch, ParseError
 from color import color, GREEN, YELLOW
 
 @command()

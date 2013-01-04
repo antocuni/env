@@ -2,4 +2,4 @@
 
 DEST=${1/pps/ppt}
 cp -n "$1" "$DEST"
-ooffice "$DEST"
+libreoffice "$DEST"
