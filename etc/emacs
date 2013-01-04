@@ -270,7 +270,7 @@
 
 (global-set-key "\C-c>" 'my-shift-right)
 (global-set-key "\C-c<" 'my-shift-left)
-(global-set-key [(control x) (control a)] 'my-replace-string)
+(global-set-key [(super a)] 'my-replace-string)
 
 
 (defun count-words (&optional begin end)
@@ -944,7 +944,11 @@ Optional arg REVISION is a revision to annotate from."
   (set-face-background 'region "LightGoldenrod")
   (set-face-foreground 'region "black")
   (set-face-foreground 'lazy-highlight "black")
-  (set-face-background 'lazy-highlight "yellow"))
+  (set-face-background 'lazy-highlight "yellow")
+  (setq term-default-fg-color (face-foreground term-current-face))
+  (setq term-default-bg-color (face-background term-current-face)))
+
+
 
 (wombat-theme)
 
