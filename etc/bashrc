@@ -97,7 +97,14 @@ if [ "$USER" != antocuni ] && [ "$USER" != root ]
 then
     U="\u@"
 fi
-   
+
+if [ -n "$SSH_CLIENT" ]
+then
+    YELLOW_OR_WHITE=37 # white
+else
+    YELLOW_OR_WHITE=33 # yellow
+fi
+
 case $USER--`hostname` in
     root--*)                 HCOL=31 ;; # red
     *--viper)                HCOL=33 ;; # yellow
@@ -107,6 +114,7 @@ case $USER--`hostname` in
     *--tannit)               HCOL=35 ;; # blue
     *--cobra)                HCOL=32 ;; # green
     *--code0.codespeak.net)  HCOL=34 ;; # blue
+    *--buenosaires)          HCOL=$YELLOW_OR_WHITE ;;
     *)                       HCOL=37 ;; # white
 esac
 
