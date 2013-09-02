@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- mode: Python -*-
 
+import os
 import sys
 import subprocess
 
@@ -30,17 +31,40 @@ class Color:
             pass
         return '\x1b[%sm%s\x1b[00m' % (color, string)
 
-def plot(numbers):
-    p = subprocess.Popen(['gnuplot', '-e', 'set term dumb 164, 25; plot "-" notitle'],
+def plot_terminal(numbers, title):
+    if title:
+        title = "title '%s'" % title
+    else:
+        title = 'notitle'
+    p = subprocess.Popen(['gnuplot', '-e', 'set term dumb 164, 25; plot "-" %s' % title],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     stdin = '\n'.join(map(str, numbers))
     stdout, stderr = p.communicate(stdin)
     stdout = stdout.replace('A', Color.set(Color.green, '*'))
     print stdout
 
+def plot_x11(numbers, title):
+    import matplotlib.pyplot as plt
+
+    fig = plt.figure()
+    ax = plt.subplot(111)
+    ax.plot(numbers, marker='.', linestyle='', label=title)
+    if title:
+        ax.legend(loc='upper center',
+                  bbox_to_anchor=(0, 0, 1, 1),
+                  bbox_transform=fig.transFigure,
+                  fancybox=True, shadow=True, ncol=5)
+    plt.show()
+
 def main():
+    title = None
+    if len(sys.argv) >= 2:
+        title = ' '.join(sys.argv[1:])
     numbers = sys.stdin.readlines()
-    plot(numbers)
+    if os.getenv('DISPLAY'):
+        plot_x11(numbers, title)
+    else:
+        plot_terminal(numbers, title)
 
 if __name__ == '__main__':
     main()
