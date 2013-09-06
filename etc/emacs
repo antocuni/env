@@ -356,12 +356,15 @@
 ;; (autoload 'guess-style-set-variable "guess-style" nil t)
 ;; (autoload 'guess-style-guess-variable "guess-style")
 ;; (autoload 'guess-style-guess-all "guess-style" nil t)
+(defun my-python-use-tabs ()
+  (interactive)
+  (setq indent-tabs-mode t)
+  (setq tab-width 4)
+  (setq python-indent 4))
+
 (add-hook 'python-mode-hook (lambda ()
                               (if (search "/gpuppet/" (buffer-file-name))
-                                  (progn
-                                    (setq indent-tabs-mode t)
-                                    (setq tab-width 4)
-                                    (setq python-indent 4)))))
+                                  (my-python-use-tabs))))
 
 ; LRU yank
 ; -----------------------

@@ -32,6 +32,11 @@ then
     PATH=~/usr/bin:$PATH
 fi
 
+# if [ `hostname` == buenosaires ]
+# then
+#     PATH=/usr/gambit/python-271-20120921-0/bin/:$PATH
+# fi
+
 # ================
 #    PYTHONPATH
 # ================
