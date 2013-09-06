@@ -69,7 +69,7 @@ alias fs="dropbox filestatus ~/Dropbox/antocuni/{.mozilla,.thunderbird}"
 
 alias lstree='find . -name .svn -prune -o -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"'  
 
-if [ `hostname` == viper ]
+if [ `hostname` == homer ]
 then
     #alias python2.5='/opt/python2.5/bin/python'
     alias pythonnet='mono /home/antocuni/opt/pythonnet2/python.exe'
@@ -107,7 +107,7 @@ fi
 
 case $USER--`hostname` in
     root--*)                 HCOL=31 ;; # red
-    *--viper)                HCOL=33 ;; # yellow
+    *--homer)                HCOL=33 ;; # yellow
     *--viper2)               HCOL=32 ;; # green
     *--anaconda)             HCOL=32 ;; # green
     *--wyvern)               HCOL=35 ;; # magenta
@@ -126,12 +126,23 @@ fi
 
 if [ "$TERM" = "emacs" ] || [ "$TERM" = "dumb" ]
 then
-    export PS1="${U}${P32}\h \W \$ "
+    export PS1_="${U}${P32}\h \W \$ "
 else
-    export PS1="\[\033[01;${HCOL}m\]${U}\h\[\033[01;32m\]${P32} \[\033[01;36m\]\W \[\033[01;34m\]\$ \[\033[00m\]"
+    export PS1_="\[\033[01;${HCOL}m\]${U}\h\[\033[01;32m\]${P32} \[\033[01;36m\]\W \[\033[01;34m\]\$ \[\033[00m\]"
 fi
 unset U
 unset HCOL
+export PS1="$PS1_"
+
+function tag() {
+    export PS1="\[\033[01;32m\][$1]\[\033[00m\] $PS1_"
+}
+
+function untag() {
+    export PS1="$PS1_"
+}
+
+
 
 
 # ==============

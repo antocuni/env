@@ -27,6 +27,7 @@
  '(tramp-default-method "scpx")
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
+ '(vc-handled-backends (quote (Hg)))
  '(vc-hg-log-switches nil)
  '(x-select-enable-clipboard t))
 
