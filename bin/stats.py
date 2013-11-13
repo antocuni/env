@@ -5,6 +5,7 @@ import numpy
 
 def main():
     numbers = map(float, sys.stdin)
+    print 'Count:   %d'   % len(numbers)
     print 'Average: %.4f' % numpy.mean(numbers)
     print 'Median:  %.4f' % numpy.median(numbers)
     print 'Stddev:  %.4f' % numpy.std(numbers)
