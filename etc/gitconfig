@@ -1,0 +1,20 @@
+[user]
+  name = Antonio Cuni
+  email = anto.cuni@gmail.com
+
+[color]
+  diff  = auto
+  status= auto
+  branch= auto
+  interactive = true
+
+[alias]
+  ci = commit -a
+  di = diff --color-words
+  st = status
+
+[color "diff"]
+  meta = white bold
+  frag = magenta bold
+  old = white
+  new = yellow bold

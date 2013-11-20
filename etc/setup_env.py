@@ -85,4 +85,4 @@ def install_py_packages():
 
 if __name__ == '__main__':
     create_symlinks()
-    install_py_packages()
+    #install_py_packages()
