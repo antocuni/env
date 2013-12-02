@@ -18,3 +18,5 @@
   frag = magenta bold
   old = white
   new = yellow bold
+[push]
+	default = simple
