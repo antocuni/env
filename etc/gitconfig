@@ -20,3 +20,5 @@
   new = yellow bold
 [push]
 	default = simple
+[core]
+	excludesfile = /home/antocuni/.gitignore
