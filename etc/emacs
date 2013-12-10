@@ -25,6 +25,7 @@
  '(tab-width 4)
  '(tool-bar-mode nil)
  '(tramp-default-method "scpx")
+ '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
  '(vc-handled-backends (quote (Hg)))
@@ -91,6 +92,8 @@
 ;; enable wdired, editing filenames in dired renames files
 (require 'wdired)
 (define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode)
+
+(require 'uniquify)
 
 
 ; don't start the server in tty mode
