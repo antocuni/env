@@ -114,6 +114,7 @@ case $USER--`hostname` in
     *--tannit)               HCOL=35 ;; # blue
     *--cobra)                HCOL=32 ;; # green
     *--code0.codespeak.net)  HCOL=34 ;; # blue
+    *--gamlaptben)           HCOL=$YELLOW_OR_WHITE ;;
     *--buenosaires)          HCOL=$YELLOW_OR_WHITE ;;
     *)                       HCOL=37 ;; # white
 esac
