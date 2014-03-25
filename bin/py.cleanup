@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 import sys, os, stat
+import shutil
+
+def is_cffi(fn):
+    return fn.startswith('_cffi_') and (fn.endswith('.o') or
+                                        fn.endswith('.c') or
+                                        fn.endswith('.so'))
 
 def clean(path):
     global count
@@ -14,15 +20,25 @@ def clean(path):
         if stat.S_ISDIR(st.st_mode):
             clean(filename)
             if fn == '__pycache__':
-                try:
-                    os.rmdir(filename)
-                except OSError:
-                    pass
-        elif fn.endswith('.pyc') or fn.endswith('.pyo'):
+                if force:
+                    shutil.rmtree(filename)
+                    count += 1
+                else:
+                    try:
+                        os.rmdir(filename)
+                    except OSError:
+                        print 'Cannot rmdir', filename
+        elif fn.endswith('.pyc') or fn.endswith('.pyo') or is_cffi(fn):
             os.unlink(filename)
             count += 1
 
 count = 0
+
+if '-f' in sys.argv:
+    force = True
+    sys.argv.remove('-f')
+else:
+    force = False
 
 for arg in sys.argv[1:] or ['.']:
     print "cleaning path", arg, "of .pyc/.pyo/__pycache__ files"
