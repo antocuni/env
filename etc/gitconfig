@@ -10,7 +10,7 @@
 
 [alias]
   ci = commit -a
-  di = diff --color-words
+  dist = diff --staged
   st = status
 
 [color "diff"]
