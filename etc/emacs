@@ -464,6 +464,12 @@ the new line indented."
     (message "Sum: %f" sum)))
 
 
+; tramp debug
+; ===========
+
+;; (setq debug-on-quit t
+;;       tramp-verbose 6)
+
 ; re-open the current file as root
 ; =================================
 
