@@ -368,7 +368,7 @@
 (add-hook 'python-mode-hook (lambda ()
                               (if (or (search "/gpuppet/" (buffer-file-name))
                                       (search "/repos/" (buffer-file-name))
-                                      (search "/optfarm-deploy-shm/lib/" (buffer-file-name)))
+                                      (string-match "/optfarm-deploy/.*/lib/"  (buffer-file-name)))
                                   (my-python-use-tabs))))
 
 
