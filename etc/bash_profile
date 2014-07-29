@@ -20,7 +20,7 @@ export HISTCONTROL=ignoredups
 #    PATH
 # ==========
 PATH=~/.local/bin:$PATH
-PATH=~/pypy/default/py/bin:$PATH
+#PATH=~/pypy/default/py/bin:$PATH
 PATH=~/pypy/default/rpython/bin:$PATH
 PATH=~/pypy/default/pypy/goal/:$PATH
 PATH=~/env/bin/colorize/:~/env/bin:$PATH
@@ -40,8 +40,8 @@ fi
 # ================
 #    PYTHONPATH
 # ================
-PYTHONPATH=~/pypy/default/
-PYTHONPATH=$PYTHONPATH:~/env/pypath
+#PYTHONPATH=~/pypy/default/
+PYTHONPATH=~/env/pypath
 export PYTHONPATH
 
 
