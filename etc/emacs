@@ -465,11 +465,19 @@ the new line indented."
     (message "Sum: %f" sum)))
 
 
-; tramp debug
-; ===========
+; tramp settings
+; ==============
 
+;; enable tramp debug
 ;; (setq debug-on-quit t
 ;;       tramp-verbose 6)
+
+;; disable vc for remote files
+(setq vc-ignore-dir-regexp
+      (format "\\(%s\\)\\|\\(%s\\)"
+              vc-ignore-dir-regexp
+              tramp-file-name-regexp))
+
 
 ; re-open the current file as root
 ; =================================
