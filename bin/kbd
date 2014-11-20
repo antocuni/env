@@ -1,3 +1,4 @@
 #!/bin/bash
 
-xkbcomp -I$HOME/.xkb ~/.xkb/keymap/my $DISPLAY
+xkbcomp -I$HOME/.xkb ~/.xkb/keymap/my $DISPLAY 2>/dev/null
+
