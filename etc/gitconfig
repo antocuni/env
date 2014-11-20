@@ -1,5 +1,5 @@
 [user]
-  name = Antonio Cuni
+	name = Antonio Cuni\n
   email = anto.cuni@gmail.com
 
 [color]
@@ -22,3 +22,16 @@
 	default = simple
 [core]
 	excludesfile = /home/antocuni/.gitignore
+[giggle]
+	main-window-maximized = true
+	main-window-geometry = 1920x1028+0+1
+	main-window-view = HistoryView
+	history-view-vpane-position = 760
+	file-view-vpane-position = 924
+	show-graph = true
+[merge]
+	tool = diffmerge
+[mergetool "diffmerge"]
+	cmd = /usr/bin/diffmerge --merge --result=$MERGED $LOCAL $BASE $REMOTE
+[mergetool]
+	keepBackup = false
