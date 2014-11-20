@@ -16,6 +16,7 @@
  '(ispell-check-comments nil)
  '(jka-compr-compression-info-list (quote (["\\.Z\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "compress" ("-c") "uncompressing" "gzip" ("-c" "-q" "-d") nil t "\235"] ["\\.bz2\\(~\\|\\.~[0-9]+~\\)?\\'" "bzip2ing" "bzip2" nil "bunzip2ing" "bzip2" ("-d") nil t "BZh"] ["\\.tbz2?\\'" "bzip2ing" "bzip2" nil "bunzip2ing" "bzip2" ("-d") nil nil "BZh"] ["\\.\\(?:tgz\\|svgz\\|sifz\\)\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "gzip" ("-c" "-q") "uncompressing" "gzip" ("-c" "-q" "-d") t nil "\213"] ["\\.\\(g?z\\|gnumeric\\)\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "gzip" ("-c" "-q") "uncompressing" "gzip" ("-c" "-q" "-d") t t "\213"] ["\\.dz\\'" nil nil nil "uncompressing" "gzip" ("-c" "-q" "-d") nil t "\213"])))
  '(menu-bar-mode window-system)
+ '(python-fill-docstring-style (quote django))
  '(rst-level-face-base-color "blackn")
  '(safe-local-variable-values (quote ((encoding . latin-1) (encoding . Latin-1) (test-case-name . twisted\.test\.test_defer\,twisted\.test\.test_defgen\,twisted\.internet\.test\.test_inlinecb) (test-case-name . twisted) (test-case-name . twisted\.conch\.test\.test_manhole) (sh-indent-comment . t) (pymacs-auto-reload . t) (test-case-name . test\.test_txpostgres) (test-case-name . buildbot\.test\.test_status) (test-case-name . buildbot\.test\.test_run) (test-case-name . buildbot\.test\.test_runner) (test-case-name . buildbot\.test\.test_steps\,buildbot\.test\.test_properties) (test-case-name . twisted\.test\.test_internet\,twisted\.internet\.test\.test_posixbase) (test-case-name . buildbot\.test\.test_slavecommand) (test-case-name . buildbot\.test\.test_steps) (test-case-name . buildbot\.test\.test_vc) (test-case-name . twisted\.test\.test_log) (test-case-name . twisted\.test\.test_application\,twisted\.test\.test_twistd) (test-case-name . twisted\.test\.test_twistd) (test-case-name . buildbot\.test\.test_twisted) (test-case-name . twisted\.web\.test\.test_static) (c-tab-always-indent) (c-continued-statement-offset . 2) (c-brace-offset . -2) (c-brace-imaginary-offset . 0) (c-argdecl-indent . 0) (c-label-offset . -2) (auto-revert-interval . 0.5) (auto-revert-interval . 0.2) (encoding . utf-8))))
  '(scroll-bar-mode (quote right))
@@ -71,10 +72,12 @@
 ; =======================
 
 (setq load-path (cons "/home/antocuni/env/etc/elisp" load-path))
-(setq load-path (cons "/home/antocuni/pypy/default/pypy/jit/tool" load-path))
+(setq load-path (cons "/home/antocuni/pypy/default/rpython/jit/tool/" load-path))
 (setq minibuffer-max-depth nil)
 (setq font-lock-auto-fontify 1)
-(setq ansi-term-color-vector [unspecified "dim gray" "red3" "lime green" "yellow3" "DodgerBlue1" "magenta3" "cyan3" "white"]) ; optimized for pdb++
+;;(setq ansi-term-color-vector [term "dim gray" "red3" "lime green" "yellow3" "DodgerBlue1" "magenta3" "cyan3" "white"]) ; optimized for pdb++
+(setq ansi-term-color-vector [term term-color-black term-color-red term-color-green term-color-yellow term-color-blue term-color-magenta term-color-cyan term-color-white])
+
 ;(set-default-font "-Adobe-Courier-Medium-R-Normal--18-180-75-75-M-110-ISO8859-1")
 (savehist-mode t)
 (setenv "EMACS" "ON")
@@ -86,7 +89,7 @@
 
 (require 'ido)
 (ido-mode t)
-(setq ido-enable-prefix t)
+(setq ido-enable-prefix nil)
 (setq ido-enable-flex-matching t) ;; enable fuzzy matching
 
 ;; enable wdired, editing filenames in dired renames files
@@ -225,30 +228,30 @@
 ; -----------------------
 
 ; like python-shift-left but don't deactivate the mark
-(defun my-shift-left (start end &optional count)
-  (interactive (if mark-active
-                   (list (region-beginning) (region-end) current-prefix-arg)
-                 (list (point) (point) current-prefix-arg)))
-  (let ((mark (mark)))
-    (save-excursion
-      (python-shift-left start end count)
-      (push-mark mark t t)
-      ;; Tell the command loop not to deactivate the mark
-      ;; for transient mark mode
-      (setq deactivate-mark nil))))
+;; (defun my-shift-left (start end &optional count)
+;;   (interactive (if mark-active
+;;                    (list (region-beginning) (region-end) current-prefix-arg)
+;;                  (list (point) (point) current-prefix-arg)))
+;;   (let ((mark (mark)))
+;;     (save-excursion
+;;       (python-shift-left start end count)
+;;       (push-mark mark t t)
+;;       ;; Tell the command loop not to deactivate the mark
+;;       ;; for transient mark mode
+;;       (setq deactivate-mark nil))))
 
-; like python-shift-left but don't deactivate the mark
-(defun my-shift-right (start end &optional count)
-  (interactive (if mark-active
-                   (list (region-beginning) (region-end) current-prefix-arg)
-                 (list (point) (point) current-prefix-arg)))
-  (let ((mark (mark)))
-    (save-excursion
-      (python-shift-right start end count)
-      (push-mark mark t t)
-      ;; Tell the command loop not to deactivate the mark
-      ;; for transient mark mode
-      (setq deactivate-mark nil))))
+;; ; like python-shift-left but don't deactivate the mark
+;; (defun my-shift-right (start end &optional count)
+;;   (interactive (if mark-active
+;;                    (list (region-beginning) (region-end) current-prefix-arg)
+;;                  (list (point) (point) current-prefix-arg)))
+;;   (let ((mark (mark)))
+;;     (save-excursion
+;;       (python-shift-right start end count)
+;;       (push-mark mark t t)
+;;       ;; Tell the command loop not to deactivate the mark
+;;       ;; for transient mark mode
+;;       (setq deactivate-mark nil))))
 
 ; like replace-string, but don't deactivate the mark
 (defun my-replace-string (from-string to-string &optional delimited start end)
@@ -272,8 +275,12 @@
       ;; for transient mark mode
       (setq deactivate-mark nil))))
 
-(global-set-key "\C-c>" 'my-shift-right)
-(global-set-key "\C-c<" 'my-shift-left)
+;; in emacs 24, python-indent-shift-right (&left) already does the right thing
+;; (global-set-key "\C-c>" 'my-shift-right)
+;; (global-set-key "\C-c<" 'my-shift-left)
+(global-set-key "\C-c>" 'python-indent-shift-right)
+(global-set-key "\C-c<" 'python-indent-shift-left)
+
 (global-set-key [(super a)] 'my-replace-string)
 
 
@@ -365,6 +372,12 @@
   (setq tab-width 4)
   (setq python-indent 4))
 
+(defun my-python-dont-use-tabs ()
+  (interactive)
+  (setq indent-tabs-mode nil)
+  (setq tab-width 8)
+  (setq python-indent 4))
+
 (add-hook 'python-mode-hook (lambda ()
                               (if (or (search "/gpuppet/" (buffer-file-name))
                                       (search "/repos/" (buffer-file-name))
@@ -412,8 +425,8 @@ the new line indented."
   (local-set-key "\M-s\M-w" 'show-subtree)
   (local-set-key "\M-s\M-q" 'hide-subtree)
   (local-set-key [(f1)] 'python-describe-symbol)
-  (local-set-key "\C-c>" 'my-shift-right)
-  (local-set-key "\C-c<" 'my-shift-left)
+  ;; (local-set-key "\C-c>" 'my-shift-right) ;; not necessary in emacs 24
+  ;; (local-set-key "\C-c<" 'my-shift-left)  ;; not necessary in emacs 24
   (define-key python-mode-map "\C-m" 'py-newline-and-indent)
   (define-key python-mode-map "\C-c#" 'comment-dwim)
   (setq comment-start "##"))
@@ -468,8 +481,15 @@ the new line indented."
 ; tramp debug
 ; ===========
 
-;; (setq debug-on-quit t
-;;       tramp-verbose 6)
+(setq debug-on-quit nil
+      tramp-verbose 6)
+
+; disable vc on tramp files
+(setq vc-ignore-dir-regexp
+      (format "\\(%s\\)\\|\\(%s\\)"
+              vc-ignore-dir-regexp
+              tramp-file-name-regexp))
+
 
 ; re-open the current file as root
 ; =================================
