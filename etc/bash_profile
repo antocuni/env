@@ -68,8 +68,11 @@ export SVN_EDITOR="emacs -nw"
 export EDITOR="emacs -nw"
 export IPOD_MOUNTPOINT=/mnt/usb
 export MAKEFLAGS="-j2"
-unset GTK2_RC_FILES # this is set by ~/bin/autoterm
 
+
+# workaround for this bug
+# https://bugs.launchpad.net/ubuntu/+source/at-spi2-core/+bug/1193236unset GTK2_RC_FILES # this is set by ~/bin/autoterm
+export NO_AT_BRIDGE=1
 
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then

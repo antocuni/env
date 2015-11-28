@@ -5,8 +5,9 @@ import time
 import wmctrl
 
 def main():
-    os.system('chromium-browser --app=http://gmail.com')
-    
+    os.system('google-chrome --app=http://gmail.com &')
+    os.system('google-chrome --app=http://web.whatsapp.com')
+
     ## os.system('LC_ALL=en_IE.utf8 thunderbird &')
 
     ## while True:

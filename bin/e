@@ -7,6 +7,7 @@ function do_local()
 
     if emacsclient -e '(version)' &>/dev/null
     then
+        emacsclient -n -e "(other-window 1)" > /dev/null
         emacsclient -n "$@"
         # for FILE in "$@"
         # do
@@ -28,7 +29,8 @@ function do_local()
         #     esac
         # done
     else
-        emacs -geometry $EMACS_GEOMETRY2 "$@" &
+        #emacs -geometry $EMACS_GEOMETRY2 "$@" &
+        emacs "$@" &
     fi
 }
 
