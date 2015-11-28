@@ -5,7 +5,7 @@ ignore = ~/.hgignore
 style= /home/antocuni/env/etc/misc/svn.style
 merge = internal:merge
 
-%include /home/antocuni/Dropbox/hgrc.auth
+%include ~/.hgrc.auth
 
 [extensions]
 convert = 
