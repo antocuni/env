@@ -1,1 +1,1 @@
-../src/wmctrl/wmctrl.py
+../../src/wmctrl/wmctrl.py

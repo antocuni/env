@@ -1,1 +1,1 @@
-../src/fancycompleter/fancycompleter.py
+../../src/fancycompleter/fancycompleter.py

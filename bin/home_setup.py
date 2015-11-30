@@ -6,6 +6,10 @@ from getpass import getpass
 
 REPOS = [
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
+    ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
+    ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
+    ('hg', 'https://bitbucket.org/antocuni/pdb', '~/src/pdb'),
+    ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
 ]
 
 
@@ -46,6 +50,7 @@ def write_hgrc_auth():
     print color('Wrote ~/.hgrc.auth', YELLOW)
 
 def clone_repos():
+    print
     print color('Cloning repos:', YELLOW)
     for kind, url, dst in REPOS:
         if kind == 'hg':
@@ -86,6 +91,7 @@ def do_symlink(src, dst):
         print color("Failed: %s" % (msg,), RED)
 
 def create_symlinks():
+    print
     print color('Creating symlinks', YELLOW)
     for f in os.listdir(etc_dir):
         if (f.startswith('.') or
@@ -101,7 +107,6 @@ def create_symlinks():
     more_links = [
         ('~/env/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ('~/env/bin', '~/bin'),
-        ('~/env/src', '~/src'),
         ('~/env/etc/gtk-3.0', '~/.config/gtk-3.0'),
         ]
     for src, dst in more_links:
