@@ -12,6 +12,7 @@ REPOS = [
     ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
     ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
     ('hg', 'https://bitbucket.org/antocuni/pdb', '~/src/pdb'),
+    ('hg', 'https://bitbucket.org/antocuni/pytest-emacs', '~/src/pytest-emacs'),
     ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
 ]
 
