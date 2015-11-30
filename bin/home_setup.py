@@ -4,6 +4,11 @@ import os.path
 import glob
 from getpass import getpass
 
+REPOS = [
+    ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
+]
+
+
 HGRC_AUTH = """
 [auth]
 bb.prefix = https://bitbucket.org/
@@ -40,15 +45,22 @@ def write_hgrc_auth():
         f.write(content)
     print color('Wrote ~/.hgrc.auth', YELLOW)
 
-def clone_env():
-    os.chdir(home)
-    if os.path.exists('env'):
-        print color('~/env already exists', GREEN)
-        return
-    print color('Cloning env...', YELLOW)
-    url = 'https://bitbucket.org/antocuni/env'
-    system('hg clone %s' % url)
+def clone_repos():
+    print color('Cloning repos:', YELLOW)
+    for kind, url, dst in REPOS:
+        if kind == 'hg':
+            clone_hg_repo(url, dst)
+        else:
+            raise KeyError('unknown repo kind: %s' % kind)
 
+def clone_hg_repo(url, dst):
+    dst = os.path.expanduser(dst)
+    if os.path.exists(dst):
+        print '    %s: ' % dst, color('already exists', GREEN)
+        return
+    print '    %s: ' % dst, color('cloning from %s' % url, YELLOW)
+    system('hg clone %s %s' % (url, dst))
+    print
 
 def symlink(src, dst):
     # check if dst is already a symlink to src
@@ -100,6 +112,5 @@ def create_symlinks():
 
 if __name__ == '__main__':
     write_hgrc_auth()
-    clone_env()
+    clone_repos()
     create_symlinks()
-
