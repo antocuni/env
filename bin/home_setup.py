@@ -3,6 +3,7 @@
 import sys
 import os.path
 import glob
+import subprocess
 from getpass import getpass
 
 GUI = '--gui' in sys.argv
@@ -134,8 +135,20 @@ def apt_install():
 def compile_terminal_hack():
     if not GUI:
         return
+    print
+    print color('gnome-terminal-hack', YELLOW)
     dirname = os.path.join(home, 'env', 'src', 'gnome-terminal-hack')
     system('make -C %s' % dirname)
+
+def import_dconf():
+    if not GUI:
+        return
+    print
+    print color('import dconf settings', YELLOW)
+    dirname = os.path.join(etc_dir, 'dconf')
+    for filename in glob.glob('%s/*.txt' % dirname):
+        print '    ', filename
+        system('dconf load / < %s' % filename)
 
 if __name__ == '__main__':
     write_hgrc_auth()
@@ -143,4 +156,4 @@ if __name__ == '__main__':
     create_symlinks()
     apt_install()
     compile_terminal_hack()
-
+    import_dconf()

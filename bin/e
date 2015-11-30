@@ -2,8 +2,8 @@
 
 function do_local()
 {
-    . ~/.settings
-    wmctrl -s 2
+    #. ~/.settings
+    show.py emacs
 
     if emacsclient -e '(version)' &>/dev/null
     then
