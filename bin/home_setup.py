@@ -116,6 +116,7 @@ def create_symlinks():
         ('~/env/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ('~/env/bin', '~/bin'),
         ('~/env/etc/gtk-3.0/gtk.css', '~/.config/gtk-3.0/gtk.css'),
+        ('~/env/etc/bash_profile', '~/.profile'),
         ]
     for src, dst in more_links:
         src = os.path.expanduser(src)
