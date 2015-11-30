@@ -5,6 +5,8 @@ import os.path
 import glob
 from getpass import getpass
 
+GUI = '--gui' in sys.argv
+
 REPOS = [
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
     ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
@@ -13,7 +15,9 @@ REPOS = [
     ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
 ]
 
-APT_PACKAGES = ['emacs', 'wmctrl', 'git']
+APT_PACKAGES = ['emacs', 'wmctrl', 'git', 'build-essential', 'python-dev']
+if GUI:
+    APT_PACKAGES += ['wmctrl', 'libgtk2.0-dev']
 
 HGRC_AUTH = """
 [auth]
@@ -109,7 +113,7 @@ def create_symlinks():
     more_links = [
         ('~/env/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ('~/env/bin', '~/bin'),
-        ('~/env/etc/gtk-3.0', '~/.config/gtk-3.0'),
+        ('~/env/etc/gtk-3.0/gtk.css', '~/.config/gtk-3.0/gtk.css'),
         ]
     for src, dst in more_links:
         src = os.path.expanduser(src)
@@ -126,8 +130,16 @@ def apt_install():
         print color('install apt-packages', YELLOW)
         system('sudo apt-get install %s' % packages)
 
+def compile_terminal_hack():
+    if not GUI:
+        return
+    dirname = os.path.join(home, 'env', 'src', 'gnome-terminal-hack')
+    system('make -C %s' % dirname)
+
 if __name__ == '__main__':
     write_hgrc_auth()
     clone_repos()
     create_symlinks()
     apt_install()
+    compile_terminal_hack()
+
