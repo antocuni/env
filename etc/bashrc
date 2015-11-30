@@ -98,26 +98,21 @@ then
     U="\u@"
 fi
 
-if [ -n "$SSH_CLIENT" ]
-then
-    YELLOW_OR_WHITE=37 # white
-else
-    YELLOW_OR_WHITE=33 # yellow
-fi
-
 case $USER--`hostname` in
     root--*)                 HCOL=31 ;; # red
+    *--bart)                 HCOL=32 ;; # green
     *--homer)                HCOL=33 ;; # yellow
-    *--viper2)               HCOL=32 ;; # green
-    *--anaconda)             HCOL=32 ;; # green
-    *--wyvern)               HCOL=35 ;; # magenta
-    *--tannit)               HCOL=35 ;; # blue
-    *--cobra)                HCOL=32 ;; # green
-    *--code0.codespeak.net)  HCOL=34 ;; # blue
-    *--gamlaptben)           HCOL=$YELLOW_OR_WHITE ;;
-    *--buenosaires)          HCOL=$YELLOW_OR_WHITE ;;
+    *--antowork)             HCOL=34 ;; # blue
+    *--tannit)               HCOL=35 ;; # magenta
     *)                       HCOL=37 ;; # white
 esac
+
+# if we are not on SSH, always use an yellow prompt
+if [ -z "$SSH_CLIENT" ]
+then
+    HCOL=33 # yellow
+fi
+
 
 # if we are inside the 32bit chroot, show it in the prompt
 if [ -f /etc/32bit ]
