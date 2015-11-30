@@ -16,7 +16,7 @@ GREEN = 32
 YELLOW = 33
 
 home = os.path.expanduser('~')
-etc_dir = os.path.dirname(os.path.abspath(__file__))
+etc_dir = os.path.join(home, 'env', 'etc')
 excludes = ['create_symlinks.py', 'scripts', 'elisp', 'gtk-3.0']
 
 def system(cmd):
