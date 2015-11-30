@@ -6,7 +6,7 @@ CompatVersion=1
 Windows=Window0;
 
 [Window0]
-MenubarVisible=false
+MenubarVisible=true
 Role=autoterm
 ActiveTerminal=0
 Geometry=164x46+1684+4
