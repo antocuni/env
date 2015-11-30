@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 import os.path
 import glob
 from getpass import getpass
@@ -12,6 +13,7 @@ REPOS = [
     ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
 ]
 
+APT_PACKAGES = ['emacs', 'wmctrl', 'git']
 
 HGRC_AUTH = """
 [auth]
@@ -31,7 +33,7 @@ excludes = ['create_symlinks.py', 'scripts', 'elisp', 'gtk-3.0']
 def system(cmd):
     ret = os.system(cmd)
     if ret != 0:
-        print color('Command failed :(', RED), cmd
+        print color('Command failed: ', RED), cmd
         sys.exit(ret)
 
 def color(s, fg=1, bg=1):
@@ -114,8 +116,18 @@ def create_symlinks():
         dst = os.path.expanduser(dst)
         do_symlink(src, dst)
 
+def apt_install():
+    print
+    packages = ' '.join(APT_PACKAGES)
+    ret = os.system('dpkg -s %s >/dev/null 2>&1' % packages)
+    if ret == 0:
+        print color('apt packages: already installed', GREEN)
+    else:
+        print color('install apt-packages', YELLOW)
+        system('sudo apt-get install %s' % packages)
 
 if __name__ == '__main__':
     write_hgrc_auth()
     clone_repos()
     create_symlinks()
+    apt_install()
