@@ -146,9 +146,8 @@ def import_dconf():
     print
     print color('import dconf settings', YELLOW)
     dirname = os.path.join(etc_dir, 'dconf')
-    for filename in glob.glob('%s/*.txt' % dirname):
-        print '    ', filename
-        system('dconf load / < %s' % filename)
+    for filename in glob.glob('%s/*.sh' % dirname):
+        system(filename)
 
 if __name__ == '__main__':
     if 'SSH_CLIENT' not in os.environ and not GUI:
