@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+#open('/tmp/foo', 'a').write(str(sys.argv) + '\n')
 import wmctrl
 
 if len(sys.argv) == 2:

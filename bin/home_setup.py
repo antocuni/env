@@ -147,6 +147,7 @@ def import_dconf():
     print color('import dconf settings', YELLOW)
     dirname = os.path.join(etc_dir, 'dconf')
     for filename in glob.glob('%s/*.sh' % dirname):
+        print '    ', filename
         system(filename)
 
 if __name__ == '__main__':
