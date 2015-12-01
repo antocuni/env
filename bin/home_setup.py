@@ -147,11 +147,13 @@ def import_dconf():
     print
     print color('import dconf settings', YELLOW)
     dirname = os.path.join(etc_dir, 'dconf')
-    for filename in glob.glob('%s/*.txt' % dirname):
+    for filename in glob.glob('%s/*.sh' % dirname):
         print '    ', filename
-        system('dconf load / < %s' % filename)
+        system(filename)
 
 if __name__ == '__main__':
+    if 'SSH_CLIENT' not in os.environ and not GUI:
+        print color('WARNING: did you forget --gui?', RED)
     write_hgrc_auth()
     clone_repos()
     create_symlinks()
