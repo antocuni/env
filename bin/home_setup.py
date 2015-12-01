@@ -152,7 +152,7 @@ def import_dconf():
 
 if __name__ == '__main__':
     if 'SSH_CLIENT' not in os.environ and not GUI:
-        print color('WARNING: did you forget --gui?')
+        print color('WARNING: did you forget --gui?', RED)
     write_hgrc_auth()
     clone_repos()
     create_symlinks()

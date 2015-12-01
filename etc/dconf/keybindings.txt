@@ -1,10 +1,12 @@
-[/]
+[org/gnome/settings-daemon/plugins/media-keys]
 custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/show-emacs/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/show-term/']
-[custom-keybindings/show-emacs]
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/show-emacs]
 binding='<Super>grave'
 command="$HOME/bin/show.py emacs"
 name='show emacs'
-[custom-keybindings/show-term]
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/show-term]
 binding='Menu'
 command="$HOME/bin/show.py term"
 name='show term'
