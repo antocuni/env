@@ -17,7 +17,7 @@ REPOS = [
     ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
 ]
 
-APT_PACKAGES = ['emacs', 'wmctrl', 'git', 'build-essential', 'python-dev']
+APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
 if GUI:
     APT_PACKAGES += ['wmctrl', 'libgtk2.0-dev']
 
