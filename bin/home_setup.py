@@ -33,7 +33,8 @@ GREEN = 32
 YELLOW = 33
 
 home = os.path.expanduser('~')
-etc_dir = os.path.join(home, 'env', 'etc')
+env_dir = os.path.join(home, 'env')
+etc_dir = os.path.join(env_dir, 'etc')
 excludes = ['create_symlinks.py', 'scripts', 'elisp', 'gtk-3.0']
 
 def system(cmd):
@@ -117,6 +118,7 @@ def create_symlinks():
         ('~/env/bin', '~/bin'),
         ('~/env/etc/gtk-3.0/gtk.css', '~/.config/gtk-3.0/gtk.css'),
         ('~/env/etc/bash_profile', '~/.profile'),
+        ('~/env/etc/icons', '~/.icons'),
         ]
     for src, dst in more_links:
         src = os.path.expanduser(src)
@@ -134,16 +136,12 @@ def apt_install():
         system('sudo apt-get install %s' % packages)
 
 def compile_terminal_hack():
-    if not GUI:
-        return
     print
     print color('gnome-terminal-hack', YELLOW)
     dirname = os.path.join(home, 'env', 'src', 'gnome-terminal-hack')
     system('make -C %s' % dirname)
 
 def import_dconf():
-    if not GUI:
-        return
     print
     print color('import dconf settings', YELLOW)
     dirname = os.path.join(etc_dir, 'dconf')
@@ -151,12 +149,24 @@ def import_dconf():
         print '    ', filename
         system(filename)
 
+def install_desktop_apps():
+    print
+    print color('installing apps/*.desktop', YELLOW)
+    dirname = os.path.join(env_dir, 'apps')
+    for fullname in glob.glob('%s/*.desktop' % dirname):
+        basename = os.path.basename(fullname)
+        dst = os.path.join('~/.local/share/applications/', basename)
+        dst = os.path.expanduser(dst)
+        do_symlink(fullname, dst)
+
 if __name__ == '__main__':
-    if 'SSH_CLIENT' not in os.environ and not GUI:
-        print color('WARNING: did you forget --gui?', RED)
     write_hgrc_auth()
     clone_repos()
     create_symlinks()
     apt_install()
-    compile_terminal_hack()
-    import_dconf()
+    if GUI:
+        compile_terminal_hack()
+        import_dconf()
+        install_desktop_apps()
+    elif 'SSH_CLIENT' not in os.environ:
+        print color('WARNING: did you forget --gui?', RED)
