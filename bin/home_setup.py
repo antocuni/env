@@ -103,14 +103,15 @@ def create_symlinks():
     print
     print color('Creating symlinks', YELLOW)
     for f in os.listdir(etc_dir):
-        if (f.startswith('.') or
-            f.endswith('~') or
-            f.endswith('.pyc') or
-            f in excludes):
-            continue
         dst = os.path.join(home, '.' + f)
         src = os.path.join(etc_dir, f)
         src = os.path.abspath(src)
+        if (f.startswith('.') or
+            f.endswith('~') or
+            f.endswith('.pyc') or
+            os.path.isdir(src) or
+            f in excludes):
+            continue
         do_symlink(src, dst)
 
     more_links = [
@@ -118,6 +119,7 @@ def create_symlinks():
         ('~/env/etc/gtk-3.0/gtk.css', '~/.config/gtk-3.0/gtk.css'),
         ('~/env/etc/bash_profile', '~/.profile'),
         ('~/env/etc/icons', '~/.icons'),
+        ('~/env/etc/xchat2/fijalcolor.py', '~/.xchat2/fijalcolor.py'),
         ('~/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ]
     for src, dst in more_links:
