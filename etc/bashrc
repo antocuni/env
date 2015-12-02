@@ -102,7 +102,7 @@ case $USER--`hostname` in
     root--*)                 HCOL=31 ;; # red
     *--bart)                 HCOL=32 ;; # green
     *--homer)                HCOL=33 ;; # yellow
-    *--antowork)             HCOL=34 ;; # blue
+    *--antowork)             HCOL=32 ;; # green
     *--tannit)               HCOL=35 ;; # magenta
     *)                       HCOL=37 ;; # white
 esac
