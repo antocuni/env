@@ -19,7 +19,7 @@ REPOS = [
 
 APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
 if GUI:
-    APT_PACKAGES += ['wmctrl', 'libgtk2.0-dev']
+    APT_PACKAGES += ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata']
 
 HGRC_AUTH = """
 [auth]
