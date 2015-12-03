@@ -9,8 +9,6 @@ import subprocess
 # configuration
 #
 
-GUI = '--gui' in sys.argv
-
 PYLIB = 'https://bitbucket.org/pytest-dev/py'
 REPOS = [
     ('hg', PYLIB, '~/src/py'),
@@ -23,8 +21,7 @@ REPOS = [
 ]
 
 APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
-if GUI:
-    APT_PACKAGES += ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata']
+APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata']
 
 #
 # end of configuration
@@ -69,17 +66,21 @@ except ImportError:
 # ==============================================================
 
 HOME = py.path.local('~', expanduser=True)
+GUI_SENTINEL = HOME.join('.gui')
 
 home = os.path.expanduser('~')
 env_dir = os.path.join(home, 'env')
 etc_dir = os.path.join(env_dir, 'dotfiles')
 
 def main():
+    gui = '--gui' in sys.argv or GUI_SENTINEL.check(file=True)
     write_hgrc_auth()
     clone_repos()
     create_symlinks()
-    apt_install()
-    if GUI:
+    apt_install(APT_PACKAGES)
+    if gui:
+        apt_install(APT_PACKAGES_GUI)
+        GUI_SENTINEL.write('this file tells home_setup.py that this is a GUI environment\n')
         compile_terminal_hack()
         import_dconf()
         install_desktop_apps()
@@ -167,13 +168,11 @@ def create_symlinks():
         dst = os.path.expanduser(dst)
         do_symlink(src, dst)
 
-def apt_install():
-    print
-    packages = ' '.join(APT_PACKAGES)
+def apt_install(package_list):
+    packages = ' '.join(package_list)
     ret = os.system('dpkg -s %s >/dev/null 2>&1' % packages)
-    if ret == 0:
-        print color('apt packages: already installed', GREEN)
-    else:
+    if ret != 0:
+        print
         print color('install apt-packages', YELLOW)
         system('sudo apt-get install %s' % packages)
 
