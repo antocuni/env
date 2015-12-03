@@ -84,7 +84,7 @@
 ; Misc options
 ; =======================
 
-(setq load-path (cons "/home/antocuni/env/etc/elisp" load-path))
+(setq load-path (cons "/home/antocuni/env/elisp" load-path))
 (setq load-path (cons "/home/antocuni/pypy/default/rpython/jit/tool/" load-path))
 (setq minibuffer-max-depth nil)
 (setq font-lock-auto-fontify 1)
@@ -145,9 +145,9 @@
 ; auto-complete
 ; =================
 
-(add-to-list 'load-path "~/env/etc/elisp/auto-complete")
+(add-to-list 'load-path "~/env/elisp/auto-complete")
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/env/etc/elisp/auto-complete/ac-dict")
+(add-to-list 'ac-dictionary-directories "~/env/elisp/auto-complete/ac-dict")
 (ac-config-default)
 
 ; use dabbrev as the main source for auto-complete
@@ -470,7 +470,7 @@ the new line indented."
 (autoload 'paste-new-from-region "pymacs" nil t)
 (eval-after-load "pymacs"
   '(progn
-     (add-to-list 'pymacs-load-path "/home/antocuni/env/etc/elisp/pymacs")
+     (add-to-list 'pymacs-load-path "/home/antocuni/env/elisp/pymacs")
      (pymacs-load "pastemacs" "paste-")
      (setq paste-kill-url t)))
 
