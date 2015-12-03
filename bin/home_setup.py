@@ -127,9 +127,7 @@ def symlink(src, dst):
         link = os.readlink(dst)
         if link == src:
             return # nothing to do
-        if link.startswith('/home/antocuni/pypy/user/antocuni/') or\
-           link.startswith('pypy/user/antocuni') or\
-           not os.path.exists(link):
+        if not os.path.exists(link):
             # old location, kill it
             os.remove(dst)
     except OSError:
