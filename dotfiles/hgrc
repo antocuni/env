@@ -2,7 +2,7 @@
 username = Antonio Cuni <anto.cuni@gmail.com>
 editor = emacsclient -nw
 ignore = ~/.hgignore
-style= /home/antocuni/env/etc/misc/svn.style
+style= /home/antocuni/env/hacks/hgstyle/svn.style
 merge = internal:merge
 
 %include ~/.hgrc.auth

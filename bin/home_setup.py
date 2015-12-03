@@ -186,7 +186,7 @@ def compile_terminal_hack():
 def import_dconf():
     print
     print color('import dconf settings', YELLOW)
-    dirname = os.path.join(etc_dir, 'dconf')
+    dirname = os.path.join(env_dir, 'dconf')
     for filename in glob.glob('%s/*.sh' % dirname):
         print '    ', filename
         system(filename)
