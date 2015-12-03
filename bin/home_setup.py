@@ -10,6 +10,7 @@ GUI = '--gui' in sys.argv
 
 REPOS = [
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
+    ('hg', 'https://bitbucket.org/pytest-dev/py', '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
     ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
     ('hg', 'https://bitbucket.org/antocuni/pdb', '~/src/pdb'),
@@ -62,18 +63,15 @@ def clone_repos():
     print
     print color('Cloning repos:', YELLOW)
     for kind, url, dst in REPOS:
-        if kind == 'hg':
-            clone_hg_repo(url, dst)
-        else:
-            raise KeyError('unknown repo kind: %s' % kind)
+        clone_one_repo(kind, url, dst)
 
-def clone_hg_repo(url, dst):
+def clone_one_repo(kind, url, dst):
     dst = os.path.expanduser(dst)
     if os.path.exists(dst):
         print '    %s: ' % dst, color('already exists', GREEN)
         return
     print '    %s: ' % dst, color('cloning from %s' % url, YELLOW)
-    system('hg clone %s %s' % (url, dst))
+    system('%s clone %s %s' % (kind, url, dst))
     print
 
 def symlink(src, dst):
