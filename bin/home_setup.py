@@ -73,7 +73,6 @@ HOME = py.path.local('~', expanduser=True)
 home = os.path.expanduser('~')
 env_dir = os.path.join(home, 'env')
 etc_dir = os.path.join(env_dir, 'dotfiles')
-excludes = ['create_symlinks.py', 'scripts', 'elisp', 'gtk-3.0']
 
 def main():
     write_hgrc_auth()
@@ -151,17 +150,16 @@ def create_symlinks():
         src = os.path.abspath(src)
         if (f.startswith('.') or
             f.endswith('~') or
-            f.endswith('.pyc') or
-            f in excludes):
+            f.endswith('.pyc')):
             continue
         do_symlink(src, dst)
 
     more_links = [
         ('~/env/bin', '~/bin'),
-        ('~/env/misc/gtk.css', '~/.config/gtk-3.0/gtk.css'),
+        ('~/env/hacks/gnome-terminal-hack/gtk.css', '~/.config/gtk-3.0/gtk.css'),
         ('~/env/dotfiles/bash_profile', '~/.profile'),
         ('~/env/dotfiles/icons', '~/.icons'),
-        ('~/env/misc/fijalcolor.py', '~/.xchat2/fijalcolor.py'),
+        ('~/env/hacks/fijalcolor.py', '~/.xchat2/fijalcolor.py'),
         ('~/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ]
     for src, dst in more_links:
@@ -182,7 +180,7 @@ def apt_install():
 def compile_terminal_hack():
     print
     print color('gnome-terminal-hack', YELLOW)
-    dirname = os.path.join(home, 'env', 'src', 'gnome-terminal-hack')
+    dirname = os.path.join(home, 'env', 'hacks', 'gnome-terminal-hack')
     system('make -C %s' % dirname)
 
 def import_dconf():
