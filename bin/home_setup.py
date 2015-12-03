@@ -4,7 +4,34 @@ import sys
 import os.path
 import glob
 import subprocess
-from getpass import getpass
+
+# ==============================================================
+# configuration
+#
+
+GUI = '--gui' in sys.argv
+
+PYLIB = 'https://bitbucket.org/pytest-dev/py'
+REPOS = [
+    ('hg', PYLIB, '~/src/py'),
+    ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
+    ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
+    ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
+    ('hg', 'https://bitbucket.org/antocuni/pdb', '~/src/pdb'),
+    ('hg', 'https://bitbucket.org/antocuni/pytest-emacs', '~/src/pytest-emacs'),
+    ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
+]
+
+APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
+if GUI:
+    APT_PACKAGES += ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata']
+
+#
+# end of configuration
+# ==============================================================
+
+# misc utility functions
+# ----------------------
 
 RED = 31
 GREEN = 32
@@ -23,7 +50,6 @@ def system(cmd):
 # ==============================================================
 # import the py lib: automatically download/install it if needed
 #
-PYLIB = 'https://bitbucket.org/pytest-dev/py'
 def bootstrap():
     print color('bootstraping the pylib...', YELLOW)
     src = os.path.expanduser('~/src')
@@ -42,50 +68,43 @@ except ImportError:
 # end of the automagically pylib importing/boostraping
 # ==============================================================
 
-
-GUI = '--gui' in sys.argv
-
-REPOS = [
-    ('hg', PYLIB, '~/src/py'),
-    ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
-    ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
-    ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
-    ('hg', 'https://bitbucket.org/antocuni/pdb', '~/src/pdb'),
-    ('hg', 'https://bitbucket.org/antocuni/pytest-emacs', '~/src/pytest-emacs'),
-    ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
-]
-
-APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
-if GUI:
-    APT_PACKAGES += ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata']
-
-HGRC_AUTH = """
-[auth]
-bb.prefix = https://bitbucket.org/
-bb.username = antocuni
-bb.password = %s
-"""
-
-RED = 31
-GREEN = 32
-YELLOW = 33
+HOME = py.path.local('~', expanduser=True)
 
 home = os.path.expanduser('~')
 env_dir = os.path.join(home, 'env')
 etc_dir = os.path.join(env_dir, 'etc')
 excludes = ['create_symlinks.py', 'scripts', 'elisp', 'gtk-3.0']
 
+def main():
+    write_hgrc_auth()
+    clone_repos()
+    create_symlinks()
+    apt_install()
+    if GUI:
+        compile_terminal_hack()
+        import_dconf()
+        install_desktop_apps()
+    elif 'SSH_CLIENT' not in os.environ:
+        print color('WARNING: did you forget --gui?', RED)
+
 
 def write_hgrc_auth():
-    filename = os.path.join(home, '.hgrc.auth')
-    if os.path.exists(filename):
+    import textwrap
+    from getpass import getpass
+    TEMPLATE = textwrap.dedent("""
+        [auth]
+        bb.prefix = https://bitbucket.org/
+        bb.username = antocuni
+        bb.password = %s
+    """)
+    hgrc_auth = HOME.join('.hgrc.auth')
+    if hgrc_auth.check(file=True):
         print color('~/.hgrc.auth already exists', GREEN)
         return
-    bbpasswd = getpass("antocuni's bitbucket.org password:")
-    content = HGRC_AUTH % bbpasswd
-    with open(filename, 'w') as f:
-        f.write(content)
-    print color('Wrote ~/.hgrc.auth', YELLOW)
+    print color('Generating ~/.hgrc.auth...', YELLOW)
+    bbpasswd = getpass("    antocuni's bitbucket.org password: ")
+    hgrc_auth.write(TEMPLATE % bbpasswd)
+    print color('    DONE', GREEN)
 
 def clone_repos():
     print
@@ -188,13 +207,4 @@ def install_desktop_apps():
         do_symlink(fullname, dst)
 
 if __name__ == '__main__':
-    write_hgrc_auth()
-    clone_repos()
-    create_symlinks()
-    apt_install()
-    if GUI:
-        compile_terminal_hack()
-        import_dconf()
-        install_desktop_apps()
-    elif 'SSH_CLIENT' not in os.environ:
-        print color('WARNING: did you forget --gui?', RED)
+    main()
