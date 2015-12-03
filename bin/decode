@@ -1,7 +1,0 @@
-#!/bin/bash
-
-mkdir wav
-for i in *.mp3
-do
-    mpg123 -w "wav/$i.wav" "$i"
-done

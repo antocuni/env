@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if isatty
-then
-    grep -Hn --color=always "$@" | greppipe.py
-else
-    grep "@"
-fi

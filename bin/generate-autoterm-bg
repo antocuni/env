@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# XXX: it only works for 1280x800
-
-BG=`cut ~/.fluxbox/lastwallpaper -d '|' -f 2`
-convert -modulate 15 -scale 1280x800! -crop $AUTOTERM_GEOMETRY $BG ~/.fluxbox/autoterm-bg.xpm

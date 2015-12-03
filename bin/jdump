@@ -1,5 +1,0 @@
-#!/bin/bash
-
-CLASSPATH=/usr/share/java/asm3-analysis.jar:/usr/share/java/asm3-commons.jar:/usr/share/java/asm3.jar:/usr/share/java/asm3-tree.jar:/usr/share/java/asm3-util.jar:/usr/share/java/asm3-xml.jar
-
-java org.objectweb.asm.util.TraceClassVisitor "$@"

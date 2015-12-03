@@ -1,5 +1,0 @@
-#!/bin/bash
-
-#ussp-push 00:11:9F:BD:98:EE@9 
-#ussp-push 00:25:47:40:4A:25@09 "$1" "$1"
-ussp-push 00:25:CF:4B:1D:81@09 "$1" "$1"

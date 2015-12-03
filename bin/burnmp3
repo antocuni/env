@@ -1,5 +1,0 @@
-#!/bin/bash
-
-decode
-cd wav
-cdrecord dev=/dev/cdrom -pad -eject *.wav && cd .. && rm -rf wav

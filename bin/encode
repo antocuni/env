@@ -1,7 +1,0 @@
-#!/bin/bash
-
-mkdir mp3
-for i in *.wav
-do
-    lame -h "$i" "mp3/${i/.wav/.mp3}"
-done

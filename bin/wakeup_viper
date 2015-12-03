@@ -1,4 +1,0 @@
-#!/bin/bash
-
-AUTH=`cat ~/.wakeup_viper.password`
-wget "http://$AUTH@antocuni.homelinux.org:81/do.cgi?page=wol&action=send&rmLst=00:24:8c:a7:6d:e1" -O -

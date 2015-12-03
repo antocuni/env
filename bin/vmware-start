@@ -1,6 +1,0 @@
-#!/bin/bash
-
-sudo /etc/init.d/vmware start
-sleep 7
-sudo /etc/init.d/samba start
-vmware -x -q "/opt/vmware/workstation/winxp/Windows XP Professional.vmx" &

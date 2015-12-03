@@ -1,9 +1,0 @@
-#!/bin/bash
-
-FMT="%m-%d %H%S"
-
-#jhead "-n$FMT" *.jpg
-
-#exiftool '-FileName<${CreateDate}.avi' -d "$FMT" *.avi
-
-exiftool '-FileName<${CreateDate}.mp4' -d "$FMT" *.mp4
