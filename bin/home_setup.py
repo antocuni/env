@@ -72,7 +72,7 @@ HOME = py.path.local('~', expanduser=True)
 
 home = os.path.expanduser('~')
 env_dir = os.path.join(home, 'env')
-etc_dir = os.path.join(env_dir, 'etc')
+etc_dir = os.path.join(env_dir, 'dotfiles')
 excludes = ['create_symlinks.py', 'scripts', 'elisp', 'gtk-3.0']
 
 def main():
@@ -154,17 +154,16 @@ def create_symlinks():
         if (f.startswith('.') or
             f.endswith('~') or
             f.endswith('.pyc') or
-            os.path.isdir(src) or
             f in excludes):
             continue
         do_symlink(src, dst)
 
     more_links = [
         ('~/env/bin', '~/bin'),
-        ('~/env/etc/gtk-3.0/gtk.css', '~/.config/gtk-3.0/gtk.css'),
-        ('~/env/etc/bash_profile', '~/.profile'),
-        ('~/env/etc/icons', '~/.icons'),
-        ('~/env/etc/xchat2/fijalcolor.py', '~/.xchat2/fijalcolor.py'),
+        ('~/env/misc/gtk.css', '~/.config/gtk-3.0/gtk.css'),
+        ('~/env/dotfiles/bash_profile', '~/.profile'),
+        ('~/env/dotfiles/icons', '~/.icons'),
+        ('~/env/misc/fijalcolor.py', '~/.xchat2/fijalcolor.py'),
         ('~/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ]
     for src, dst in more_links:

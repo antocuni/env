@@ -186,8 +186,7 @@ fi
 
 if [ "$TERM" != "emacs" ] && [ "$TERM" != "dumb" ] && [ "$TERM" != "linux" ]
 then
-    #. /home/antocuni/pypy/user/antocuni/etc/scripts/preexec.bash.sh
-    . ~/env/etc/scripts/preexec.bash.sh
+    . ~/bin/scripts/preexec.bash.sh
     preexec_xterm_title_install
 fi
 

@@ -1,4 +1,4 @@
-SCRIPTS=/home/antocuni/env/etc/scripts
-complete -o bashdefault -o default -C $SCRIPTS/completepytest.py py.test py.test2.5 py.test.net py.test.net.hack
+SCRIPTS=/home/antocuni/bin/scripts
+complete -o bashdefault -o default -C $SCRIPTS/completepytest.py py.test
 #complete -o bashdefault -o default -C $SCRIPTS/completetranslate.py ./translate.py
 complete -f -X '!*.@(gnumeric|gnm|csv|html|htm|xls|xlsx|ods|odt|sxc|stc|txt)' gnumeric
