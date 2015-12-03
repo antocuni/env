@@ -6,11 +6,48 @@ import glob
 import subprocess
 from getpass import getpass
 
+RED = 31
+GREEN = 32
+YELLOW = 33
+
+def color(s, fg=1, bg=1):
+    template = '\033[%02d;%02dm%s\033[0m'
+    return template % (bg, fg, s)
+
+def system(cmd):
+    ret = os.system(cmd)
+    if ret != 0:
+        print color('Command failed: ', RED), cmd
+        sys.exit(ret)
+
+# ==============================================================
+# import the py lib: automatically download/install it if needed
+#
+PYLIB = 'https://bitbucket.org/pytest-dev/py'
+def bootstrap():
+    print color('bootstraping the pylib...', YELLOW)
+    src = os.path.expanduser('~/src')
+    if not os.path.exists(src):
+        os.makedirs(src)
+    pydir = os.path.join(src, 'py')
+    system('hg clone %s %s' % (PYLIB, pydir))
+    sys.path.append(pydir)
+
+try:
+    import py
+except ImportError:
+    bootstrap()
+    import py
+
+# end of the automagically pylib importing/boostraping
+# ==============================================================
+
+
 GUI = '--gui' in sys.argv
 
 REPOS = [
+    ('hg', PYLIB, '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
-    ('hg', 'https://bitbucket.org/pytest-dev/py', '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
     ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
     ('hg', 'https://bitbucket.org/antocuni/pdb', '~/src/pdb'),
@@ -38,15 +75,6 @@ env_dir = os.path.join(home, 'env')
 etc_dir = os.path.join(env_dir, 'etc')
 excludes = ['create_symlinks.py', 'scripts', 'elisp', 'gtk-3.0']
 
-def system(cmd):
-    ret = os.system(cmd)
-    if ret != 0:
-        print color('Command failed: ', RED), cmd
-        sys.exit(ret)
-
-def color(s, fg=1, bg=1):
-    template = '\033[%02d;%02dm%s\033[0m'
-    return template % (bg, fg, s)
 
 def write_hgrc_auth():
     filename = os.path.join(home, '.hgrc.auth')
