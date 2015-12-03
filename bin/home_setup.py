@@ -21,7 +21,7 @@ REPOS = [
 ]
 
 APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
-APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata']
+APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel']
 
 #
 # end of configuration
