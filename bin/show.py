@@ -15,6 +15,8 @@ if arg == 'term':
 elif arg == 'emacs':
     wlist = wmctrl.Window.by_class('emacs.Emacs24')
     wlist += wmctrl.Window.by_class('emacs24.Emacs24')
+elif arg == 'xchat':
+    wlist = wmctrl.Window.by_class('xchat.Xchat')
 
 if wlist:
     wlist[0].activate()

@@ -16,6 +16,9 @@ command-2="$HOME/bin/show.py term"
 run-command-3=['<Shift><Control>c']
 command-3="$HOME/bin/pastebin-from-xsel"
 
+run-command-4=['XF86Messenger']
+command-4="$HOME/bin/show.py xchat"
+
 show-hud=['<Alt>Menu']
 
 
