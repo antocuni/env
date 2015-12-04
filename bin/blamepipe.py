@@ -3,8 +3,6 @@
 import re
 import sys
 import os.path
-import rxvtlib
-import svnshow
 from color import color, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, GRAY
 
 COLORS = [CYAN, RED, GREEN, YELLOW, BLUE, MAGENTA, GRAY]
@@ -46,10 +44,6 @@ def cycle(key, key2color, bg, text=None):
     return color(text, col, bg=bg)
 
 def main():
-    #_, wcpath = svnshow.parse_args()
-    #root = svnshow.get_repo_root(wcpath)
-    #wcpath = os.path.abspath(wcpath)
-
     rev2color = {}
     author2color = {}
     for line in sys.stdin:
@@ -59,11 +53,7 @@ def main():
             sys.stdout.write(line)
             continue
         
-        ## cmd = 'svn show --rev %s "%s"' % (rev, wcpath)
-        ## cmd = rxvtlib.command_in_term(cmd)
-        
         rev = cycle(rev, rev2color, bg=0)
-        ## rev = rxvtlib.format_command(rev, cmd, force=True)
         author = cycle(author, author2color, bg=0)
         sys.stdout.write('%s%s%s\n' % (rev, author, text))
         

@@ -6,11 +6,11 @@ def isatty(stream):
 
 def info(type, value, tb):
     ontty = isatty(sys.stderr) and isatty(sys.stdout) and isatty(sys.stdin)
-    if hasattr(sys, 'ps1a') or not ontty or type is bdb.BdbQuit or \
+    if hasattr(sys, 'ps1') or not ontty or type is bdb.BdbQuit or \
             str(value) == 'underlying C/C++ object has been deleted':
         # You are in interactive mode or don't have a tty-like
         # device, so call the default hook
-        sys. __excepthook__(type, value, tb)
+        sys.__excepthook__(type, value, tb)
     else:
         import traceback, pdb
         # You are not in interactive mode; print the exception
