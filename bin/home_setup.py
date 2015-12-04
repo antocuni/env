@@ -21,7 +21,7 @@ REPOS = [
 ]
 
 APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
-APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel']
+APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel', 'zeal']
 
 #
 # end of configuration
@@ -43,6 +43,7 @@ def system(cmd):
     if ret != 0:
         print color('Command failed: ', RED), cmd
         sys.exit(ret)
+
 
 # ==============================================================
 # import the py lib: automatically download/install it if needed

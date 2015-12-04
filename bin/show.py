@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import os
 #open('/tmp/foo', 'a').write(str(sys.argv) + '\n')
 import wmctrl
 
@@ -17,6 +18,13 @@ elif arg == 'emacs':
     wlist += wmctrl.Window.by_class('emacs24.Emacs24')
 elif arg == 'xchat':
     wlist = wmctrl.Window.by_class('xchat.Xchat')
+elif arg == 'zeal':
+    # start zeal if it's not already
+    wlist = wmctrl.Window.by_class('zeal.Zeal')
+    if not wlist:
+        os.system('zeal')
+
+
 
 if wlist:
     wlist[0].activate()
