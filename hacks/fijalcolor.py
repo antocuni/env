@@ -7,7 +7,7 @@ def check_message(word, word_eol, userdata):
     nick = word[0]
     line = word[1]
     if nick == '\x0326fijal':
-        nick = '  fijal'
+        nick = '   fijal'
         xchat.emit_print("Channel Message", nick, line)
         return xchat.EAT_XCHAT
 
