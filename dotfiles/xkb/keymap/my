@@ -2,6 +2,7 @@ xkb_keymap {
         xkb_keycodes  { include "evdev+aliases(qwerty)" };
         xkb_types     { include "complete"      };
         xkb_compat    { include "complete"      };
-        xkb_symbols   { include "pc+it(us)+us:2+inet(evdev)+mysym(caps_lock)+mysym(lsgt_as_control)+mysym(super_r_hotkey)"    };
+        xkb_symbols   { include "pc+it(us)+us:2+inet(evdev)+mysym(caps_lock)+mysym(lsgt_as_control)+mysym(super_r_hotkey)+mysym(emoji)"    };
         xkb_geometry  { include "pc(pc105)"     };
 };
+

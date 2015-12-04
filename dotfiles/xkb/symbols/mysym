@@ -28,3 +28,21 @@ partial alphanumeric_keys
 xkb_symbols "super_r_hotkey" {
     replace key <RWIN> { [ XF86Messenger ] };
 };
+
+partial alphanumeric_keys
+xkb_symbols "emoji" {
+    replace key <LatS> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ s, S, U1F60A, NoSymbol ],
+        symbols[Group2]= [ s, S ]
+    };
+
+    replace key <LatG> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ g, G, U1F601, NoSymbol ],
+        symbols[Group2]= [ g, G ]
+    };
+
+};
