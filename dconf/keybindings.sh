@@ -32,4 +32,16 @@ command-5="$HOME/bin/show.py zeal"
 [org/gnome/desktop/wm/keybindings]
 toggle-maximized=['<Alt>z']
 
+# resize window with Alt+Right mouse button
+[org/gnome/desktop/wm/preferences]
+mouse-button-modifier='<Alt>'
+resize-with-right-button=true
+
+[org/compiz/profiles/unity/plugins/resize]
+rectangle-modifier=@ai []
+fill-color='#fb8b0046'
+centered-modifier=[0]
+mode=2
+
+
 EOF
