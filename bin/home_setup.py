@@ -21,7 +21,7 @@ REPOS = [
 ]
 
 APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
-APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel', 'zeal']
+APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel']
 
 #
 # end of configuration
@@ -80,8 +80,9 @@ def main():
     create_symlinks()
     apt_install(APT_PACKAGES)
     if gui:
-        apt_install(APT_PACKAGES_GUI)
         GUI_SENTINEL.write('this file tells home_setup.py that this is a GUI environment\n')
+        apt_install(APT_PACKAGES_GUI)
+        apt_install_zeal()
         compile_terminal_hack()
         import_dconf()
         install_desktop_apps()
@@ -176,6 +177,16 @@ def apt_install(package_list):
         print
         print color('install apt-packages', YELLOW)
         system('sudo apt-get install %s' % packages)
+
+def apt_install_zeal():
+    files = py.path.local('/etc/apt/sources.list.d').listdir('zeal-developers*')
+    if files:
+        print color('zeal ppa: already enabled', GREEN)
+    else:
+        print color('zeal ppa: add-apt-repository', YELLOW)
+        system('sudo add-apt-repository ppa:zeal-developers/ppa')
+        system('sudo apt-get update')
+    apt_install(['zeal'])
 
 def compile_terminal_hack():
     print
