@@ -12,18 +12,19 @@ else:
 
 wlist = []
 if arg == 'term':
-    wlist = wmctrl.Window.by_role("autoterm")
+    #wlist = wmctrl.Window.by_role("autoterm")
+    os.system('wmctrl -x -a gnome-terminal')
 elif arg == 'emacs':
-    wlist = wmctrl.Window.by_class('emacs.Emacs24')
-    wlist += wmctrl.Window.by_class('emacs24.Emacs24')
+    os.system('wmctrl -x -a emacs')
+    ## wlist = wmctrl.Window.by_class('emacs.Emacs24')
+    ## wlist += wmctrl.Window.by_class('emacs24.Emacs24')
 elif arg == 'xchat':
     wlist = wmctrl.Window.by_class('xchat.Xchat')
 elif arg == 'zeal':
     # start zeal if it's not already
     wlist = wmctrl.Window.by_class('zeal.Zeal')
     if not wlist:
-        os.system('zeal')
-
+        os.system('zeal &')
 
 
 if wlist:
