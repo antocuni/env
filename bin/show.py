@@ -20,6 +20,7 @@ elif arg == 'emacs':
     ## wlist += wmctrl.Window.by_class('emacs24.Emacs24')
 elif arg == 'xchat':
     wlist = wmctrl.Window.by_class('xchat.Xchat')
+    wlist.sort(key=lambda w: w.wm_name)
 elif arg == 'zeal':
     # start zeal if it's not already
     wlist = wmctrl.Window.by_class('zeal.Zeal')
@@ -27,7 +28,16 @@ elif arg == 'zeal':
         os.system('zeal &')
 
 
-if wlist:
+if len(wlist) == 0:
+    print 'No windows found'
+elif len(wlist) == 1:
     wlist[0].activate()
 else:
-    print 'No windows found'
+    current = wmctrl.Window.get_active()
+    if current in wlist:
+        i = wlist.index(current)
+        i = (i+1) % len(wlist)
+        wlist[i].activate()
+    else:
+        wlist[0].activate()
+
