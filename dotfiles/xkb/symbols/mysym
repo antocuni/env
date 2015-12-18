@@ -29,20 +29,104 @@ xkb_symbols "super_r_hotkey" {
     replace key <RWIN> { [ XF86Messenger ] };
 };
 
+
 partial alphanumeric_keys
 xkb_symbols "emoji" {
+    #   😱    U1F631 FACE SCREAMING IN FEAR
+    #   ⛄    U026C4 SNOWMAN WITHOUT SNOW
     replace key <LatS> {
         type[group1]= "FOUR_LEVEL_ALPHABETIC",
         type[group2]= "ALPHABETIC",
-        symbols[Group1]= [ s, S, U1F60A, NoSymbol ],
+        symbols[Group1]= [ s, S, U1F631, U026C4 ],  # 😱 ⛄
         symbols[Group2]= [ s, S ]
     };
 
+    #   😂    U1F602 FACE WITH TEARS OF JOY
+    #   ❤    U02764 HEAVY BLACK HEART
+    replace key <LatR> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ r, R, U1F602, NoSymbol ],  # 😂
+        symbols[Group2]= [ r, R ]
+    };
+
+    #   😍    U1F60D SMILING FACE WITH HEART-SHAPED EYES
+    #   😘    U1F618 FACE THROWING A KISS
+    replace key <LatH> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ h, H, U1F60D, U02764],  # 😍 ❤
+        symbols[Group2]= [ h, H ]
+    };
+
+    #   😞    U1F61E DISAPPOINTED FACE
+    #   😊    U1F60A SMILING FACE WITH SMILING EYES
+    replace key <LatK> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ k, K, U1F618, NoSymbol ], # 😘
+        symbols[Group2]= [ k, K ]
+    };
+
+
+    #   😁    U1F601 GRINNING FACE WITH SMILING EYES
     replace key <LatG> {
         type[group1]= "FOUR_LEVEL_ALPHABETIC",
         type[group2]= "ALPHABETIC",
-        symbols[Group1]= [ g, G, U1F601, NoSymbol ],
+        symbols[Group1]= [ g, G, U1F601, NoSymbol ], # 😁
         symbols[Group2]= [ g, G ]
     };
+
+
+    #   👍    U1F44D THUMBS UP SIGN
+    #   😋    U1F60B FACE SAVOURING DELICIOUS FOOD
+    replace key <LatY> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ y, Y, U1F44D, U1F60B ], # 👍 😋
+        symbols[Group2]= [ y, Y ]
+    };
+
+
+    #   👏    U1F44F CLAPPING HANDS SIGN
+    replace key <LatC> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ c, C, U1F44F, NoSymbol ], # 👏
+        symbols[Group2]= [ c, C ]
+    };
+
+
+    #   😴    U1F634 SLEEPING FACE
+    replace key <LatZ> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ z, Z, U1F634, NoSymbol ], # 😴
+        symbols[Group2]= [ z, Z ]
+    };
+
+
+    #   😛   U1F61B FACE WITH STUCK-OUT TONGUE
+    #   🎉    U1F389 PARTY POPPER
+    replace key <LatP> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ p, P, U1F61B, U1F389 ], # 😛 🎉
+        symbols[Group2]= [ p, P ]
+    };
+
+
+    replace key <AE09> {
+        type[group1]= "FOUR_LEVEL",
+        symbols[Group1]= [ 9, parenleft, U1F61E, NoSymbol ], # 😞
+        symbols[Group2]= [ 9, parenleft ]
+    };
+
+    key <AE10> {
+        type[group1]= "FOUR_LEVEL",
+        symbols[Group1]= [ 0, parenright,  U1F60A, degree ], # 😊 °
+        symbols[Group2]= [ 0, parenright ]
+    };
+
 
 };
