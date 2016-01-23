@@ -70,10 +70,11 @@ xkb_symbols "emoji" {
 
 
     #   😁    U1F601 GRINNING FACE WITH SMILING EYES
+    #   😡    U1F621 POUTING FACE
     replace key <LatG> {
         type[group1]= "FOUR_LEVEL_ALPHABETIC",
         type[group2]= "ALPHABETIC",
-        symbols[Group1]= [ g, G, U1F601, NoSymbol ], # 😁
+        symbols[Group1]= [ g, G, U1F601, U1F621 ], # 😁 😡
         symbols[Group2]= [ g, G ]
     };
 
