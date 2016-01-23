@@ -16,6 +16,7 @@ if arg == 'term':
     os.system('wmctrl -x -a gnome-terminal')
 elif arg == 'emacs':
     os.system('wmctrl -x -a emacs')
+    sys.exit(0)
     ## wlist = wmctrl.Window.by_class('emacs.Emacs24')
     ## wlist += wmctrl.Window.by_class('emacs24.Emacs24')
 elif arg == 'xchat':
