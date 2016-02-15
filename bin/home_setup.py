@@ -54,7 +54,8 @@ def bootstrap():
     if not os.path.exists(src):
         os.makedirs(src)
     pydir = os.path.join(src, 'py')
-    system('hg clone %s %s' % (PYLIB, pydir))
+    if not os.path.exists(pydir):
+        system('hg clone %s %s' % (PYLIB, pydir))
     sys.path.append(pydir)
 
 try:
