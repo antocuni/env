@@ -140,9 +140,9 @@ def main():
                     set_style(l, 'opacity', str(opacity))
             #print l.attrib['style']
         svgslide = os.path.abspath(os.path.join(os.curdir,
-                                                "%s.p%d.svg" % (FILENAME, i)))
+                                                "%s.p%02d.svg" % (FILENAME, i)))
         pdfslide = os.path.abspath(os.path.join(os.curdir,
-                                                "%s-p%d.pdf" % (FILENAME.replace('.svg', ''), i)))
+                                                "%s-p%02d.pdf" % (FILENAME.replace('.svg', ''), i)))
         # Write the XML to file, "wireframes.p1.svg"
         f = open(svgslide, 'w')
         f.write(lxml.etree.tostring(doc))
