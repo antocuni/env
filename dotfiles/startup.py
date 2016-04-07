@@ -1,4 +1,5 @@
 from __future__ import nested_scopes
+import sys
 
 #
 #  Point to this file in your $PYTHONSTARTUP environment variable.
@@ -106,7 +107,8 @@ def startup():
         execfile('.pystartup', __main__.__dict__)
 
 
-startup()
+if sys.version_info < (3, 0):
+    startup()
 del startup
 
 try:
