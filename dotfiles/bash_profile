@@ -24,7 +24,9 @@ PATH=~/.local/bin:$PATH
 PATH=~/pypy/default/rpython/bin:$PATH
 PATH=~/pypy/default/pypy/goal/:$PATH
 PATH=~/env/bin/colorize/:~/env/bin:$PATH
-PATH=~/android-sdk-linux_x86/tools/:~/android-sdk-linux_x86/platform-tools/:$PATH
+
+ANDROID=~/android/android-sdk-linux_x86
+PATH=$ANDROID/tools/:$ANDROID/platform-tools/:$ANDROID/build-tools:$PATH
 
 if [ -d /usr/gambit/python/bin/ ]
 then
@@ -40,6 +42,8 @@ export PATH
 PYTHONPATH=~/env/pypath
 export PYTHONPATH
 
+PYTHONWARNINGS="ignore:Unverified HTTPS request"
+export PYTHONWARNINGS
 
 # ===================
 # python related vars

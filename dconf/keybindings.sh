@@ -21,7 +21,7 @@ command-3="$HOME/bin/pastebin-from-xsel"
 run-command-4=['XF86Messenger']
 command-4="$HOME/bin/show.py xchat"
 
-run-command-5=['F1']
+run-command-5=['<Control>F1']
 command-5="$HOME/bin/show.py zeal"
 
 

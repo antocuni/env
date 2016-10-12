@@ -745,6 +745,18 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 (define-key reb-mode-map "\C-c\M-%" 'reb-query-replace-this-regxp)
 
+
+; rust
+; =======================
+(require 'rust-mode)
+(setq racer-rust-src-path "/usr/local/src/rustc-1.11.0/src/")
+(add-hook 'rust-mode-hook #'racer-mode)
+(add-hook 'racer-mode-hook #'eldoc-mode)
+; completion
+(add-hook 'racer-mode-hook #'company-mode)
+(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+(setq company-tooltip-align-annotations t)
+
 ; Color theme for X window
 ; =======================
 
