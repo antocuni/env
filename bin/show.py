@@ -20,7 +20,7 @@ elif arg == 'emacs':
     ## wlist = wmctrl.Window.by_class('emacs.Emacs24')
     ## wlist += wmctrl.Window.by_class('emacs24.Emacs24')
 elif arg == 'xchat':
-    wlist = wmctrl.Window.by_class('xchat.Xchat')
+    wlist = wmctrl.Window.by_class('hexchat.Hexchat')
     wlist.sort(key=lambda w: w.wm_name)
 elif arg == 'zeal':
     # start zeal if it's not already
