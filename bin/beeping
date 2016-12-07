@@ -1,0 +1,26 @@
+#!/bin/bash
+
+gracefulExit() {
+    echo "exiting..."
+    exit 1
+}
+
+trap gracefulExit INT
+
+beep() {
+    play -n synth 0.3 sine 800 vol 1 2> /dev/null
+}
+
+function beep_lines() {
+    while :
+    do
+        read a
+        echo $a
+        if [[ $a == "64 bytes"* ]]
+        then
+            beep
+        fi
+    done
+}
+
+/bin/ping "$@" | beep_lines
