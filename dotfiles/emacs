@@ -98,6 +98,7 @@
 (menu-bar-mode -1)
 
 (load-file "/home/antocuni/src/pytest-emacs/pytest.el")
+(require 'capnproto-mode)
 
 (require 'ido)
 (ido-mode t)
@@ -199,6 +200,9 @@
 
 (setq auto-mode-alist
       (append '(("\\.cs$" . java-mode)) auto-mode-alist))
+
+(setq auto-mode-alist
+      (append '(("\\.capnp$" . capnproto-mode)) auto-mode-alist))
 
 ; Custom keybindings
 ; =======================

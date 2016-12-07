@@ -236,3 +236,6 @@ esac
 # ==========================
 
 ##export GNOME_DESKTOP_SESSION_ID="whatever"
+
+# added by travis gem
+[ -f /home/antocuni/.travis/travis.sh ] && source /home/antocuni/.travis/travis.sh
