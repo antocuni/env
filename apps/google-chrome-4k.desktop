@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Name=Google Chrome 4K
+Exec=/usr/bin/google-chrome-stable --force-device-scale-factor=1.75  %U
+Terminal=false
+Icon=google-chrome
+Type=Application
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+X-Ayatana-Desktop-Shortcuts=NewWindow;NewIncognito
+
+[NewWindow Shortcut Group]
+Name=New Window
+Exec=/usr/bin/google-chrome-stable
+TargetEnvironment=Unity
+
+[NewIncognito Shortcut Group]
+Name=New Incognito Window
+Exec=/usr/bin/google-chrome-stable --incognito
+TargetEnvironment=Unity
