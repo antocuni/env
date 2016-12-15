@@ -77,6 +77,7 @@
 
 (put 'narrow-to-region 'disabled nil)
 
+
 ; ***********************
 ; Manually edited section
 ; ***********************
@@ -126,10 +127,9 @@
 ;; get rid of `find-file-read-only' and replace it with something
 ;; more useful.
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
- 
-;; enable recent files mode.
+
+(setq recentf-auto-cleanup 'never) ;; disable before we start recentf!
 (recentf-mode t)
- 
 ; 50 files ought to be enough.
 (setq recentf-max-saved-items 50)
  
