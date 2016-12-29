@@ -1,5 +1,10 @@
 #!/bin/bash
 
-echo DISPLAY is $DISPLAY
-xkbcomp -I$HOME/.xkb ~/.xkb/keymap/my $DISPLAY # 2>/dev/null
+xkbcomp -I$HOME/.xkb ~/.xkb/keymap/my ${DISPLAY-:0} -w0
 
+if hash synclient 2>/dev/null
+then
+    # tweak my synaptic touchpad
+    synclient TapButton2=2  # 2-fingers tap sends middle button
+    synclient TapButton3=3  # 3-fingers tap sends right button
+fi
