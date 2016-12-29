@@ -77,6 +77,10 @@
 
 (put 'narrow-to-region 'disabled nil)
 
+;; use a smaller font on bart
+(when (string= system-name "bart")
+  (set-face-attribute 'default (selected-frame) :height 118))
+
 
 ; ***********************
 ; Manually edited section
