@@ -9,7 +9,7 @@ import subprocess
 # configuration
 #
 
-PYLIB = 'https://bitbucket.org/pytest-dev/py'
+PYLIB = 'https://github.com/pytest-dev/py'
 REPOS = [
     ('hg', PYLIB, '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
@@ -55,7 +55,7 @@ def bootstrap():
         os.makedirs(src)
     pydir = os.path.join(src, 'py')
     if not os.path.exists(pydir):
-        system('hg clone %s %s' % (PYLIB, pydir))
+        system('git clone %s %s' % (PYLIB, pydir))
     sys.path.append(pydir)
 
 try:
