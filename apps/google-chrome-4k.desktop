@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=Google Chrome 4K
-Exec=/usr/bin/google-chrome-stable --force-device-scale-factor=1.75  %U
+Exec=/usr/bin/google-chrome-stable --password-store=basic  %U
 Terminal=false
 Icon=google-chrome
 Type=Application
