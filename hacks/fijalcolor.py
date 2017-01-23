@@ -17,4 +17,4 @@ def test_fijal():
 xchat.hook_print("Channel Message", check_message, "mydata")
 #test_fijal()
 
-print "\0034",__module_name__, __module_version__,"has been loaded\003"
+print("\0034",__module_name__, __module_version__,"has been loaded\003")
