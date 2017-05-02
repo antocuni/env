@@ -29,7 +29,7 @@ import sys
 
 SCRIPT_NAME = os.path.basename(sys.argv[0])
 VERSION = '0.2'
-SERVICE_URL = 'https://paste.lugons.org/'
+SERVICE_URL = 'https://paste.openstack.org/'
 SETTING_KEYS = ['author', 'title', 'language', 'private', 'clipboard',
                 'open_browser']
 

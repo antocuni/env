@@ -121,6 +121,19 @@
 (if window-system
     (server-start))
 
+; =============================
+; multiple cursors & phi-search
+; =============================
+
+(require 'multiple-cursors)
+(require 'iy-go-to-char)
+(require 'phi-search)
+;; (global-set-key (kbd "M-s") 'iy-go-to-char)
+;; (global-set-key (kbd "M-r") 'iy-go-to-char-backward)
+(add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
+
+(global-set-key (kbd "M-s") 'phi-search)
+(global-set-key (kbd "M-r") 'phi-search-backward)
 
 ; ========================
 ; recent file mode for ido
@@ -440,10 +453,6 @@ the new line indented."
 
 (defun my-python-ext ()
   (outline-minor-mode)
-  (local-set-key "\M-s\M-s" 'hide-body)
-  (local-set-key "\M-s\M-a" 'show-all)
-  (local-set-key "\M-s\M-w" 'show-subtree)
-  (local-set-key "\M-s\M-q" 'hide-subtree)
   (local-set-key [(f1)] 'python-describe-symbol)
   ;; (local-set-key "\C-c>" 'my-shift-right) ;; not necessary in emacs 24
   ;; (local-set-key "\C-c<" 'my-shift-left)  ;; not necessary in emacs 24
