@@ -4,6 +4,7 @@ import sys
 import os.path
 import glob
 import subprocess
+from commands import getoutput
 
 # ==============================================================
 # configuration
@@ -87,6 +88,7 @@ def main():
         compile_terminal_hack()
         import_dconf()
         install_desktop_apps()
+        check_sysrq()
     elif 'SSH_CLIENT' not in os.environ:
         print color('WARNING: did you forget --gui?', RED)
 
@@ -212,6 +214,22 @@ def install_desktop_apps():
         dst = os.path.join('~/.local/share/applications/', basename)
         dst = os.path.expanduser(dst)
         do_symlink(fullname, dst)
+
+def check_sysrq():
+    def sysrq_enabled():
+        out = getoutput('sysctl -n kernel.sysrq')
+        return int(out) == 1
+
+    print
+    if not sysrq_enabled():
+        print color('kernel.sysrq is disabled, fixing it', YELLOW)
+        system('echo kernel.sysrq = 1 | sudo tee /etc/sysctl.d/10-magic-sysrq.conf')
+        system('sudo sysctl --system')
+
+    if sysrq_enabled():
+        print color('kernel.sysrq is enabled', GREEN)
+    else:
+        print color('kernel.sysrq is disabled, plese look at it manually', RED)
 
 if __name__ == '__main__':
     main()
