@@ -45,6 +45,12 @@ def system(cmd):
         print color('Command failed: ', RED), cmd
         sys.exit(ret)
 
+NO_SUDO = False
+def sudo(cmd):
+    if NO_SUDO:
+        print color('NO SUDO', RED)
+    else:
+        system('sudo ' + cmd)
 
 # ==============================================================
 # import the py lib: automatically download/install it if needed
@@ -75,8 +81,11 @@ home = os.path.expanduser('~')
 env_dir = os.path.join(home, 'env')
 etc_dir = os.path.join(env_dir, 'dotfiles')
 
+
 def main():
+    global NO_SUDO
     gui = '--gui' in sys.argv or GUI_SENTINEL.check(file=True)
+    NO_SUDO = '--nosudo' in sys.argv or '--no-sudo' in sys.argv
     write_hgrc_auth()
     clone_repos()
     create_symlinks()
@@ -179,7 +188,7 @@ def apt_install(package_list):
     if ret != 0:
         print
         print color('install apt-packages', YELLOW)
-        system('sudo apt-get install %s' % packages)
+        sudo('apt-get install %s' % packages)
 
 def apt_install_zeal():
     files = py.path.local('/etc/apt/sources.list.d').listdir('zeal-developers*')
@@ -187,8 +196,8 @@ def apt_install_zeal():
         print color('zeal ppa: already enabled', GREEN)
     else:
         print color('zeal ppa: add-apt-repository', YELLOW)
-        system('sudo add-apt-repository ppa:zeal-developers/ppa')
-        system('sudo apt-get update')
+        sudo('add-apt-repository ppa:zeal-developers/ppa')
+        sudo('apt-get update')
     apt_install(['zeal'])
 
 def compile_terminal_hack():
@@ -221,10 +230,10 @@ def check_sysrq():
         return int(out) == 1
 
     print
-    if not sysrq_enabled():
+    if not sysrq_enabled() and not NO_SUDO:
         print color('kernel.sysrq is disabled, fixing it', YELLOW)
         system('echo kernel.sysrq = 1 | sudo tee /etc/sysctl.d/10-magic-sysrq.conf')
-        system('sudo sysctl --system')
+        sudo('sysctl --system')
 
     if sysrq_enabled():
         print color('kernel.sysrq is enabled', GREEN)
