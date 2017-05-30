@@ -22,7 +22,8 @@ REPOS = [
 ]
 
 APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
-APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel']
+APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel',
+                    'hexchat']
 
 #
 # end of configuration
@@ -169,6 +170,9 @@ def create_symlinks():
             continue
         do_symlink(src, dst)
 
+    hexchat_dir = os.path.expanduser('~/.config/hexchat')
+    if not os.path.exists(hexchat_dir):
+        os.makedirs(hexchat_dir)
     more_links = [
         ('~/env/bin', '~/bin'),
         ('~/env/hacks/gnome-terminal-hack/gtk.css', '~/.config/gtk-3.0/gtk.css'),
