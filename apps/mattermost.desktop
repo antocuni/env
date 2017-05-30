@@ -4,6 +4,6 @@ Version=1.0
 Terminal=false
 Type=Application
 Name=Mattermost
-Exec=/opt/google/chrome/google-chrome --profile-directory=Default --app-id=faaiflphdlghmomafpinbmedfnkkhhpd
-Icon=chrome-faaiflphdlghmomafpinbmedfnkkhhpd-Default
-StartupWMClass=crx_faaiflphdlghmomafpinbmedfnkkhhpd
+Exec=google-chrome --app=https://mattermost.smithersbet.com
+Icon=mattermost
+StartupWMClass=mattermost.smithersbet.com
