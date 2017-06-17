@@ -12,7 +12,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector ["black" "red" "green" "yellow" "#4646FF" "magenta" "cyan" "white"])
+ '(ansi-color-names-vector
+   ["black" "red" "green" "yellow" "#4646FF" "magenta" "cyan" "white"])
  '(auto-revert-interval 1)
  '(blink-cursor-mode nil)
  '(c-basic-offset 4)
@@ -24,11 +25,67 @@
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-check-comments nil)
- '(jka-compr-compression-info-list (quote (["\\.Z\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "compress" ("-c") "uncompressing" "gzip" ("-c" "-q" "-d") nil t "\235"] ["\\.bz2\\(~\\|\\.~[0-9]+~\\)?\\'" "bzip2ing" "bzip2" nil "bunzip2ing" "bzip2" ("-d") nil t "BZh"] ["\\.tbz2?\\'" "bzip2ing" "bzip2" nil "bunzip2ing" "bzip2" ("-d") nil nil "BZh"] ["\\.\\(?:tgz\\|svgz\\|sifz\\)\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "gzip" ("-c" "-q") "uncompressing" "gzip" ("-c" "-q" "-d") t nil "\213"] ["\\.\\(g?z\\|gnumeric\\)\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "gzip" ("-c" "-q") "uncompressing" "gzip" ("-c" "-q" "-d") t t "\213"] ["\\.dz\\'" nil nil nil "uncompressing" "gzip" ("-c" "-q" "-d") nil t "\213"])))
+ '(jka-compr-compression-info-list
+   (quote
+    (["\\.Z\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "compress"
+      ("-c")
+      "uncompressing" "gzip"
+      ("-c" "-q" "-d")
+      nil t "\235"]
+     ["\\.bz2\\(~\\|\\.~[0-9]+~\\)?\\'" "bzip2ing" "bzip2" nil "bunzip2ing" "bzip2"
+      ("-d")
+      nil t "BZh"]
+     ["\\.tbz2?\\'" "bzip2ing" "bzip2" nil "bunzip2ing" "bzip2"
+      ("-d")
+      nil nil "BZh"]
+     ["\\.\\(?:tgz\\|svgz\\|sifz\\)\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "gzip"
+      ("-c" "-q")
+      "uncompressing" "gzip"
+      ("-c" "-q" "-d")
+      t nil "\213"]
+     ["\\.\\(g?z\\|gnumeric\\)\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "gzip"
+      ("-c" "-q")
+      "uncompressing" "gzip"
+      ("-c" "-q" "-d")
+      t t "\213"]
+     ["\\.dz\\'" nil nil nil "uncompressing" "gzip"
+      ("-c" "-q" "-d")
+      nil t "\213"])))
  '(menu-bar-mode window-system)
  '(python-fill-docstring-style (quote django))
  '(rst-level-face-base-color "blackn")
- '(safe-local-variable-values (quote ((encoding . latin-1) (encoding . Latin-1) (test-case-name . twisted\.test\.test_defer\,twisted\.test\.test_defgen\,twisted\.internet\.test\.test_inlinecb) (test-case-name . twisted) (test-case-name . twisted\.conch\.test\.test_manhole) (sh-indent-comment . t) (pymacs-auto-reload . t) (test-case-name . test\.test_txpostgres) (test-case-name . buildbot\.test\.test_status) (test-case-name . buildbot\.test\.test_run) (test-case-name . buildbot\.test\.test_runner) (test-case-name . buildbot\.test\.test_steps\,buildbot\.test\.test_properties) (test-case-name . twisted\.test\.test_internet\,twisted\.internet\.test\.test_posixbase) (test-case-name . buildbot\.test\.test_slavecommand) (test-case-name . buildbot\.test\.test_steps) (test-case-name . buildbot\.test\.test_vc) (test-case-name . twisted\.test\.test_log) (test-case-name . twisted\.test\.test_application\,twisted\.test\.test_twistd) (test-case-name . twisted\.test\.test_twistd) (test-case-name . buildbot\.test\.test_twisted) (test-case-name . twisted\.web\.test\.test_static) (c-tab-always-indent) (c-continued-statement-offset . 2) (c-brace-offset . -2) (c-brace-imaginary-offset . 0) (c-argdecl-indent . 0) (c-label-offset . -2) (auto-revert-interval . 0.5) (auto-revert-interval . 0.2) (encoding . utf-8))))
+ '(safe-local-variable-values
+   (quote
+    ((encoding . latin-1)
+     (encoding . Latin-1)
+     (test-case-name . twisted\.test\.test_defer\,twisted\.test\.test_defgen\,twisted\.internet\.test\.test_inlinecb)
+     (test-case-name . twisted)
+     (test-case-name . twisted\.conch\.test\.test_manhole)
+     (sh-indent-comment . t)
+     (pymacs-auto-reload . t)
+     (test-case-name . test\.test_txpostgres)
+     (test-case-name . buildbot\.test\.test_status)
+     (test-case-name . buildbot\.test\.test_run)
+     (test-case-name . buildbot\.test\.test_runner)
+     (test-case-name . buildbot\.test\.test_steps\,buildbot\.test\.test_properties)
+     (test-case-name . twisted\.test\.test_internet\,twisted\.internet\.test\.test_posixbase)
+     (test-case-name . buildbot\.test\.test_slavecommand)
+     (test-case-name . buildbot\.test\.test_steps)
+     (test-case-name . buildbot\.test\.test_vc)
+     (test-case-name . twisted\.test\.test_log)
+     (test-case-name . twisted\.test\.test_application\,twisted\.test\.test_twistd)
+     (test-case-name . twisted\.test\.test_twistd)
+     (test-case-name . buildbot\.test\.test_twisted)
+     (test-case-name . twisted\.web\.test\.test_static)
+     (c-tab-always-indent)
+     (c-continued-statement-offset . 2)
+     (c-brace-offset . -2)
+     (c-brace-imaginary-offset . 0)
+     (c-argdecl-indent . 0)
+     (c-label-offset . -2)
+     (auto-revert-interval . 0.5)
+     (auto-revert-interval . 0.2)
+     (encoding . utf-8))))
  '(scroll-bar-mode (quote right))
  '(scroll-conservatively 100000)
  '(scroll-margin 0)
@@ -39,7 +96,7 @@
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
- '(vc-handled-backends (quote (Hg)))
+ '(vc-handled-backends nil)
  '(vc-hg-log-switches nil)
  '(x-select-enable-clipboard t))
 
@@ -509,7 +566,7 @@ the new line indented."
 
 ; tramp settings
 ; ==============
-
+(require 'tramp)
 (setq debug-on-quit nil
       tramp-verbose 6)
 
@@ -519,6 +576,13 @@ the new line indented."
               vc-ignore-dir-regexp
               tramp-file-name-regexp))
 
+
+
+;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+;; ;; Backup (file~) disabled and auto-save (#file#) locally to prevent delays in editing remote files
+;; (add-to-list 'backup-directory-alist
+;;              (cons tramp-file-name-regexp nil))
+;; (setq tramp-auto-save-directory temporary-file-directory)
 
 ;; enable tramp debug
 ;; (setq debug-on-quit t
