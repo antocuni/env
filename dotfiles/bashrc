@@ -67,7 +67,9 @@ alias upod='echo remind to rebuild the DB!; umount /mnt/ipod'
 [ -d ~/pypy/user/arigo ] && alias rm="~/pypy/user/arigo/hack/bin/atomic_rm.py"
 alias fs="dropbox filestatus ~/Dropbox/antocuni/{.mozilla,.thunderbird}"
 
-alias lstree='find . -name .svn -prune -o -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"'  
+alias lstree='find . -name .svn -prune -o -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"'
+
+alias 32='schroot -c 32bit --'
 
 if [ `hostname` == homer ]
 then
