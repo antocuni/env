@@ -176,7 +176,10 @@
 
 ; don't start the server in tty mode
 (if window-system
-    (server-start))
+    (progn
+      (global-set-key (kbd "C-x C-c") 'server-edit)
+      (global-set-key (kbd "C-x C-q") 'save-buffers-kill-emacs)
+      (server-start)))
 
 ; =============================
 ; multiple cursors & phi-search

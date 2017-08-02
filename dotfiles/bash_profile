@@ -64,8 +64,7 @@ export IGNOREEOF=10
 export LESS="-R $LESS"
 export FIGNORE='~'
 export BROWSER="firefox:mozilla"
-export SVN_EDITOR="emacs -nw"
-export EDITOR="emacs -nw"
+export EDITOR="emacsclient"
 export IPOD_MOUNTPOINT=/mnt/usb
 #export MAKEFLAGS="-j2"
 

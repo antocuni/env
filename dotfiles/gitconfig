@@ -22,6 +22,7 @@
 	default = simple
 [core]
 	excludesfile = /home/antocuni/.gitignore
+	editor = emacsclient
 [giggle]
 	main-window-maximized = true
 	main-window-geometry = 1920x1028+0+1
