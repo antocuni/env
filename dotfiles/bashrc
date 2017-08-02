@@ -58,6 +58,7 @@ alias findpy="find ./ -name '*.py'"
 check pydf && alias df='pydf'
 check monodoc && alias monodoc='/usr/bin/monodoc > /dev/null 2>&1 &'
 
+alias hg="/usr/bin/python -s -E `which hg`" # else hg it's awfully slow to start
 alias mcd='mount /mnt/cdrom'
 alias ucd='umount /mnt/cdrom'
 alias musb='mount /mnt/usb'
