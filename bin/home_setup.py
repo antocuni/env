@@ -12,7 +12,7 @@ from commands import getoutput
 
 PYLIB = 'https://github.com/pytest-dev/py'
 REPOS = [
-    ('hg', PYLIB, '~/src/py'),
+    ('git', PYLIB, '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
     ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
     ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
