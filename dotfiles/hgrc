@@ -28,6 +28,7 @@ rebase =
 share=
 #activity=/tmp/Hgactivity/activity.py
 churn=
+histedit=
 
 [pager]
 pager = less
