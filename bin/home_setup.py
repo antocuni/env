@@ -178,7 +178,7 @@ def create_symlinks():
         ('~/env/hacks/gnome-terminal-hack/gtk.css', '~/.config/gtk-3.0/gtk.css'),
         ('~/env/dotfiles/bash_profile', '~/.profile'),
         ('~/env/dotfiles/icons', '~/.icons'),
-        ('~/env/hacks/fijalcolor.py', '~/.config/hexchat/fijalcolor.py'),
+        ('~/env/hacks/fijalcolor.py', '~/.config/hexchat/addons/fijalcolor.py'),
         ('~/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ]
     for src, dst in more_links:
