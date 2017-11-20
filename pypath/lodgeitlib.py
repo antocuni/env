@@ -49,7 +49,7 @@ from datetime import datetime
 from urlparse import urljoin
 
 
-LODGEIT_ADDRESS = 'https://paste.lugons.org/'
+LODGEIT_ADDRESS = 'http://paste.openstack.org/'
 SERVICE_ADDRESS = urljoin(LODGEIT_ADDRESS, 'xmlrpc/')
 
 

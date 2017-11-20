@@ -29,7 +29,7 @@ import sys
 
 SCRIPT_NAME = os.path.basename(sys.argv[0])
 VERSION = '0.2'
-SERVICE_URL = 'https://paste.openstack.org/'
+SERVICE_URL = 'http://paste.openstack.org/'
 SETTING_KEYS = ['author', 'title', 'language', 'private', 'clipboard',
                 'open_browser']
 
@@ -156,7 +156,7 @@ def language_exists(language):
     """Check if a language alias exists."""
     xmlrpc = get_xmlrpc_service()
     langs = xmlrpc.pastes.getLanguages()
-    return language in [x[0] for x in langs]
+    return language in langs # [x[0] for x in langs]
 
 
 def get_mimetype(data, filename):
