@@ -24,6 +24,8 @@ command-4="$HOME/bin/show.py xchat"
 run-command-5=['<Control>F1']
 command-5="$HOME/bin/show.py zeal"
 
+run-command-6=['Print']
+command-6='gnome-screenshot -a'
 
 # ===============================#
 #    window manager shortcuts    #

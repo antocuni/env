@@ -36,3 +36,5 @@
 	cmd = /usr/bin/diffmerge --merge --result=$MERGED $LOCAL $BASE $REMOTE
 [mergetool]
 	keepBackup = false
+[log]
+	abbrevCommit = true

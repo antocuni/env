@@ -1,6 +1,6 @@
 [ui]
 username = Antonio Cuni <anto.cuni@gmail.com>
-editor = emacsclient -nw
+editor = emacsclient
 ignore = ~/.hgignore
 style= /home/antocuni/env/hacks/hgstyle/svn.style
 merge = internal:merge
