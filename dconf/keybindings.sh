@@ -27,6 +27,9 @@ command-5="$HOME/bin/show.py zeal"
 run-command-6=['Print']
 command-6='gnome-screenshot -a'
 
+run-command-7=['XF86Sleep']
+command-7='systemctl suspend'
+
 # ===============================#
 #    window manager shortcuts    #
 # ===============================#
