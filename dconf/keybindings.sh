@@ -30,6 +30,20 @@ command-6='gnome-screenshot -a'
 run-command-7=['XF86Sleep']
 command-7='systemctl suspend'
 
+run-command-8=['XF86AudioPlay']
+command-8='$HOME/bin/spotify-cmd play'
+
+run-command-9=['XF86AudioNext']
+command-9='$HOME/bin/spotify-cmd next'
+
+run-command-10=['XF86AudioPrev']
+command-10='$HOME/bin/spotify-cmd prev'
+
+run-command-11=['XF86AudioStop']
+command-11='$HOME/bin/spotify-cmd stop'
+
+
+
 # ===============================#
 #    window manager shortcuts    #
 # ===============================#

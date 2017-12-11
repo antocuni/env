@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function _call() {
+    dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.$1
+    }
+
+case $1 in
+    play) _call PlayPause ;;
+    next) _call Next      ;;
+    prev) _call Previous  ;;
+    stop) _call Stop      ;;
+esac
