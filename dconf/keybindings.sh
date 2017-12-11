@@ -42,6 +42,11 @@ command-10='$HOME/bin/spotify-cmd prev'
 run-command-11=['XF86AudioStop']
 command-11='$HOME/bin/spotify-cmd stop'
 
+run-command-12=['XF86AudioLowerVolume']
+command-12='amixer -q sset Master 3%-'
+
+run-command-13=['XF86AudioRaiseVolume']
+command-13='amixer -q sset Master 3%+'
 
 
 # ===============================#
