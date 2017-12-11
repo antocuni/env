@@ -48,6 +48,9 @@ command-12='amixer -q sset Master 3%-'
 run-command-13=['XF86AudioRaiseVolume']
 command-13='amixer -q sset Master 3%+'
 
+run-command-5=['<Control>F2']
+command-5="$HOME/bin/reposition-windows.py"
+
 
 # ===============================#
 #    window manager shortcuts    #
