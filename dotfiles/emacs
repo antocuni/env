@@ -90,6 +90,7 @@
  '(scroll-conservatively 100000)
  '(scroll-margin 0)
  '(scroll-preserve-screen-position t)
+ '(select-enable-clipboard t)
  '(tab-width 4)
  '(tool-bar-mode nil)
  '(tramp-default-method "scpx")
@@ -97,8 +98,7 @@
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
  '(vc-handled-backends nil)
- '(vc-hg-log-switches nil)
- '(x-select-enable-clipboard t))
+ '(vc-hg-log-switches nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -119,6 +119,7 @@
  '(font-latex-sectioning-5-face ((((class color) (background dark)) (:inherit variable-pitch :weight bold))))
  '(font-latex-sedate-face ((((class color) (background dark)) (:foreground "#FF7777"))))
  '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "#777"))))
+ '(font-lock-doc-face ((t (:inherit font-lock-string-face))))
  '(font-lock-function-name-face ((((class color) (background light)) (:foreground "blue"))))
  '(font-lock-keyword-face ((((class color) (background light)) (:foreground "red"))))
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "green4"))))
@@ -1129,8 +1130,8 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (set-cursor-color "#656565")
   (set-face-foreground 'font-lock-comment-face "#99968b")
   (set-face-italic-p 'font-lock-comment-face nil)
-  (set-face-foreground 'font-lock-doc-face "#99968b")
-  (set-face-italic-p 'font-lock-doc-face t)
+  ;(set-face-foreground 'font-lock-doc-face "#99968b")
+  ;(set-face-italic-p 'font-lock-doc-face t)
   (set-face-foreground 'font-lock-constant-face "#e5786d")
   (set-face-foreground 'font-lock-string-face "#95e454")
   (set-face-italic-p 'font-lock-string-face nil)
