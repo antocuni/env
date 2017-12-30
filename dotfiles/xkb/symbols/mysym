@@ -116,6 +116,21 @@ xkb_symbols "emoji" {
         symbols[Group2]= [ p, P ]
     };
 
+    #   😳    U1F633 FLUSHED FACE
+    replace key <LatF> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ f, F, U1F633, NoSymbol ],
+        symbols[Group2]= [ f, F ]
+    };
+
+    #   🔝    U1F51D TOP WITH UPWARDS ARROW ABOVE
+    replace key <LatT> {
+        type[group1]= "FOUR_LEVEL_ALPHABETIC",
+        type[group2]= "ALPHABETIC",
+        symbols[Group1]= [ t, T, U1F51D, NoSymbol ],
+        symbols[Group2]= [ t, T ]
+    };
 
     replace key <AE09> {
         type[group1]= "FOUR_LEVEL",
