@@ -89,11 +89,12 @@ xkb_symbols "emoji" {
     };
 
 
+    #   😭    U1F62D LOUDLY CRYING FACE
     #   👏    U1F44F CLAPPING HANDS SIGN
     replace key <LatC> {
         type[group1]= "FOUR_LEVEL_ALPHABETIC",
         type[group2]= "ALPHABETIC",
-        symbols[Group1]= [ c, C, U1F44F, NoSymbol ], # 👏
+        symbols[Group1]= [ c, C, U1F62D, U1F44F ],
         symbols[Group2]= [ c, C ]
     };
 
@@ -117,10 +118,11 @@ xkb_symbols "emoji" {
     };
 
     #   😳    U1F633 FLUSHED FACE
+    #   😤    U1F624 FACE WITH LOOK OF TRIUMPH  (uh, this looks wrong: it is a snorting face)
     replace key <LatF> {
         type[group1]= "FOUR_LEVEL_ALPHABETIC",
         type[group2]= "ALPHABETIC",
-        symbols[Group1]= [ f, F, U1F633, NoSymbol ],
+        symbols[Group1]= [ f, F, U1F633, U1F624 ],
         symbols[Group2]= [ f, F ]
     };
 
