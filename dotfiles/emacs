@@ -12,6 +12,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ange-ftp-ftp-program-name "pftp")
  '(ansi-color-names-vector
    ["black" "red" "green" "yellow" "#4646FF" "magenta" "cyan" "white"])
  '(auto-revert-interval 1)
@@ -52,6 +53,9 @@
       ("-c" "-q" "-d")
       nil t "\213"])))
  '(menu-bar-mode window-system)
+ '(package-selected-packages
+   (quote
+    (php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(rst-level-face-base-color "blackn")
  '(safe-local-variable-values

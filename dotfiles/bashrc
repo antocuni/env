@@ -74,17 +74,6 @@ alias 32='schroot -c 32bit --'
 
 if [ `hostname` == homer ]
 then
-    #alias python2.5='/opt/python2.5/bin/python'
-    alias pythonnet='mono /home/antocuni/opt/pythonnet2/python.exe'
-    alias pywin='PYTHONPATH= wine /home/antocuni/.wine/drive_c/Python27/python.exe'
-    alias py.test.net='pythonnet `which py.test`'
-    alias py.test.net.hack='mono /home/antocuni/opt/pythonnet2-hacked/python.exe `which py.test`'
-    alias py.test2.5='python2.5 `which py.test`'
-    alias py.py.net='pythonnet `which py.py` --withmod-clr'
-#    alias ipy='mono /home/antocuni/IronPython-2.0.1/ipy.exe -X:TabCompletion'
-#    alias ipy10='mono /home/antocuni/IronPython-1.0.1/ipy.exe -X:TabCompletion'
-    
-#    alias sqlite3="LD_LIBRARY_PATH=/home/antocuni/lib /usr/bin/sqlite3"
     alias latexmk='/home/antocuni/latexmk/latexmk.pl'
 fi
 
