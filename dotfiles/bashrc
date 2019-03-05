@@ -58,6 +58,8 @@ alias findpy="find ./ -name '*.py'"
 check pydf && alias df='pydf'
 check monodoc && alias monodoc='/usr/bin/monodoc > /dev/null 2>&1 &'
 
+alias pypy="/extra/pypy/latest/bin/pypy"
+
 alias dmesg="dmesg --human"
 alias ddmesg="/bin/dmesg"
 
@@ -79,6 +81,9 @@ if [ `hostname` == homer ]
 then
     alias latexmk='/home/antocuni/latexmk/latexmk.pl'
 fi
+
+# convert raw files to dng
+alias dng='wine ~/.wine/drive_c/Program\ Files/Adobe/Adobe\ DNG\ Converter/Adobe\ DNG\ Converter.exe -c'
 
 unset -f check
 

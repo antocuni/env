@@ -21,8 +21,8 @@ export HISTCONTROL=ignoredups
 # ==========
 PATH=~/.local/bin:$PATH
 #PATH=~/pypy/default/py/bin:$PATH
-PATH=~/pypy/default/rpython/bin:$PATH
-PATH=~/pypy/default/pypy/goal/:$PATH
+#PATH=~/pypy/default/rpython/bin:$PATH
+#PATH=~/pypy/default/pypy/goal/:$PATH
 PATH=~/env/bin/colorize/:~/env/bin:$PATH
 
 ANDROID=~/android/android-sdk-linux_x86

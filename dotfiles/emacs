@@ -55,7 +55,7 @@
  '(menu-bar-mode window-system)
  '(package-selected-packages
    (quote
-    (php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
+    (web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(rst-level-face-base-color "blackn")
  '(safe-local-variable-values
@@ -102,7 +102,8 @@
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
  '(vc-handled-backends nil)
- '(vc-hg-log-switches nil))
+ '(vc-hg-log-switches nil)
+ '(web-mode-markup-indent-offset 2))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
