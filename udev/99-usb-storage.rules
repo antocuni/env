@@ -1,0 +1,3 @@
+# make /dev/sdc/ and /dev/sdd user-writable, so that I can use 'dd' without sudo
+KERNEL=="sdc", SUBSYSTEMS=="usb", MODE="0666"
+KERNEL=="sdd", SUBSYSTEMS=="usb", MODE="0666"
