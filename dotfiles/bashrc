@@ -173,6 +173,15 @@ then
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ROOTSYS/lib"
 fi
 
+ANDROID=/extra/android/android-sdk-linux_x86/
+export PATH="$PATH:$ANDROID/platform-tools/"
+
+if [ -d ~/pypy/misc/root ]
+then
+    export ROOTSYS="/home/antocuni/pypy/misc/root"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ROOTSYS/lib"
+fi
+
 
 # =============================
 #    dircolors & xterm title
