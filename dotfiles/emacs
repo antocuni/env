@@ -179,6 +179,11 @@
 
 (require 'uniquify)
 
+;; https://emacs.stackexchange.com/questions/20896/change-the-behaviour-of-ret-with-electric-indent-to-only-indent-the-new-line
+(add-hook 'kivy-mode-hook
+          '(lambda ()
+             (setq electric-indent-inhibit t)))
+
 
 ; don't start the server in tty mode
 (if window-system
