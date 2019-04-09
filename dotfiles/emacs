@@ -575,6 +575,12 @@ the new line indented."
 
 ; tramp settings
 ; ==============
+
+;; WARNING: in case tramp opens your files as read-only, the first thing to
+;; check is that it is ssh-ing as the right user. Problems can happen if
+;; e.g. ssh antowork is configured to log in as "antocuni" but antowork.gambit
+;; is configured to log in as "anto"
+
 (require 'tramp)
 (setq debug-on-quit nil
       tramp-verbose 6)
