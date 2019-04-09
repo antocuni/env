@@ -46,6 +46,26 @@ function apt-get()
     esac
 }
 
+function auto-ssh-agent()
+{
+    AGENT_FILE="/tmp/ssh-agent-data"
+    # try to connect to the existing ssh-agent
+    if [ -f $AGENT_FILE ]
+    then
+        . $AGENT_FILE
+        if ps -p $SSH_AGENT_PID > /dev/null
+        then
+            echo "ssh-agent already running"
+            return 0
+        fi
+    fi
+    # run a new one
+    echo "starting a new ssh-agent"
+    echo "remind to ssh-add the keys you need"
+    ssh-agent | cat > $AGENT_FILE
+    . $AGENT_FILE
+}
+
 gdbem () { emacs -nw --eval "(gdb \"gdb --cd=`pwd` --annotate=3 $*\")";}
 
 # "cd to eMacs directory"
@@ -102,7 +122,7 @@ case $USER--`hostname` in
     root--*)                 HCOL=31 ;; # red
     *--bart)                 HCOL=32 ;; # green
     *--homer)                HCOL=33 ;; # yellow
-    *--antowork)             HCOL=32 ;; # green
+    *--antowork*)            HCOL=32 ;; # green
     *--tannit)               HCOL=35 ;; # magenta
     *)                       HCOL=37 ;; # white
 esac
@@ -111,6 +131,11 @@ esac
 if [ -z "$SSH_CLIENT" ]
 then
     HCOL=33 # yellow
+fi
+
+if [ `hostname` = "antowork.gambit" ]
+then
+    auto-ssh-agent
 fi
 
 
