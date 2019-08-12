@@ -34,14 +34,14 @@ function check()
     which $1 &> /dev/null 
 }
 
-function apt-get()
+function apt()
 {
     case x$1 in
-        xinstall|xupdate|xupgrade|xdist-upgrade)
-            sudo /usr/bin/apt-get "$@"
+        xinstall|xupdate|xupgrade|xdist-upgrade|xremove|xautoremove|xpurge)
+            sudo /usr/bin/apt "$@"
             ;;
         *)
-            /usr/bin/apt-get "$@"
+            /usr/bin/apt "$@"
             ;;
     esac
 }
@@ -58,10 +58,10 @@ alias findpy="find ./ -name '*.py'"
 check pydf && alias df='pydf'
 check monodoc && alias monodoc='/usr/bin/monodoc > /dev/null 2>&1 &'
 
-alias pypy="/extra/pypy/latest/bin/pypy"
-
 alias dmesg="dmesg --human"
 alias ddmesg="/bin/dmesg"
+
+alias xs='xdg-open'
 
 #alias hg="/usr/bin/python -s -E `which hg`" # else hg it's awfully slow to start
 alias mcd='mount /mnt/cdrom'
@@ -202,15 +202,16 @@ fi
 
 unset GTK2_RC_FILES
 
+
 # =======================
 #    virtualenvwrapper
 # =======================
 
-if [ -f /usr/local/bin/virtualenvwrapper.sh ]
+if [ -f ~/.local/bin/virtualenvwrapper.sh ]
 then 
-    export WORKON_HOME=~/Envs
+    export WORKON_HOME=~/.virtualenvs
     mkdir -p $WORKON_HOME
-    source /usr/local/bin/virtualenvwrapper.sh
+    source ~/.local/bin/virtualenvwrapper.sh
 fi
 
 
@@ -221,13 +222,16 @@ fi
 
 stty -ixon
 
-
 # ====================================
 #    start bash-dirhist, if present
 # ====================================
 
-
 case $0 in
+    -*)
+        # I am not sure why, but on login shell (i.e. whose name starts by
+        # "-"), exec()ing bash-dirhist hangs. This happens e.g. if you login
+        # from a tty
+        ;;
     *bash-dirhist)
         # we are already running bash-dirhist, nothing to do
         ;;
