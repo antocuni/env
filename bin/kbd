@@ -2,6 +2,14 @@
 
 xkbcomp -I$HOME/.xkb ~/.xkb/keymap/my ${DISPLAY-:0} -w0
 
+USB_KEYBOARD_ID="04f2:0111"
+
+if ! lsusb -d $USB_KEYBOARD_ID
+then
+   # if we are NOT using my usb keyboard, add remap this key on lenovo keyboard
+   xmodmap -e 'keycode 107 = Menu NoSymbol Menu'
+fi
+
 if hash synclient 2>/dev/null
 then
     # tweak my synaptic touchpad
