@@ -1,61 +1,41 @@
-#!/usr/bin/env python
+#!/usr/bin/python
+
 import sys
 import os
-#open('/tmp/foo', 'a').write(str(sys.argv) + '\n')
 import wmctrl
+WLIST = wmctrl.Window.list()
 
-if len(sys.argv) == 2:
-    arg = sys.argv[1]
-else:
-    print 'Usage: show.py [term|emacs]'
-    sys.exit(1)
+def show(cls, i):
+    """
+    Activate the i-th window of the given class.
 
-def show_emacs_and_term(arg):
-    emacs = wmctrl.Window.by_class('emacs.Emacs24')
-    if emacs:
-        emacs = emacs[0]
-    #
-    term = wmctrl.Window.by_role("autoterm")
-    if term:
-        term = term[0]
-    #
-    H = 2160
-    if arg == 'emacs':
-        emacs.resize_and_move(y=0, h=1680)
-        #term.resize_and_move(y=1680, h=H-1680)
-        return emacs
-    else:
-        term.resize_and_move(y=480, h=H-480)
-        #emacs.resize_and_move(y=0, h=480)
-        return term
+    If there are less windows than i, activate the first.
 
-
-wlist = []
-if arg == 'term':
-    ## wlist = wmctrl.Window.by_role("autoterm")
-    os.system('wmctrl -x -a gnome-terminal')
-elif arg == 'emacs':
-    os.system('wmctrl -x -a emacs')
-    sys.exit(0)
-    ## wlist = wmctrl.Window.by_class('emacs.Emacs24')
-    ## wlist += wmctrl.Window.by_class('emacs24.Emacs24')
-## if arg in ('term', 'emacs'):
-##     wlist = [show_emacs_and_term(arg)]
-elif arg == 'xchat':
-    wlist = wmctrl.Window.by_class('hexchat.Hexchat')
-    wlist.sort(key=lambda w: w.wm_name)
-elif arg == 'zeal':
-    # start zeal if it's not already
-    wlist = wmctrl.Window.by_class('zeal.Zeal')
+    The logic is to prefer windows which are on the active desktop first. If
+    there is NO window of that class on the active desktop, then consider also
+    the windows on other desktops
+    """
+    desktop = wmctrl.Desktop.get_active()
+    # try to find the windows on the current desktop
+    wlist = [w for w in WLIST if w.wm_class == cls and w.desktop == desktop.num]
     if not wlist:
-        os.system('zeal &')
+        # try to find the windows on all desktops
+        wlist = [w for w in WLIST if w.wm_class == cls]
+    if not wlist:
+        # no windows found, give up
+        print 'No windows found: %s' % cls
+        return
+    #
+    if i == 'cycle':
+        cycle(wlist)
+        return
+    if i >= len(wlist):
+        # not enough windows, fall back to the first
+        i = 0
+    wlist[i].activate()
 
-
-if len(wlist) == 0:
-    print 'No windows found'
-elif len(wlist) == 1:
-    wlist[0].activate()
-else:
+def cycle(wlist):
+    # cycle through the list of windows
     current = wmctrl.Window.get_active()
     if current in wlist:
         i = wlist.index(current)
@@ -64,3 +44,26 @@ else:
     else:
         wlist[0].activate()
 
+
+def main():
+    chrome = 'google-chrome.Google-chrome'
+    arg = sys.argv[1]
+
+    if arg == 'emacs':   show('emacs.Emacs', 0)
+    elif arg == 'term':  show('gnome-terminal-server.Gnome-terminal', 0)
+    elif arg == '1':     show(chrome, 0)
+    elif arg == '2':     show(chrome, 1)
+    elif arg == '3':     show(chrome, 'cycle')
+    elif arg == 'q':     show('web.whatsapp.com.Google-chrome', 0)
+    elif arg == 'w':     show('Telegram.TelegramDesktop', 0)
+    elif arg == 'e':     show('mail.google.com.Google-chrome', 0)
+    elif arg == 'a':     show('mattermost.Mattermost', 0)
+    elif arg == 's':     show('hexchat.Hexchat', 0)
+    elif arg == 'F2':    os.system('reposition-windows.py')
+    else:
+        print 'Unknown arg:', arg
+
+
+
+if __name__ == '__main__':
+    main()
