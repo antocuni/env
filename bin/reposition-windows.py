@@ -7,33 +7,45 @@ def unmaximize(win):
     win.set_properties(['remove', 'maximized_vert', 'maximized_horz'])
 
 def main():
-    # position windows on my 4k screen
-    X2 = 3840 # x position of the second screen
+    X0 = 0       # x position of the leftmost screen
+    X1 = 1440    # x position of the center screen
+    X2 = X1+3840 # x position of the rightmost screen
 
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
-        win.resize_and_move(x=1804, y=0, w=2036, h=1650)
+        win.set_decorations(False)
+        win.resize_and_move(x=X1+1806, y=0, w=2036, h=1900)
 
     for win in Window.by_role('autoterm'):
         unmaximize(win)
-        win.resize_and_move(x=1811, y=755, w=2029, h=1405)
+        win.set_decorations(False)
+        win.resize_and_move(x=X1+1809, y=0, w=2036, h=2160)
 
     for win in Window.by_class('mail.google.com.Google-chrome'):
         unmaximize(win)
-        win.resize_and_move(x=73, y=0, w=1728, h=1803)
+        win.resize_and_move(x=1440+64, y=0, w=1740, h=1803)
 
     for win in Window.by_class('web.whatsapp.com.Google-chrome'):
         unmaximize(win)
-        win.resize_and_move(x=X2, y=0, w=960, h=526)
+        win.resize_and_move(x=0, y=0, w=1428, h=1200)
+
+    #telegram_class = 'crx_hadgilakbfohcfcgfbioeeehgpkopaga.Google-chrome' # chrome webapp
+    telegram_class = 'Telegram.TelegramDesktop' # telegram native app
+    for win in Window.by_class(telegram_class):
+        unmaximize(win)
+        win.resize_and_move(x=0, y=1288, w=1440, h=1000)
+
+    #mattermost_class = 'mattermost.smithersbet.com.Google-chrome' # chrome webapp
+    mattermost_class = 'mattermost.Mattermost' # native app
+    for win in Window.by_class(mattermost_class):
+        unmaximize(win)
+        win.set_decorations(False)
+        win.resize_and_move(x=X2, y=0, w=1080, h=956)
 
     for win in Window.by_class('hexchat.Hexchat'):
         unmaximize(win)
-        win.resize_and_move(x=X2, y=0, w=960, h=1028)
-
-    for win in Window.by_class('mattermost.smithersbet.com.Google-chrome'):
-        unmaximize(win)
-        print win.x - X2
-        win.resize_and_move(x=X2+960, y=0, w=960, h=1028)
+        win.set_decorations(False)
+        win.resize_and_move(x=X2, y=960, w=1080, h=960)
 
 
 if __name__ == '__main__':
