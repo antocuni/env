@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=Google Chrome 4K
+Name=My Google Chrome
 Exec=/usr/bin/google-chrome-stable --password-store=basic  %U
 Terminal=false
 Icon=google-chrome
