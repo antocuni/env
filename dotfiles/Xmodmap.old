@@ -1,0 +1,48 @@
+! ********************************
+! Latin-1 keys on top of US layout
+! ********************************
+
+! first of all, ensure that "alt" (mod1) is associated only to Alt_L but not
+! to Alt_R
+clear mod1
+add mod1 = Alt_L
+
+! then, set Alt_R (Alt Gr) as Mode_switch
+keysym Alt_R = Mode_switch
+
+! set additional keys
+keysym a = a A agrave Agrave
+keysym e = e E egrave Egrave
+keysym bracketleft = bracketleft braceleft eacute Eacute
+keysym i = i I igrave Igrave
+keysym o = o O ograve Ograve
+keysym u = u U ugrave Ugrave
+
+keysym w = w W EuroSign
+keysym apostrophe = apostrophe quotedbl degree
+keysym backslash = backslash bar masculine ordfeminine
+
+
+! ************
+! Windows Keys
+! ************
+! usually, they are bound to keycodes 115 and 116
+
+! on ubuntu, they are already set this way, so comment out
+!keycode 115 = Super_L
+!keycode 116 = Super_R
+
+! we want to use the right one as a hotkey, not as a modifier
+!keysym Super_R = XF86Messenger
+
+! **********************
+! Swap CapsLock and Ctrl
+! **********************
+! assign XF86Memo to the caps lock key, and make the '<' key another control
+!clear Lock
+!keycode 94 = Control_L
+!keycode 66 = XF86Memo
+!add Control = Control_L
+
+
+
