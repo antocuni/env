@@ -61,6 +61,8 @@ def main():
     if len(sys.argv) >= 2:
         title = ' '.join(sys.argv[1:])
     numbers = sys.stdin.readlines()
+    numbers = map(float, numbers)
+    numbers = [n for n in numbers if n < 1000]
     if os.getenv('DISPLAY'):
         plot_x11(numbers, title)
     else:
