@@ -2,34 +2,18 @@
 
 function do_local()
 {
-    #. ~/.settings
-    show.py emacs
-
-    if emacsclient -e '(version)' &>/dev/null
+    if super.py emacs --no-switch
     then
+        # there is already an emacs frame on this desktop, just use it
         emacsclient -n -e "(other-window 1)" > /dev/null
         emacsclient -n "$@"
-        # for FILE in "$@"
-        # do
-        #     case $FILE in
-        #         +*) 
-        #             GOTO=$FILE
-        #             ;;
-        #         *)
-        #             FILE=`abspath.py "$FILE"`
-        #             emacsclient -e "(switch-to-buffer (car (buffer-list)))" >/dev/null
-        #             emacsclient -e "(setq file-name-history (cons \"$FILE\" file-name-history))" >/dev/null
-        #             emacsclient -e "(find-file \"$FILE\")" >/dev/null
-        #             if [ -n "$GOTO" ]
-        #             then
-        #                 emacsclient -e "(goto-line $GOTO (car (buffer-list)))" >/dev/null 
-        #                 GOTO=
-        #             fi
-        #             ;;
-        #     esac
-        # done
+    elif emacsclient -e '(version)' &>/dev/null
+    then
+        # there is an emacs server but no frame on this desktop. Create a new
+        # one
+        emacsclient -c -n "$@"
     else
-        #emacs -geometry $EMACS_GEOMETRY2 "$@" &
+        # start a new emacs
         emacs "$@" &
     fi
 }
