@@ -1,3 +1,14 @@
+/* this is for the newsest gnome-terminal 3.32.1 ubuntu 19.04, gtk 3.24.8 */
+terminal-window tab:checked {
+	background-color: #3daee9;
+}
+
+
+
+
+
+/* this is what worked with older gnome-terminal (ubuntu 18.04?) */
+
 TerminalWindow .notebook {
     background-image: none;
     /* background-color: none; */
@@ -20,3 +31,4 @@ TerminalWindow .notebook tab {
 TerminalWindow .notebook tab:active {
     background-color: #F0B67A;
 }
+

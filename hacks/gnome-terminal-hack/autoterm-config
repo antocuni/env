@@ -6,11 +6,11 @@ CompatVersion=1
 Windows=Window0;
 
 [Window0]
-MenubarVisible=true
+MenubarVisible=false
 Role=autoterm
 ActiveTerminal=0
 Geometry=164x46+0+0
-Terminals=0;1;2;3;4;5;6;7
+Terminals=0;1;2;3
 
 [0]
 WorkingDirectory=/home/antocuni
@@ -19,12 +19,4 @@ WorkingDirectory=/home/antocuni
 [2]
 WorkingDirectory=/home/antocuni
 [3]
-WorkingDirectory=/home/antocuni
-[4]
-WorkingDirectory=/home/antocuni
-[5]
-WorkingDirectory=/home/antocuni
-[6]
-WorkingDirectory=/home/antocuni
-[7]
 WorkingDirectory=/home/antocuni
