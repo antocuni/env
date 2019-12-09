@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# for ALT+` on gnome3: http://andrewpearson.org/?p=605
+# gsettings set org.gnome.desktop.wm.keybindings switch-group "['disabled']"
+
 import sys
 import os.path
 import glob
