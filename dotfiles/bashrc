@@ -31,7 +31,7 @@ fi
 
 function check()
 {
-    which $1 &> /dev/null 
+    which $1 &> /dev/null
 }
 
 function apt()
@@ -46,10 +46,25 @@ function apt()
     esac
 }
 
+function ssh-add()
+{
+    SSH_ADD=/usr/bin/ssh-add
+    if [ $# -eq 0 ]
+    then
+        $SSH_ADD
+        $SSH_ADD ~/.ssh/*.id_rsa
+        echo
+        echo Current identities:
+        $SSH_ADD -l
+    else
+        $SSH_ADD "$@"
+    fi
+}
+
 gdbem () { emacs -nw --eval "(gdb \"gdb --cd=`pwd` --annotate=3 $*\")";}
 
 # "cd to eMacs directory"
-alias cdm='cd $(emacsclient -e "(with-current-buffer (window-buffer (frame-selected-window)) default-directory)" | '"sed -E 's/(^\")|(\"$)//g')" 
+alias cdm='cd $(emacsclient -e "(with-current-buffer (window-buffer (frame-selected-window)) default-directory)" | '"sed -E 's/(^\")|(\"$)//g')"
 
 # change the default arguments of some commands
 alias ls="ls -F --color=auto -B -I '*.pyc' -I '*.pyo' -N"
@@ -208,7 +223,7 @@ unset GTK2_RC_FILES
 # =======================
 
 if [ -f ~/.local/bin/virtualenvwrapper.sh ]
-then 
+then
     export WORKON_HOME=~/.virtualenvs
     mkdir -p $WORKON_HOME
     source ~/.local/bin/virtualenvwrapper.sh
