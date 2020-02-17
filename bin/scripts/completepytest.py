@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 
 # Magic line for bash (blame obscure shells):
 #
