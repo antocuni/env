@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import bdb
 
@@ -16,11 +17,17 @@ def info(type, value, tb):
         import traceback, pdb
         # You are not in interactive mode; print the exception
         traceback.print_exception(type, value, tb)
-        print
+        print()
         # ... then star the debugger in post-mortem mode
         pdb.pm()
 
+sys.excepthook = info
+
 
 if sys.version_info < (3, 0):
-    sys.excepthook = info
+    import __builtin__ as builtins
+else:
+    import builtins
 
+## import timing
+## builtins.Timing = timing.Timing
