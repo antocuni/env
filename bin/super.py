@@ -7,6 +7,8 @@ import wmctrl
 CHROME = 'google-chrome.Google-chrome'
 MATTERMOST = 'mattermost.smithersbet.com.Google-chrome' # chrome webapp
 #MATTERMOST = 'mattermost.Mattermost' # native app
+TELEGRAM = 'Telegram.TelegramDesktop'
+#TELEGRAM = 'crx_hadgilakbfohcfcgfbioeeehgpkopaga.Google-chrome' # chrome webapp
 
 WLIST = wmctrl.Window.list()
 
@@ -71,18 +73,21 @@ def main():
     no_switch = '--no-switch' in sys.argv
 
     if   arg == 'emacs': return show('emacs.Emacs', 0, no_switch)
-    elif arg == 'term':  return show('gnome-terminal-server.Gnome-terminal', 0, no_switch)
+    elif arg == 'term':  return show('gnome-terminal-server.Gnome-terminal', 0, no_switch=True, spawn='autoterm')
     elif arg == '1':     return show(CHROME, 0, no_switch=True, spawn='/home/antocuni/env/apps/my-google-chrome.desktop')
     elif arg == '2':     return show(CHROME, 1, no_switch)
     elif arg == '3':     return show(CHROME, 'cycle', no_switch)
     elif arg == 'q':     return show('web.whatsapp.com.Google-chrome', 0, no_switch)
-    elif arg == 'w':     return show('Telegram.TelegramDesktop', 0, no_switch)
-    elif arg == 'e':     return show('mail.google.com.Google-chrome', 0, no_switch)
+    elif arg == 'w':     return show(TELEGRAM, 0, no_switch)
+    #elif arg == 'e':     return show('mail.google.com.Google-chrome', 0, no_switch)
     elif arg == 'a':     return show(MATTERMOST, 0, no_switch)
     elif arg == 's':     return show('hexchat.Hexchat', 0, no_switch)
     elif arg == 'prtscrn': return take_screenshot()
+    elif arg == 'esc':   return show('goldendict.GoldenDict', 0, no_switch, spawn='goldendict')
     elif arg == 'F2':    return os.system('reposition-windows.py')
     elif arg == 'F3':    return os.system('kbd')
+    elif arg == 'F11':   return os.system('reposition-windows.py emergency')
+    elif arg == 'F12':   return os.system('auto-xrandr.sh')
     else:
         print 'Unknown arg:', arg
 
