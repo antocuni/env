@@ -28,7 +28,7 @@ function do_remote()
                 ;;
             *)
                 FILE=`abspath.py "$FILE"`
-                FILE="/`hostname`:/$FILE"
+                FILE="/ssh:`hostname`:/$FILE"
                 local_exec.py e $GOTO "$FILE"
                 ;;
         esac
