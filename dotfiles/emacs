@@ -22,7 +22,13 @@
  '(dabbrev-case-fold-search nil)
  '(dired-dwim-target t)
  '(fill-column 78)
+ '(find-file-hook
+   (quote
+    (auto-revert-find-file-function global-auto-complete-mode-check-buffers recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode global-eldoc-mode-check-buffers global-font-lock-mode-check-buffers epa-file-find-file-hook vc-refresh-state)))
  '(flyspell-issue-message-flag nil)
+ '(ido-default-buffer-method (quote selected-window))
+ '(ido-enable-flex-matching t)
+ '(ido-mode (quote both) nil (ido))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-check-comments nil)
@@ -95,9 +101,11 @@
  '(scroll-margin 0)
  '(scroll-preserve-screen-position t)
  '(select-enable-clipboard t)
+ '(split-height-threshold 100)
  '(tab-width 4)
  '(tool-bar-mode nil)
- '(tramp-default-method "scpx")
+ '(tramp-default-method "ssh" nil (tramp))
+ '(tramp-verbose 6 nil (tramp))
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
@@ -110,7 +118,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 138 :family "Inconsolata"))))
+ '(default ((t (:height 120 :family "Inconsolata"))))
  '(bold ((t (:size "" :bold t))))
  '(bold-italic ((t (:bold t :italic nil))))
  '(diff-added ((t (:inherit diff-changed :foreground "yellow"))))
@@ -139,6 +147,7 @@
  '(underline ((((supports :underline t)) (:slant italic)))))
 
 (put 'narrow-to-region 'disabled nil)
+
 
 ;; use a smaller font on bart
 (when (string= system-name "bart")
@@ -211,7 +220,7 @@
 ; ========================
 
 (require 'recentf)
- 
+
 ;; get rid of `find-file-read-only' and replace it with something
 ;; more useful.
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
@@ -220,7 +229,7 @@
 (recentf-mode t)
 ; 50 files ought to be enough.
 (setq recentf-max-saved-items 50)
- 
+
 (defun ido-recentf-open ()
   "Use `ido-completing-read' to \\[find-file] a recent file"
   (interactive)
@@ -401,11 +410,11 @@
 
 
 (require 'swbuff)
-(setq swbuff-exclude-buffer-regexps '("^ .*" 
-                                      "^\\*Messages\\*$" 
-                                      "^\\*scratch\\*$" 
-                                      "^\\*RE-Builder\\*$" 
-                                      "^\\*Buffer List\\*$" 
+(setq swbuff-exclude-buffer-regexps '("^ .*"
+                                      "^\\*Messages\\*$"
+                                      "^\\*scratch\\*$"
+                                      "^\\*RE-Builder\\*$"
+                                      "^\\*Buffer List\\*$"
                                       "^\\*Completions\\*$"))
 
 (global-set-key [(control x) (x)] 'electric-buffer-list)
@@ -591,6 +600,14 @@ the new line indented."
               tramp-file-name-regexp))
 
 
+; always show the remote host name
+;; (defun add-server-postfix ()
+;;   "Add the name of the connection type and server to the buffer name"
+;;   (if (string-match "^/ssh:.*?:" (buffer-file-name (current-buffer)))
+;;       (rename-buffer (concat (buffer-name (current-buffer)) "<" (match-string 0 (buffer-file-name (current-buffer))) ">")) nil))
+
+;; (add-hook 'find-file-hook 'add-server-postfix)
+
 
 ;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 ;; ;; Backup (file~) disabled and auto-save (#file#) locally to prevent delays in editing remote files
@@ -670,6 +687,10 @@ the new line indented."
 
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 (global-auto-revert-mode 1)
+
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 
 ; =======================================================
 ; customize vc-hg.el
@@ -852,6 +873,21 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (add-hook 'racer-mode-hook #'company-mode)
   (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
   (setq company-tooltip-align-annotations t))
+
+
+;(add-hook 'find-file-hook 'auto-insert)
+(setq auto-insert-alist
+      '(("\\.h\\'"
+         nil
+         '(setq v1 (read-string "Namespace: " "A"))
+         '(setq v2 (upcase (concat v1 "_"
+                                   (file-name-nondirectory
+                                    (file-name-sans-extension buffer-file-name))
+                                   "_" (file-name-extension buffer-file-name))))
+         "#ifndef " v2 n
+         "#define " v2 n n
+         "#endif // " v2)))
+
 
 ; Color theme for X window
 ; =======================
@@ -1169,24 +1205,18 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 
 
-(wombat-theme)
-
-
 (if (not window-system)
     (progn
       (color-theme-initialize)
       (tty-dark-color-theme)))
 
 
-;; (defun my-frame-config (frame)
-;;   "Custom behaviours for new frames."
-;;   (with-selected-frame frame
-;;     (if (display-graphic-p)
-;;         (set-background-color "#101416")
-;;       (set-background-color "red"))))
+(defun my-frame-config (frame)
+  "Custom behaviours for new frames."
+  (with-selected-frame frame
+    (if (display-graphic-p)
+        (wombat-theme))))
 
-;; ;; run now
-;; (my-frame-config (selected-frame))
-;; ;; and later
-;; (add-hook 'after-make-frame-functions 'my-frame-config)
-
+(my-frame-config (selected-frame))
+;; and later
+(add-hook 'after-make-frame-functions 'my-frame-config)
