@@ -12,6 +12,10 @@
   ci = commit -a
   dist = diff --staged
   st = status
+  rmbranch = !sh -c 'git branch -d $1 && git push --delete origin $1' -
+
+[pull]
+  ff = yes
 
 [color "diff"]
   meta = white bold
@@ -20,6 +24,7 @@
   new = yellow bold
 [push]
 	default = simple
+	followTags = true
 [core]
 	excludesfile = /home/antocuni/.gitignore
 	editor = emacsclient
@@ -32,9 +37,15 @@
 	show-graph = true
 [merge]
 	tool = diffmerge
+    ff = no
 [mergetool "diffmerge"]
 	cmd = /usr/bin/diffmerge --merge --result=$MERGED $LOCAL $BASE $REMOTE
 [mergetool]
 	keepBackup = false
 [log]
 	abbrevCommit = true
+[pager]
+	branch = false
+
+[pretty]
+    csv = format:\"%h\",\"%ai\",\"%s\"
