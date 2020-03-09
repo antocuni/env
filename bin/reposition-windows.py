@@ -4,6 +4,8 @@ import sys
 import os
 from wmctrl import Window
 
+PANEL=64
+
 #TELEGRAM = 'crx_hadgilakbfohcfcgfbioeeehgpkopaga.Google-chrome' # chrome webapp
 TELEGRAM = 'Telegram.TelegramDesktop' # telegram native app
 
@@ -59,10 +61,13 @@ def main_dock():
         win.sticky()
         set_hexchat_font(9)
 
+    for win in Window.by_class('google-chrome.Google-chrome'):
+        # position this at the center of the main screen
+        W = 2000
+        X = X1 + PANEL + (3840-2000-PANEL)/2
+        win.resize_and_move(x=X, y=0, w=W, h=2000)
 
 def main_laptop():
-    PANEL=64
-
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
         win.set_decorations(False)
@@ -101,6 +106,12 @@ def main_laptop():
         win.sticky()
         win.resize_and_move(x=PANEL, y=1440-960, w=1428, h=960)
         set_hexchat_font(12)
+
+    for win in Window.by_class('google-chrome.Google-chrome'):
+        # position this at the center of the main screen
+        W = 1800
+        X = PANEL + (2560-W-PANEL)/2
+        win.resize_and_move(x=X, y=0, w=W, h=1500)
 
 
 def autodetect():
