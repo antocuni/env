@@ -8,12 +8,12 @@ merge = internal:merge
 %include ~/.hgrc.auth
 
 [extensions]
-convert = 
+convert =
 transplant =
-hgext.graphlog = 
-hgk = 
-purge = 
-color = 
+hgext.graphlog =
+hgk =
+purge =
+color =
 #attic = /home/antocuni/env/src/hgattic/attic.py
 shelve =
 record =
@@ -21,14 +21,16 @@ record =
 #svnup = /home/antocuni/pypy/user/antocuni/hg-conversion/svnup.py
 #hgsubrepohack = /home/antocuni/env/src/hgsubrepohack/hgsubrepohack.py
 mq=
-pager = 
-progress = 
-rebase = 
+pager =
+progress =
+rebase =
 #hgbb = /home/antocuni/env/src/hgbb/hgbb.py
 share=
 #activity=/tmp/Hgactivity/activity.py
 churn=
 histedit=
+evolve=
+topic=
 
 [pager]
 pager = less
