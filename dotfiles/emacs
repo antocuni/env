@@ -149,6 +149,14 @@
 (put 'narrow-to-region 'disabled nil)
 
 
+; XXX: use this to automatically adjust font size based on frame width
+; https://blog.patshead.com/2016/04/emacs-automatically-adjust-font-size-when-frame-width-changes.html
+
+(when nil
+  ;; for the non-docked mode
+  (set-face-attribute 'default (selected-frame) :height 140)
+  )
+
 ;; use a smaller font on bart
 (when (string= system-name "bart")
   (set-face-attribute 'default (selected-frame) :height 118))
