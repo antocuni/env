@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+if ! lsmod | grep v4l2loopback
+then
+    echo "Loading v4l2loopback"
+    sudo modprobe v4l2loopback exclusive_caps=1
+fi
+
+ffmpeg -f v4l2 -i /dev/video0 -vf "transpose=1,hflip" -f v4l2 -pix_fmt yuyv422 /dev/video2
