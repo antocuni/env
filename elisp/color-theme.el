@@ -1,39 +1,44 @@
-;;; color-theme.el --- install color themes
-
+;;; color-theme.el --- Install color themes
+;; 
+;; Filename: color-theme.el
+;; Description: Install color themes
+;; Author: Jonadab the Unsightly One <jonadab@bright.net>
+;; Maintainer: Drew Adams
 ;; Copyright (C) 1999, 2000  Jonadab the Unsightly One <jonadab@bright.net>
 ;; Copyright (C) 2000, 2001, 2002, 2003  Alex Schroeder <alex@gnu.org>
 ;; Copyright (C) 2003, 2004, 2005, 2006  Xavier Maillard <zedek@gnu.org>
-
-;; Version: 6.6.0
-;; Keywords: faces
-;; Author: Jonadab the Unsightly One <jonadab@bright.net>
-;; Maintainer: Xavier Maillard <zedek@gnu.org>
-;; URL: http://www.emacswiki.org/cgi-bin/wiki.pl?ColorTheme
-
-;; This file is not (YET) part of GNU Emacs.
-
-;; This is free software; you can redistribute it and/or modify it under
-;; the terms of the GNU General Public License as published by the Free
-;; Software Foundation; either version 2, or (at your option) any later
-;; version.
+;; Copyright (C) 2019, Drew Adams
+;; Created: Thu Apr  4 11:52:07 2019 (-0700)
+;; Version: 6.6.1
+;; Package-Requires: ()
+;; Last-Updated: Thu Apr  4 12:10:28 2019 (-0700)
+;;           By: dradams
+;;     Update #: 13
+;; URL: https://www.emacswiki.org/emacs/download/color-theme.el
+;; URL: https://www.emacswiki.org/emacs/ColorThemes
+;; URL: http://www.nongnu.org/color-theme/
+;; Keywords: faces frames
+;; Compatibility: GNU Emacs 20.x, 21.x, 22.x, 23.x, 24.x, 25.x, 26.x, 
+;; 
+;; Features that might be required by this library:
 ;;
-;; This is distributed in the hope that it will be useful, but WITHOUT
-;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-;; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-;; for more details.
+;;   None
 ;;
-;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to the
-;; Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-;; MA 02111-1307, USA.
-
-;;; Commentary:
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;;; Commentary: 
+;; 
+;; This version of the file is the same as version 6.6.0, the last
+;; version really maintained, except that it removes use of obsolete
+;; function `make-variable-frame-local'.
+;;
+;; Please obtain the other color-theme files and information here:
+;; http://www.nongnu.org/color-theme/.
+;;
 ;; Please read README and BUGS files for any relevant help.
 ;; Contributors (not themers) should also read HACKING file.
-
-;;; Thanks
-
+;;
+;; Thanks to:
 ;; Deepak Goel  <deego@glue.umd.edu>
 ;; S. Pokrovsky <pok@nbsp.nsk.su> for ideas and discussion.
 ;; Gordon Messmer <gordon@dragonsdawn.net> for ideas and discussion.
@@ -41,10 +46,34 @@
 ;; Olgierd `Kingsajz' Ziolko <kingsajz@rpg.pl> for the spec-filter idea.
 ;; Brian Palmer for color-theme-library ideas and code
 ;; All the users that contributed their color themes.
-
-
-
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;;; Change Log:
+;; 
+;; 2019/04/04 dadams
+;;     Modified version 6.6.0 by removing use of make-variable-frame-local for Emacs 26+.
+;;     color-theme-frob-faces: Use set-face-attribute, not set-face-property.
+;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;; 
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;; 
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
+;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
 ;;; Code:
+
 (eval-when-compile
   (require 'easymenu)
   (require 'reporter)
@@ -313,7 +342,7 @@ of `color-theme-history-max-length'.")
 ;;   (setcdr (nthcdr 2 l) nil)
 ;;   l)
 
-
+ 
 
 ;; List of color themes used to create the *Color Theme Selection*
 ;; buffer.
@@ -412,7 +441,9 @@ of `color-theme-history-max-length'.")
     (color-theme-taylor "Taylor" "Art Taylor <reeses@hemisphere.org>")
     (color-theme-tty-dark "TTY Dark" "O Polite <m2@plusseven.com>")
     (color-theme-vim-colors "Vim Colors" "Michael Soulier <msoulier@biryani.nssg.mitel.com>")
-    (color-theme-whateveryouwant "Whateveryouwant" "Fabien Penso <penso@linuxfr.org>, color by Scott Jaderholm <scott@jaderholm.com>")
+    (color-theme-whateveryouwant
+     "Whateveryouwant"
+     "Fabien Penso <penso@linuxfr.org>, color by Scott Jaderholm <scott@jaderholm.com>")
     (color-theme-wheat "Wheat" "Alex Schroeder <alex@gnu.org>")
     (color-theme-pok-wob "White On Black" "S. Pokrovsky <pok@nbsp.nsk.su>")
     (color-theme-pok-wog "White On Grey" "S. Pokrovsky <pok@nbsp.nsk.su>")
@@ -599,7 +630,7 @@ Binds `color-theme-is-global' to nil and calls
   (let ((color-theme-is-global nil))
     (color-theme-install-at-point)))
 
-
+ 
 
 ;; Taking a snapshot of the current color theme and pretty printing it.
 
@@ -648,7 +679,9 @@ are included in the SPEC returned."
     `((t ,(nreverse result)))))
 
 ;; (color-theme-spec-filter '((t (:background "blue3"))))
-;; (color-theme-spec-filter '((t (:stipple nil :background "Black" :foreground "SteelBlue" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width semi-condensed :family "misc-fixed"))))
+;; (color-theme-spec-filter '((t (:stipple nil :background "Black" :foreground "SteelBlue" :inverse-video nil
+;;                                :box nil :strike-through nil :overline nil :underline nil :slant normal
+;;                                :weight normal :width semi-condensed :family "misc-fixed"))))
 
 (defun color-theme-plist-delete (plist prop)
   "Delete property PROP from property list PLIST by side effect.
@@ -1082,13 +1115,11 @@ If REGEXP is given, this is only done if faces contains a match for regexps."
   (let ((rules '((font-lock-builtin-face font-lock-reference-face)
 		 (font-lock-doc-face font-lock-doc-string-face)
 		 (font-lock-constant-face font-lock-preprocessor-face)
-		 ;; In Emacs 21 `modeline' is just an alias for
-		 ;; `mode-line'.  I recommend the use of
-		 ;; `modeline' until further notice.
-		 (modeline mode-line)
-		 (modeline modeline-buffer-id)
-		 (modeline modeline-mousable)
-		 (modeline modeline-mousable-minor-mode)
+                 ;; D.ADAMS - Emacs 24.3 made `modeline' obsolete, so I've just commented-out these four lines.
+		 ;; (modeline mode-line)
+		 ;; (modeline modeline-buffer-id)
+		 ;; (modeline modeline-mousable)
+		 ;; (modeline modeline-mousable-minor-mode)
 		 (region primary-selection)
 		 (region zmacs-region)
 		 (font-lock-string-face dired-face-boring "^dired")
@@ -1237,7 +1268,7 @@ The snapshot is created via `color-theme-snapshot'."
 	      ;; remaining elements of snapshot: face specs
 	      ,@(color-theme-get-face-definitions))))))
 
-
+ 
 
 ;;; Handling the various parts of a color theme install
 
@@ -1248,7 +1279,6 @@ The snapshot is created via `color-theme-snapshot'."
 This is only necessary for XEmacs, because in Emacs 21 changing the
 frame paramters automatically affects the relevant faces.")
 
-;; fixme: silent the bytecompiler with set-face-property
 (defun color-theme-frob-faces (params)
   "Change certain faces according to PARAMS.
 This uses `color-theme-frame-param-frobbing-rules'."
@@ -1259,7 +1289,9 @@ This uses `color-theme-frame-param-frobbing-rules'."
 	   (val (cdr (assq param params)))
 	   (frame (if color-theme-is-global nil (selected-frame))))
       (when val
-	(set-face-property face prop val frame)))))
+        (if (fboundp 'set-face-property)
+	    (set-face-property face prop val frame)
+          (set-face-attribute face frame prop val))))))
 
 (defun color-theme-alist-reduce (old-list)
   "Reduce OLD-LIST.
@@ -1337,7 +1369,9 @@ Called from `color-theme-install'."
     (dolist (var vars)
       (if (or color-theme-is-global color-theme-xemacs-p)
 	  (set (car var) (cdr var))
-	(make-variable-frame-local (car var))
+        ;; DADAMS
+        ;; `make-variable-frame-local' was removed from Emacs C code in Emacs 26.
+        (when (fboundp 'make-variable-frame-local) (make-variable-frame-local (car var)))
 	(modify-frame-parameters (selected-frame) (list var))))))
 
 (defun color-theme-install-faces (faces)
@@ -1409,7 +1443,7 @@ Called from `color-theme-install'."
 ;; of a color-theme in .emacs.  That's why we use the
 ;; `face-defface-spec' property.
 
-
+ 
 
 ;;; Theme accessor functions, canonicalization, merging, comparing
 
@@ -1515,7 +1549,7 @@ a difference."
 	  vars
 	  faces)))
 
-
+ 
 
 ;;; Installing a color theme
 ;;;###autoload
@@ -1560,7 +1594,7 @@ frame-parameter settings of previous color themes."
     (color-theme-add-to-history
      (car theme))))
 
-
+ 
 
 ;; Sharing your stuff
 ;;;###autoload
@@ -1617,7 +1651,7 @@ frame-parameter settings of previous color themes."
       (message "Enter a message and type %s to send or %s to abort."
 	       sendkey abortkey))))
 
-
+ 
 
 ;; Use this to define themes
 (defmacro define-color-theme (name author description &rest forms)
@@ -1665,4 +1699,7 @@ frame-parameter settings of previous color themes."
 
 (provide 'color-theme)
 
+;;; color-theme.el ends here
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; color-theme.el ends here
