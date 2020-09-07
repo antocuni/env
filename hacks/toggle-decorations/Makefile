@@ -1,0 +1,2 @@
+all:
+	gcc toggle-decorations.c -Wall -o toggle-decorations `pkg-config --cflags --libs x11`
