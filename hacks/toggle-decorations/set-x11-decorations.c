@@ -1,5 +1,8 @@
 /*
  * Copyright (C) 2017 Alberts Muktupāvels
+ *               2020 Antonio Cuni
+ *
+ * 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +81,7 @@ get_motif_wm_hints (Display *display,
 }
 
 static void
-toggle_window_decorations (Display *display,
-                           Window   window)
+set_window_decorations(Display *display, Window window, char op)
 {
   MotifWmHints *hints;
   Atom property;
@@ -93,7 +95,17 @@ toggle_window_decorations (Display *display,
     }
 
   hints->flags |= (1L << 1);
-  hints->decorations = hints->decorations == 0 ? (1L << 0) : 0;
+  switch (op) {
+  case 't':
+      hints->decorations = hints->decorations == 0 ? (1L << 0) : 0;
+      break;
+  case '0':
+      hints->decorations = 0;
+      break;
+  case '1':
+      hints->decorations = 1;
+      break;
+  }
 
   property = XInternAtom (display, "_MOTIF_WM_HINTS", False);
   nelements = sizeof (*hints) / sizeof (long);
@@ -104,30 +116,44 @@ toggle_window_decorations (Display *display,
   free (hints);
 }
 
-int
-main (int   argc,
-      char *argv[])
+static int
+usage(void)
+{
+      printf("Usage: set-x11-decoration WINDOW-ID [DECORATION]\n");
+      printf("  DECORATION:    t    toogle (default)\n");
+      printf("                 0    undecorate\n");
+      printf("                 1    decorate\n");
+      return 1;
+}
+
+int main (int   argc, char *argv[])
 {
   Display *display;
-  Window window;
+  Window window = 0;
+  char op = 't';
+
+  if (argc != 2 && argc != 3)
+      return usage();
+
+  if (argc == 2 || argc == 3) {
+      sscanf (argv[1], "0x%lx", &window);
+      if (window == 0)
+        sscanf (argv[1], "%lu", &window);
+  }
+  if (argc == 3) {
+      sscanf(argv[2], "%c", &op);
+      if (op != 't' && op != '0' && op != '1')
+          return usage();
+  }
+
+  if (window == 0)
+    return 1;
 
   display = XOpenDisplay (NULL);
   if (display == NULL)
     return 1;
 
-  window = 0;
-  if (argc > 0)
-    {
-      sscanf (argv[1], "0x%lx", &window);
-
-      if (window == 0)
-        sscanf (argv[1], "%lu", &window);
-    }
-
-  if (window == 0)
-    return 1;
-
-  toggle_window_decorations (display, window);
+  set_window_decorations (display, window, op);
   XCloseDisplay (display);
 
   return 0;
