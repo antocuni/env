@@ -32,3 +32,4 @@ TerminalWindow .notebook tab:active {
     background-color: #F0B67A;
 }
 
+@import 'colors.css';
