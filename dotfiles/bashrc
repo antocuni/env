@@ -138,7 +138,11 @@ case $USER--`hostname` in
     *--bart)                 HCOL=32 ;; # green
     *--homer)                HCOL=33 ;; # yellow
     *--antowork*)            HCOL=32 ;; # green
-    *--tannit)               HCOL=35 ;; # magenta
+
+    *--qgpu)                 HCOL=32 ;; # green
+    *--qgpu2)                HCOL=37 ;; # white
+    *--pytorch-dev)          HCOL=35 ;; # magenta
+
     *)                       HCOL=37 ;; # white
 esac
 
