@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 
 # Magic line for bash (blame obscure shells):
 #
@@ -37,7 +37,7 @@ for arg in filenames:
                         continue
                     testname = testname[:i]
                     if testname.startswith(wordstart):
-                        print addspace + testname
+                        print(addspace + testname)
                 elif line.startswith('# =='):
                     # follow comments of the form:
                     # ===> relative_file_path.py
