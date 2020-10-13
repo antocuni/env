@@ -17,11 +17,11 @@ PYLIB = 'https://github.com/pytest-dev/py'
 REPOS = [
     ('git', PYLIB, '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
-    ('hg', 'https://bitbucket.org/antocuni/fancycompleter', '~/src/fancycompleter'),
-    ('hg', 'https://bitbucket.org/antocuni/wmctrl', '~/src/wmctrl'),
-    ('git', 'https://github.com/antocuni/pdb.git', '~/src/pdb'),
-    ('hg', 'https://bitbucket.org/antocuni/pytest-emacs', '~/src/pytest-emacs'),
-    ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
+    ('git', 'git@github.com:pdbpp/fancycompleter.git', '~/src/fancycompleter'),
+    ('git', 'git@github.com:antocuni/wmctrl.git', '~/src/wmctrl'),
+    ('git', 'git@github.com:pdbpp/pdbpp.git', '~/src/pdb'),
+#    ('hg', 'https://bitbucket.org/antocuni/pytest-emacs', '~/src/pytest-emacs'),
+#    ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
 ]
 
 APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
