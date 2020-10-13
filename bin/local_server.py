@@ -2,14 +2,14 @@
 
 import sys
 import subprocess
-import cPickle
+import json
 import SocketServer
 
 class UtilsHandler(SocketServer.StreamRequestHandler):
 
     def handle(self):
         argv = self.rfile.read()
-        argv = cPickle.loads(argv)
+        argv = json.loads(argv.decode('utf-8'))
         cmd = argv[0]
         if cmd not in ('aplay', 'e'):
             print >> sys.stderr, 'Invalid command: %s' % cmd
