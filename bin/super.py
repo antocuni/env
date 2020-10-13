@@ -84,7 +84,10 @@ def main():
     elif arg == 's':     return show('hexchat.Hexchat', 0, no_switch)
     elif arg == 'prtscrn': return take_screenshot()
     elif arg == 'esc':   return show('goldendict.GoldenDict', 0, no_switch, spawn='goldendict')
-    elif arg == 'F2':    return os.system('reposition-windows.py')
+    elif arg == 'F2':
+        os.system('reposition-windows.py')
+        os.system('conky')
+        return os.system('kdb')
     elif arg == 'F3':    return os.system('kbd')
     elif arg == 'F11':   return os.system('reposition-windows.py emergency')
     elif arg == 'F12':   return os.system('auto-xrandr.sh')
