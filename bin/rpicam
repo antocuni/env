@@ -1,0 +1,8 @@
+#!/bin/bash
+
+PORT=9723
+IP=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+
+nc -l $PORT | mplayer -fps 25 -cache 1024 - &
+ssh maggie raspivid -w 640 -h 480 -t 9999 -o - \| nc $IP $PORT
+#wait

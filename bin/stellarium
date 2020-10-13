@@ -1,0 +1,4 @@
+#!/bin/bash
+
+unset QT_SCREEN_SCALE_FACTORS 
+/opt/stellarium/bin/stellarium
