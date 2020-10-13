@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from colorize import *
 
 Run(RegexpGroupsColors('^(/\S+)( on )(\S+)( type )(\S+)( \\()(.*)(\\))$', Cyan+Bold, '', Yellow+Bold, '', Green+Bold, '', Green, ''),

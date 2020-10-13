@@ -1,5 +1,4 @@
-
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright 2010, Alejandro Forero Cuervo
 # http://azul.freaks-unidos.net/colorize
 #
@@ -47,7 +46,7 @@ def Colorize(string, color):
 class Handler(object):
   def Run(self, lines):
     for line in lines:
-      print self.ColorLine(line)
+      print(self.ColorLine(line))
 
   def ColorLine(self, line):
     return line

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from colorize import *
 
 Run(Table([RowDict(dict((i, Bold) for i in ['root', 'wheel']))]))
