@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 # for ALT+` on gnome3: http://andrewpearson.org/?p=605
 # gsettings set org.gnome.desktop.wm.keybindings switch-group "['disabled']"
@@ -7,7 +7,6 @@ import sys
 import os.path
 import glob
 import subprocess
-from commands import getoutput
 
 # ==============================================================
 # configuration
@@ -46,13 +45,13 @@ def color(s, fg=1, bg=1):
 def system(cmd):
     ret = os.system(cmd)
     if ret != 0:
-        print color('Command failed: ', RED), cmd
+        print(color('Command failed: ', RED), cmd)
         sys.exit(ret)
 
 NO_SUDO = False
 def sudo(cmd):
     if NO_SUDO:
-        print color('NO SUDO', RED)
+        print(color('NO SUDO', RED))
     else:
         system('sudo ' + cmd)
 
@@ -60,7 +59,7 @@ def sudo(cmd):
 # import the py lib: automatically download/install it if needed
 #
 def bootstrap():
-    print color('bootstraping the pylib...', YELLOW)
+    print(color('bootstraping the pylib...', YELLOW))
     src = os.path.expanduser('~/src')
     if not os.path.exists(src):
         os.makedirs(src)
@@ -103,7 +102,7 @@ def main():
         install_desktop_apps()
         check_sysrq()
     elif 'SSH_CLIENT' not in os.environ:
-        print color('WARNING: did you forget --gui?', RED)
+        print(color('WARNING: did you forget --gui?', RED))
 
 
 def write_hgrc_auth():
@@ -117,27 +116,27 @@ def write_hgrc_auth():
     """)
     hgrc_auth = HOME.join('.hgrc.auth')
     if hgrc_auth.check(file=True):
-        print color('~/.hgrc.auth already exists', GREEN)
+        print(color('~/.hgrc.auth already exists', GREEN))
         return
-    print color('Generating ~/.hgrc.auth...', YELLOW)
+    print(color('Generating ~/.hgrc.auth...', YELLOW))
     bbpasswd = getpass("    antocuni's bitbucket.org password: ")
     hgrc_auth.write(TEMPLATE % bbpasswd)
-    print color('    DONE', GREEN)
+    print(color('    DONE', GREEN))
 
 def clone_repos():
-    print
-    print color('Cloning repos:', YELLOW)
+    print()
+    print(color('Cloning repos:', YELLOW))
     for kind, url, dst in REPOS:
         clone_one_repo(kind, url, dst)
 
 def clone_one_repo(kind, url, dst):
     dst = os.path.expanduser(dst)
     if os.path.exists(dst):
-        print '    %s: ' % dst, color('already exists', GREEN)
+        print('    %s: ' % dst, color('already exists', GREEN))
         return
-    print '    %s: ' % dst, color('cloning from %s' % url, YELLOW)
+    print('    %s: ' % dst, color('cloning from %s' % url, YELLOW))
     system('%s clone %s %s' % (kind, url, dst))
-    print
+    print()
 
 def symlink(src, dst):
     # check if dst is already a symlink to src
@@ -154,15 +153,16 @@ def symlink(src, dst):
 
 def do_symlink(src, dst):
     try:
-        print '    %s -> %s' % (src.replace(etc_dir, '.'), dst.replace(home, '~')),
+        print('    %s -> %s' % (src.replace(etc_dir, '.'), dst.replace(home, '~')),
+              end='')
         symlink(src, dst)
-        print
-    except Exception, msg:
-        print color("Failed: %s" % (msg,), RED)
+        print()
+    except Exception as msg:
+        print(color("Failed: %s" % (msg,), RED))
 
 def create_symlinks():
-    print
-    print color('Creating symlinks', YELLOW)
+    print()
+    print(color('Creating symlinks', YELLOW))
     for f in os.listdir(etc_dir):
         dst = os.path.join(home, '.' + f)
         src = os.path.join(etc_dir, f)
@@ -193,37 +193,37 @@ def apt_install(package_list):
     packages = ' '.join(package_list)
     ret = os.system('dpkg -s %s >/dev/null 2>&1' % packages)
     if ret != 0:
-        print
-        print color('install apt-packages', YELLOW)
+        print()
+        print(color('install apt-packages', YELLOW))
         sudo('apt-get install %s' % packages)
 
 def apt_install_zeal():
     files = py.path.local('/etc/apt/sources.list.d').listdir('zeal-developers*')
     if files:
-        print color('zeal ppa: already enabled', GREEN)
+        print(color('zeal ppa: already enabled', GREEN))
     else:
-        print color('zeal ppa: add-apt-repository', YELLOW)
+        print(color('zeal ppa: add-apt-repository', YELLOW))
         sudo('add-apt-repository ppa:zeal-developers/ppa')
         sudo('apt-get update')
     apt_install(['zeal'])
 
 def compile_terminal_hack():
-    print
-    print color('gnome-terminal-hack', YELLOW)
+    print()
+    print(color('gnome-terminal-hack', YELLOW))
     dirname = os.path.join(home, 'env', 'hacks', 'gnome-terminal-hack')
     system('make -C %s' % dirname)
 
 def import_dconf():
-    print
-    print color('import dconf settings', YELLOW)
+    print()
+    print(color('import dconf settings', YELLOW))
     dirname = os.path.join(env_dir, 'dconf')
     for filename in glob.glob('%s/*.sh' % dirname):
-        print '    ', filename
+        print('    ', filename)
         system(filename)
 
 def install_desktop_apps():
-    print
-    print color('installing apps/*.desktop', YELLOW)
+    print()
+    print(color('installing apps/*.desktop', YELLOW))
     dirname = os.path.join(env_dir, 'apps')
     for fullname in glob.glob('%s/*.desktop' % dirname):
         basename = os.path.basename(fullname)
@@ -233,19 +233,19 @@ def install_desktop_apps():
 
 def check_sysrq():
     def sysrq_enabled():
-        out = getoutput('sysctl -n kernel.sysrq')
+        out = subprocess.getoutput('sysctl -n kernel.sysrq')
         return int(out) == 1
 
-    print
+    print()
     if not sysrq_enabled() and not NO_SUDO:
-        print color('kernel.sysrq is disabled, fixing it', YELLOW)
+        print(color('kernel.sysrq is disabled, fixing it', YELLOW))
         system('echo kernel.sysrq = 1 | sudo tee /etc/sysctl.d/10-magic-sysrq.conf')
         sudo('sysctl --system')
 
     if sysrq_enabled():
-        print color('kernel.sysrq is enabled', GREEN)
+        print(color('kernel.sysrq is enabled', GREEN))
     else:
-        print color('kernel.sysrq is disabled, plese look at it manually', RED)
+        print(color('kernel.sysrq is disabled, plese look at it manually', RED))
 
 if __name__ == '__main__':
     main()
