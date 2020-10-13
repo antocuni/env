@@ -1,4 +1,8 @@
-#!/usr/bin/python3
-from colorize import *
+#!/bin/sh
 
-Run(RegexpGroupsColors('^(\S+)(=.*)$', Red+Bold, ''))
+if [ $TERM = "xterm" -o $TERM = "xterm-256color" ]
+then
+    /usr/bin/python3 -c "from colorize import *; Run(RegexpGroupsColors('^(\S+)(=.*)$', Red+Bold, ''), exe='env')" "$@"
+else
+    exec /usr/bin/env "$@"
+fi

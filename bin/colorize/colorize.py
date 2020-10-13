@@ -180,7 +180,7 @@ def _YieldLines(file):
     except KeyboardInterrupt:
       pass
 
-def Run(handler_out, handler_err=None):
+def Run(handler_out, handler_err=None, exe=None):
   for file, handler in ((sys.stdout, handler_out), (sys.stderr, handler_err)):
     if handler and os.isatty(file.fileno()):
       read_end, write_end = os.pipe()
@@ -196,5 +196,7 @@ def Run(handler_out, handler_err=None):
   args = sys.argv
   _CleanPath(args)
   program = [os.path.basename(args[0])] + args[1:]
+  if exe is not None:
+    program[0] = exe
   os.execvp(program[0], program)
   sys.exit(-1)  # execvp failed
