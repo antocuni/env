@@ -25,8 +25,14 @@ PATH=~/.local/bin:$PATH
 #PATH=~/pypy/default/pypy/goal/:$PATH
 PATH=~/env/bin/colorize/:~/env/bin:$PATH
 
-ANDROID=~/android/android-sdk-linux_x86
-PATH=$ANDROID/tools/:$ANDROID/platform-tools/:$ANDROID/build-tools:$PATH
+export ANDROID_HOME=$HOME/android/android-sdk-linux_x86
+PATH=$PATH:$ANDROID_HOME/emulator
+PATH=$PATH:$ANDROID_HOME/tools
+PATH=$PATH:$ANDROID_HOME/tools/bin
+PATH=$PATH:$ANDROID_HOME/platform-tools
+
+PATH=$PATH:/opt/node-v12.18.1-linux-x64/bin/
+
 
 if [ -d /usr/gambit/python/bin/ ]
 then

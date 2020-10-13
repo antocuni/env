@@ -27,6 +27,7 @@
    (quote
     (auto-revert-find-file-function global-auto-complete-mode-check-buffers recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode global-eldoc-mode-check-buffers global-font-lock-mode-check-buffers epa-file-find-file-hook vc-refresh-state)))
  '(flyspell-issue-message-flag nil)
+ '(grep-save-buffers nil)
  '(ido-default-buffer-method (quote selected-window))
  '(ido-enable-flex-matching t)
  '(ido-mode (quote both) nil (ido))
@@ -106,7 +107,7 @@
  '(split-height-threshold 100)
  '(tab-width 4)
  '(tool-bar-mode nil)
- '(tramp-default-method "ssh" nil (tramp))
+ '(tramp-default-method "ssh")
  '(tramp-verbose 6 nil (tramp))
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(user-mail-address "anto.cuni@gmail.com")
@@ -133,14 +134,15 @@
  '(font-latex-italic-face ((((class color) (background dark)) (:inherit italic :slant italic :family "Courier New"))))
  '(font-latex-sectioning-5-face ((((class color) (background dark)) (:inherit variable-pitch :weight bold))))
  '(font-latex-sedate-face ((((class color) (background dark)) (:foreground "#FF7777"))))
- '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "#777"))))
+ '(font-lock-comment-face ((t (:foreground "#99968b" :slant normal))))
  '(font-lock-doc-face ((t (:inherit font-lock-string-face))))
  '(font-lock-function-name-face ((((class color) (background light)) (:foreground "blue"))))
- '(font-lock-keyword-face ((((class color) (background light)) (:foreground "red"))))
+ '(font-lock-keyword-face ((t (:foreground "#8ac6f2"))))
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "green4"))))
  '(font-lock-type-face ((((class color) (min-colors 88) (background light)) (:foreground "blue"))))
  '(font-lock-warning-face ((((class color) (background light)) (:foreground "Blue"))))
  '(italic ((t (:size "" :italic t))))
+ '(mc/cursor-face ((t (:background "#444"))))
  '(rst-level-1-face ((t (:foreground "red"))) t)
  '(rst-level-2-face ((t (:foreground "#F55"))) t)
  '(term-color-black ((t (:background "dim gray" :foreground "dim gray"))))
@@ -705,7 +707,8 @@ the new line indented."
 (global-auto-revert-mode 1)
 
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;(setq before-save-hook nil)
 
 
 ; =======================================================
@@ -973,3 +976,17 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 (my-frame-config (selected-frame))
 ;; and later
 (add-hook 'after-make-frame-functions 'my-frame-config)
+
+
+(defun top-join-line ()
+  "Join the current line with the line beneath it."
+  (interactive)
+  (delete-indentation 1))
+(global-set-key (kbd "C-^") 'top-join-line)
+
+; disable C++ namespace indentation
+(defconst my-cc-style
+  '("cc-mode"
+    (c-offsets-alist . ((innamespace . [0])))))
+
+(c-add-style "my-cc-mode" my-cc-style)

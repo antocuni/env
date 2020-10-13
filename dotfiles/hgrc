@@ -29,8 +29,8 @@ share=
 #activity=/tmp/Hgactivity/activity.py
 churn=
 histedit=
-evolve=
-topic=
+#evolve=
+#topic=
 
 [pager]
 pager = less

@@ -13,6 +13,8 @@
   dist = diff --staged
   st = status
   rmbranch = !sh -c 'git branch -d $1 && git push --delete origin $1' -
+  autodiff = diff ':!*/autogen_*.*'
+
 
 [pull]
   ff = yes
