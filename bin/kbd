@@ -16,3 +16,6 @@ then
     synclient TapButton2=2  # 2-fingers tap sends middle button
     synclient TapButton3=3  # 3-fingers tap sends right button
 fi
+
+# XXX: to reset the trackpoint:
+# modprobe -r psmouse && modprobe psmouse
