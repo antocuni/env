@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
     LodgeIt!
@@ -94,6 +94,8 @@ def make_utf8(text, encoding):
     d = chardet.detect(text)
     if d['encoding'] == uenc:
         return u.encode('utf-8')
+    if d['encoding'] is None:
+        d['encoding'] = 'latin-1'
     return unicode(text, d['encoding'], 'ignore').encode('utf-8')
 
 
