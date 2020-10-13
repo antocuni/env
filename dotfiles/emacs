@@ -429,7 +429,8 @@
                                       "^\\*Buffer List\\*$"
                                       "^\\*Completions\\*$"))
 
-(global-set-key [(control x) (x)] 'electric-buffer-list)
+;(global-set-key [(control x) (x)] 'electric-buffer-list)
+(global-set-key [(control x) (x)] 'ibuffer)
 
 ; these are eaten by fluxbox now :-(
 (global-set-key (quote [s-left]) 'swbuff-switch-to-previous-buffer)
