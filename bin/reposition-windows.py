@@ -38,17 +38,25 @@ def main_dock():
 
     for win in Window.by_class('web.whatsapp.com.Google-chrome'):
         unmaximize(win)
+        win.set_decorations(True)
         win.resize_and_move(x=0, y=0, w=1428, h=1200)
         win.sticky()
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
+        win.set_decorations(True)
         win.resize_and_move(x=0, y=1288, w=1440, h=1000)
         win.sticky()
 
     mattermost_class = 'mattermost.smithersbet.com.Google-chrome' # chrome webapp
     #mattermost_class = 'mattermost.Mattermost' # native app
     for win in Window.by_class(mattermost_class):
+        unmaximize(win)
+        win.set_decorations(False)
+        win.resize_and_move(x=X2, y=0, w=1080, h=956)
+        win.sticky()
+
+    for win in Window.by_class('slack.Slack'):
         unmaximize(win)
         win.set_decorations(False)
         win.resize_and_move(x=X2, y=0, w=1080, h=956)
@@ -66,6 +74,9 @@ def main_dock():
         W = 2000
         X = X1 + PANEL + (3840-2000-PANEL)/2
         win.resize_and_move(x=X, y=0, w=W, h=2000)
+
+    for win in Window.by_class('vmplayer.Vmplayer'):
+        win.move(X1, 0)
 
 def main_laptop():
     for win in Window.by_class('emacs.Emacs'):
@@ -111,7 +122,7 @@ def main_laptop():
         # position this at the center of the main screen
         W = 1800
         X = PANEL + (2560-W-PANEL)/2
-        win.resize_and_move(x=X, y=0, w=W, h=1500)
+        win.resize_and_move(x=X, y=0, w=W, h=1440)
 
 
 def autodetect():
