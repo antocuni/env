@@ -986,8 +986,14 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 (global-set-key (kbd "C-^") 'top-join-line)
 
 ; disable C++ namespace indentation
-(defconst my-cc-style
+(defconst my-pytorch-cc-style
   '("cc-mode"
-    (c-offsets-alist . ((innamespace . [0])))))
+    (c-offsets-alist . ((innamespace . [0])))
+    (c-basic-offset . 2)
+    ))
 
-(c-add-style "my-cc-mode" my-cc-style)
+(c-add-style "my-pytorch-cc-style" my-pytorch-cc-style)
+
+; disable automatic indent of random stuff
+; https://emacs.stackexchange.com/questions/20896/change-the-behaviour-of-ret-with-electric-indent-to-only-indent-the-new-line
+(setq-default electric-indent-inhibit t)
