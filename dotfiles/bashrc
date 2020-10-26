@@ -314,3 +314,9 @@ then
     unset __conda_setup
     # <<< conda initialize <<<
 fi
+
+if [ -d ~/ccache ]
+then
+    export PATH=~/ccache/lib:$PATH
+    export CUDA_NVCC_EXECUTABLE=~/ccache/cuda/nvcc
+fi
