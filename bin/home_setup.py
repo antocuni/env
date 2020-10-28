@@ -192,7 +192,6 @@ def create_symlinks():
         ('~/env/dotfiles/icons', '~/.icons'),
         ('~/env/dotfiles/sshrc', '~/.ssh/rc'),
         ('~/env/hacks/fijalcolor.py', '~/.config/hexchat/addons/fijalcolor.py'),
-        ('~/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ]
     for src, dst in more_links:
         src = os.path.expanduser(src)
