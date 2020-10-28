@@ -1,5 +1,13 @@
 import pdb
 
+def ensure_turquoise():
+    try:
+        import pygments.console
+    except ImportError:
+        return ''
+    if 'turquoise' not in pygments.console.codes:
+        pygments.console.codes['turquoise'] = '\x1b[36;01m'
+ensure_turquoise()
 
 class Config(pdb.DefaultConfig):
 
