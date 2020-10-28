@@ -37,6 +37,7 @@ APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel',
 RED = 31
 GREEN = 32
 YELLOW = 33
+BLUE = 34
 
 def color(s, fg=1, bg=1):
     template = '\033[%02d;%02dm%s\033[0m'
@@ -152,13 +153,19 @@ def symlink(src, dst):
     os.symlink(src, dst)
 
 def do_symlink(src, dst):
+    # create the destination dir if needed
+    dstdir = os.path.dirname(dst)
+    if not os.path.exists(dstdir):
+        print(color('    mkdir %s' % dstdir, BLUE))
+        os.makedirs(dstdir)
+
     try:
         print('    %s -> %s' % (src.replace(etc_dir, '.'), dst.replace(home, '~')),
               end='')
         symlink(src, dst)
         print()
     except Exception as msg:
-        print(color("Failed: %s" % (msg,), RED))
+        print(color(" Failed: %s" % (msg,), RED))
 
 def create_symlinks():
     print()
