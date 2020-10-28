@@ -171,6 +171,8 @@ def create_symlinks():
             f.endswith('~') or
             f.endswith('.pyc')):
             continue
+        if f.endswith('sshrc'):
+            continue # this is handled by more_links
         do_symlink(src, dst)
 
     hexchat_dir = os.path.expanduser('~/.config/hexchat')
@@ -181,6 +183,7 @@ def create_symlinks():
         ('~/env/hacks/gnome-terminal-hack/gtk.css', '~/.config/gtk-3.0/gtk.css'),
         ('~/env/dotfiles/bash_profile', '~/.profile'),
         ('~/env/dotfiles/icons', '~/.icons'),
+        ('~/env/dotfiles/sshrc', '~/.ssh/rc'),
         ('~/env/hacks/fijalcolor.py', '~/.config/hexchat/addons/fijalcolor.py'),
         ('~/src/pdb/pdbrc.py', '~/.pdbrc.py'),
         ]
