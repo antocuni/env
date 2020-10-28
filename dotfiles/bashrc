@@ -140,7 +140,8 @@ case $USER--`hostname` in
     *--antowork*)            HCOL=32 ;; # green
 
     *--qgpu)                 HCOL=32 ;; # green
-    *--qgpu2)                HCOL=35 ;; # magenta
+    *--qgpu2)                HCOL=31 ;; # red
+    *--qgpu3)                HCOL=35 ;; # magenta
     *--pytorch-dev)          HCOL=37 ;; # white
 
     *)                       HCOL=37 ;; # white
