@@ -1,3 +1,4 @@
+startup_message off
 defscrollback 50000
 
 # https://gist.github.com/martijnvermaat/8070533
@@ -6,3 +7,5 @@ setenv SSH_AUTH_SOCK $HOME/.ssh/ssh_auth_sock
 
 # ctrl + \ (ù on the italian keyboard with US layout)
 escape ^|^|
+
+
