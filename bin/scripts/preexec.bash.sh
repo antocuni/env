@@ -136,13 +136,17 @@ function preexec_xterm_title_install () {
     # These functions are defined here because they only make sense with the
     # preexec_install below.
 
+    if [ -n "$STY" ]
+    then
+        # we are inside screen
+        MY_HOSTNAME="[$HOSTNAME]"
+    else
+        MY_HOSTNAME="$HOSTNAME"
+    fi
+    
     if [ -n "$SSH_CLIENT" ]
     then
-        HOST="$HOSTNAME: "
-    fi
-    if [ -f /etc/32bit ]
-    then
-        HOST="32: $HOST"
+        HOST="$MY_HOSTNAME: "
     fi
 
     function precmd () {
