@@ -82,7 +82,7 @@ class Header(Handler):
 
   def Run(self, lines):
     try:
-      header_line = lines.next()
+      header_line = next(lines)
     except StopIteration:
       return
     self.header.Run([header_line])
