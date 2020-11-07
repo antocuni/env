@@ -81,6 +81,12 @@ function auto-ssh-agent()
     . $AGENT_FILE
 }
 
+function gwenview()
+{
+    echo "Using gwenview hack in ~/.bashrc"
+    QT_SCREEN_SCALE_FACTORS= /usr/bin/gwenview "$@"
+}
+
 gdbem () { emacs -nw --eval "(gdb \"gdb --cd=`pwd` --annotate=3 $*\")";}
 
 # "cd to eMacs directory"
