@@ -13,6 +13,11 @@ from pathlib import Path
 # configuration
 #
 
+HOME = Path('~').expanduser()
+ENV = HOME / 'env'
+DOTFILES = ENV / 'dotfiles'
+GUI_SENTINEL = HOME / '.gui'
+
 REPOS = [
     ('git', 'https://github.com/pytest-dev/py', '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
@@ -57,13 +62,6 @@ def sudo(cmd):
         system('sudo ' + cmd)
 
 
-HOME = Path('~').expanduser()
-GUI_SENTINEL = HOME.joinpath('.gui')
-
-home = os.path.expanduser('~')
-env_dir = os.path.join(home, 'env')
-etc_dir = os.path.join(env_dir, 'dotfiles')
-
 
 def main():
     global NO_SUDO
@@ -102,25 +100,29 @@ def clone_one_repo(kind, url, dst):
 def symlink(src, dst):
     # check if dst is already a symlink to src
     try:
-        link = os.readlink(dst)
+        link = dst.resolve()
         if link == src:
             return # nothing to do
         if not os.path.exists(link):
             # old location, kill it
-            os.remove(dst)
+            dst.unlink()
     except OSError:
         pass
-    os.symlink(src, dst)
+    dst.symlink_to(src)
+
 
 def do_symlink(src, dst):
     # create the destination dir if needed
-    dstdir = os.path.dirname(dst)
-    if not os.path.exists(dstdir):
+    src = Path(src)
+    dst = Path(dst)
+    dstdir = dst.parent
+    if not dstdir.exists():
         print(color('    mkdir %s' % dstdir, BLUE))
-        os.makedirs(dstdir)
+        dstdir.mkdir(parents=True)
 
     try:
-        print('    %s -> %s' % (src.replace(etc_dir, '.'), dst.replace(home, '~')),
+        print('    %s -> %s' % (str(src).replace(str(DOTFILES), '.'),
+                                str(dst).replace(str(HOME), '~')),
               end='')
         symlink(src, dst)
         print()
@@ -130,15 +132,13 @@ def do_symlink(src, dst):
 def create_symlinks():
     print()
     print(color('Creating symlinks', YELLOW))
-    for f in os.listdir(etc_dir):
-        dst = os.path.join(home, '.' + f)
-        src = os.path.join(etc_dir, f)
-        src = os.path.abspath(src)
-        if (f.startswith('.') or
-            f.endswith('~') or
-            f.endswith('.pyc')):
+    for src in DOTFILES.iterdir():
+        dst = HOME.joinpath('.' + src.name)
+        if (src.name.startswith('.') or
+            src.name.endswith('~') or
+            src.name.endswith('.pyc')):
             continue
-        if f.endswith('sshrc'):
+        if src.name.endswith('sshrc'):
             continue # this is handled by more_links
         do_symlink(src, dst)
 
@@ -154,8 +154,8 @@ def create_symlinks():
         ('~/env/hacks/fijalcolor.py', '~/.config/hexchat/addons/fijalcolor.py'),
         ]
     for src, dst in more_links:
-        src = os.path.expanduser(src)
-        dst = os.path.expanduser(dst)
+        src = Path(src).expanduser()
+        dst = Path(dst).expanduser()
         do_symlink(src, dst)
 
 def apt_install(package_list):
@@ -179,22 +179,22 @@ def apt_install_zeal():
 def compile_terminal_hack():
     print()
     print(color('gnome-terminal-hack', YELLOW))
-    dirname = os.path.join(home, 'env', 'hacks', 'gnome-terminal-hack')
+    dirname = ENV / 'hacks/gnome-terminal-hack'
     system('make -C %s' % dirname)
 
 def import_dconf():
     print()
     print(color('import dconf settings', YELLOW))
-    dirname = os.path.join(env_dir, 'dconf')
-    for filename in glob.glob('%s/*.sh' % dirname):
+    dirname = ENV / 'dconf'
+    for filename in dirname.glob('*.sh'):
         print('    ', filename)
         system(filename)
 
 def install_desktop_apps():
     print()
     print(color('installing apps/*.desktop', YELLOW))
-    dirname = os.path.join(env_dir, 'apps')
-    for fullname in glob.glob('%s/*.desktop' % dirname):
+    dirname = ENV / 'apps'
+    for fullname in dirname.glob('*.desktop'):
         basename = os.path.basename(fullname)
         dst = os.path.join('~/.local/share/applications/', basename)
         dst = os.path.expanduser(dst)
