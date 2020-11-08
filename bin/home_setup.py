@@ -90,7 +90,6 @@ def main():
     global NO_SUDO
     gui = '--gui' in sys.argv or GUI_SENTINEL.check(file=True)
     NO_SUDO = '--nosudo' in sys.argv or '--no-sudo' in sys.argv
-    write_hgrc_auth()
     clone_repos()
     create_symlinks()
     apt_install(APT_PACKAGES)
@@ -105,24 +104,6 @@ def main():
     elif 'SSH_CLIENT' not in os.environ:
         print(color('WARNING: did you forget --gui?', RED))
 
-
-def write_hgrc_auth():
-    import textwrap
-    from getpass import getpass
-    TEMPLATE = textwrap.dedent("""
-        [auth]
-        bb.prefix = https://bitbucket.org/
-        bb.username = antocuni
-        bb.password = %s
-    """)
-    hgrc_auth = HOME.join('.hgrc.auth')
-    if hgrc_auth.check(file=True):
-        print(color('~/.hgrc.auth already exists', GREEN))
-        return
-    print(color('Generating ~/.hgrc.auth...', YELLOW))
-    bbpasswd = getpass("    antocuni's bitbucket.org password: ")
-    hgrc_auth.write(TEMPLATE % bbpasswd)
-    print(color('    DONE', GREEN))
 
 def clone_repos():
     print()
