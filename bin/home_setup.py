@@ -7,14 +7,14 @@ import sys
 import os.path
 import glob
 import subprocess
+from pathlib import Path
 
 # ==============================================================
 # configuration
 #
 
-PYLIB = 'https://github.com/pytest-dev/py'
 REPOS = [
-    ('git', PYLIB, '~/src/py'),
+    ('git', 'https://github.com/pytest-dev/py', '~/src/py'),
     ('hg', 'https://bitbucket.org/antocuni/env', '~/env'),
     ('git', 'git@github.com:pdbpp/fancycompleter.git', '~/src/fancycompleter'),
     ('git', 'git@github.com:antocuni/wmctrl.git', '~/src/wmctrl'),
@@ -56,30 +56,9 @@ def sudo(cmd):
     else:
         system('sudo ' + cmd)
 
-# ==============================================================
-# import the py lib: automatically download/install it if needed
-#
-def bootstrap():
-    print(color('bootstraping the pylib...', YELLOW))
-    src = os.path.expanduser('~/src')
-    if not os.path.exists(src):
-        os.makedirs(src)
-    pydir = os.path.join(src, 'py')
-    if not os.path.exists(pydir):
-        system('git clone %s %s' % (PYLIB, pydir))
-    sys.path.append(pydir)
 
-try:
-    import py
-except ImportError:
-    bootstrap()
-    import py
-
-# end of the automagically pylib importing/boostraping
-# ==============================================================
-
-HOME = py.path.local('~', expanduser=True)
-GUI_SENTINEL = HOME.join('.gui')
+HOME = Path('~').expanduser()
+GUI_SENTINEL = HOME.joinpath('.gui')
 
 home = os.path.expanduser('~')
 env_dir = os.path.join(home, 'env')
@@ -88,13 +67,13 @@ etc_dir = os.path.join(env_dir, 'dotfiles')
 
 def main():
     global NO_SUDO
-    gui = '--gui' in sys.argv or GUI_SENTINEL.check(file=True)
+    gui = '--gui' in sys.argv or GUI_SENTINEL.exists()
     NO_SUDO = '--nosudo' in sys.argv or '--no-sudo' in sys.argv
     clone_repos()
     create_symlinks()
     apt_install(APT_PACKAGES)
     if gui:
-        GUI_SENTINEL.write('this file tells home_setup.py that this is a GUI environment\n')
+        GUI_SENTINEL.write_text('this file tells home_setup.py that this is a GUI environment\n')
         apt_install(APT_PACKAGES_GUI)
         apt_install_zeal()
         compile_terminal_hack()
@@ -188,7 +167,7 @@ def apt_install(package_list):
         sudo('apt-get install %s' % packages)
 
 def apt_install_zeal():
-    files = py.path.local('/etc/apt/sources.list.d').listdir('zeal-developers*')
+    files = list(Path('/etc/apt/sources.list.d').glob('zeal-developers*'))
     if files:
         print(color('zeal ppa: already enabled', GREEN))
     else:
