@@ -87,6 +87,14 @@ function gwenview()
     QT_SCREEN_SCALE_FACTORS= /usr/bin/gwenview "$@"
 }
 
+function ssh-screen()
+{
+    target=$1
+    w=$2
+    ssh -t $1 screen -xR -p $2
+}
+
+
 gdbem () { emacs -nw --eval "(gdb \"gdb --cd=`pwd` --annotate=3 $*\")";}
 
 # "cd to eMacs directory"
