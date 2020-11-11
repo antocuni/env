@@ -28,6 +28,10 @@
     (auto-revert-find-file-function global-auto-complete-mode-check-buffers recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode global-eldoc-mode-check-buffers global-font-lock-mode-check-buffers epa-file-find-file-hook vc-refresh-state)))
  '(flyspell-issue-message-flag nil)
  '(grep-save-buffers nil)
+ '(ibuffer-default-directory "~")
+ '(ibuffer-default-sorting-mode (quote filename/process))
+ '(ibuffer-display-summary t)
+ '(ibuffer-expert t)
  '(ido-default-buffer-method (quote selected-window))
  '(ido-enable-flex-matching t)
  '(ido-mode (quote both) nil (ido))
@@ -63,7 +67,7 @@
  '(menu-bar-mode window-system)
  '(package-selected-packages
    (quote
-    (cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
+    (ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(reb-re-syntax (quote string))
  '(rst-level-face-base-color "blackn")
@@ -108,7 +112,7 @@
  '(tab-width 4)
  '(tool-bar-mode nil)
  '(tramp-default-method "ssh")
- '(tramp-verbose 6 nil (tramp))
+ '(tramp-verbose 6)
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
