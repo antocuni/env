@@ -89,9 +89,10 @@ function gwenview()
 
 function ssh-screen()
 {
+    # usage: ssh-screen HOST WINDOW-NUMBER
     target=$1
     w=$2
-    ssh -t $1 screen -xR -p $2
+    autossh -t $1 "bash -l -c \"screen -l -xR -p $2\""
 }
 
 
