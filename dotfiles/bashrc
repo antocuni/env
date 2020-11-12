@@ -267,7 +267,14 @@ unset GTK2_RC_FILES
 #    virtualenvwrapper
 # =======================
 
-if [ -f ~/.local/bin/virtualenvwrapper.sh ]
+does_function_exist() {
+    declare -f -F $1 > /dev/null
+    return $?
+}
+
+# don't re-evaluate virtualenvwrapper if it already exists. It takes ~0.4
+# seconds on my machine :(
+if ! does_function_exist workon && [ -f ~/.local/bin/virtualenvwrapper.sh ]
 then
     export WORKON_HOME=~/.virtualenvs
     mkdir -p $WORKON_HOME
