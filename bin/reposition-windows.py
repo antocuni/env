@@ -39,13 +39,13 @@ def main_dock():
     for win in Window.by_class('web.whatsapp.com.Google-chrome'):
         unmaximize(win)
         win.set_decorations(True)
-        win.resize_and_move(x=0, y=0, w=1428, h=1200)
+        win.resize_and_move(x=0, y=0, w=1440, h=1200)
         win.sticky()
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
         win.set_decorations(True)
-        win.resize_and_move(x=0, y=1288, w=1440, h=1000)
+        win.resize_and_move(x=-18, y=1225, w=1476, h=1108)
         win.sticky()
 
     mattermost_class = 'mattermost.smithersbet.com.Google-chrome' # chrome webapp
@@ -77,6 +77,9 @@ def main_dock():
 
     for win in Window.by_class('vmplayer.Vmplayer'):
         win.move(X1, 0)
+
+    for win in Window.by_class('conky.conky'):
+        win.sticky()
 
 def main_laptop():
     for win in Window.by_class('emacs.Emacs'):
@@ -123,6 +126,9 @@ def main_laptop():
         W = 1800
         X = PANEL + (2560-W-PANEL)/2
         win.resize_and_move(x=X, y=0, w=W, h=1440)
+
+    for win in Window.by_class('conky.conky'):
+        win.sticky()
 
 
 def autodetect():

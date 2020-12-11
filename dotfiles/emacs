@@ -65,6 +65,11 @@
       ("-c" "-q" "-d")
       nil t "\213"])))
  '(menu-bar-mode window-system)
+ '(mode-line-format
+   (quote
+    ("%e" mode-line-front-space mode-line-mule-info mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification "   " mode-line-position
+     (vc-mode vc-mode)
+     "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(package-selected-packages
    (quote
     (ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
@@ -865,6 +870,7 @@ Optional arg REVISION is a revision to annotate from."
                       (if this-win-2nd (other-window 1))))))
 
 (define-key ctl-x-4-map "t" 'toggle-window-split)
+
 
 (require 're-builder)
 (defun reb-query-replace-this-regxp (replace)
