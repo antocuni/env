@@ -7,6 +7,11 @@ dcim.py /media/antocuni/6330-3432/DCIM/100CANON/ ~/foto/unsorted/
 import sys
 import pathlib
 import shutil
+from datetime import datetime
+
+def get_date(f):
+    mtime = f.stat().st_mtime
+    return datetime.fromtimestamp(mtime)
 
 class DCIM:
 
@@ -28,8 +33,11 @@ class DCIM:
         last_imported = None
         for f in sorted(self.src.iterdir()):
             if f.name > self.last_imported:
+                d = get_date(f)
+                dst_folder = self.dst.joinpath(d.strftime('%Y-%m-%d'))
+                dst_folder.mkdir(exist_ok=True)
                 print('COPY %s' % f)
-                shutil.copy(f, self.dst)
+                shutil.copy2(f, dst_folder.joinpath(f.name))
                 last_imported = f
         #
         if last_imported is not None:
@@ -39,7 +47,8 @@ class DCIM:
 def main():
     if len(sys.argv) != 3:
         print('Usage: dcim.py FROM TO')
-        print('Example: dcim.py /media/antocuni/6330-3432/DCIM/100CANON/ ~/foto/unsorted/')
+        print('Example:')
+        print('    dcim.py /media/antocuni/6330-3432/DCIM/100CANON/ ~/foto/unsorted/')
         return 1
     src = sys.argv[1]
     dst = sys.argv[2]
