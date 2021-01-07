@@ -87,26 +87,6 @@ function gwenview()
     QT_SCREEN_SCALE_FACTORS= /usr/bin/gwenview "$@"
 }
 
-function ssh-screen()
-{
-    # usage: ssh-screen HOST [SESSION-NAME]
-    # is SESSION-NAME is not provided, it does a "screen -ls"
-    RED='\x1b[0m\x1b[31m'
-    GREEN='\x1b[0m\x1b[32m'
-    OFF='\x1b[0m'
-
-    target=$1
-    session=$2
-    if [ -z "$session" ]
-    then
-        ssh $1 "screen -list |
-                sed 's/Detached/${RED}Detached${OFF}/' |
-                sed 's/Attached/${GREEN}Attached${OFF}/'"
-    else
-        autossh -t $1 "bash -l -c \"screen -rS $2\""
-    fi
-}
-
 gdbem () { emacs -nw --eval "(gdb \"gdb --cd=`pwd` --annotate=3 $*\")";}
 
 # "cd to eMacs directory"
