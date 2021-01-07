@@ -73,7 +73,7 @@ export BROWSER="firefox:mozilla"
 export EDITOR="emacsclient"
 export IPOD_MOUNTPOINT=/mnt/usb
 #export MAKEFLAGS="-j2"
-
+export GCC_COLORS=1
 
 # workaround for this bug
 # https://bugs.launchpad.net/ubuntu/+source/at-spi2-core/+bug/1193236unset GTK2_RC_FILES # this is set by ~/bin/autoterm
