@@ -1,0 +1,42 @@
+# -*- mode: conf -*-
+
+#background yes
+
+use_xft yes
+xftfont Bitstream Vera Sans Mono:size=9
+xftalpha 0.8
+
+own_window yes
+own_window_hints undecorated,below,skip_taskbar,sticky
+#own_window_type dock   # use this to put it only on the current desktop
+
+#own_window_type panel      # to put conky on ALL desktops
+
+# XXX if KDE doesn't show conky, commenting this line helps
+own_window_type override   # this seems to be need for KDE plasma and ALL desktops
+
+own_window_hints below
+own_window_transparent no
+#own_window_colour hotpink
+
+own_window_argb_visual yes
+own_window_argb_value 255
+own_window_colour black
+double_buffer yes
+
+draw_shades yes
+draw_outline no
+draw_borders no      # Draw borders around text
+draw_graph_borders no # Draw borders around graphs
+
+stippled_borders 0
+border_margin 0
+border_width -1
+
+default_shade_color darkgrey
+default_outline_color lightgrey
+
+uppercase no # set to yes if you want all text to be in uppercase
+override_utf8_locale no # Force UTF8?
+
+
