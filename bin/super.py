@@ -85,8 +85,7 @@ def main():
     elif arg == 'prtscrn': return take_screenshot()
     elif arg == 'esc':   return show('goldendict.GoldenDict', 0, no_switch, spawn='goldendict')
     elif arg == 'F2':
-        os.system('killall conky')
-        os.system('conky')
+        os.system('/home/antocuni/env/conky/myconky.py')
         os.system('reposition-windows.py')
         return os.system('kdb')
     elif arg == 'F3':    return os.system('kbd')

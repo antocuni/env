@@ -3,14 +3,17 @@
 import os
 from pathlib import Path
 
-DIR = Path('/tmp/myconky')
-DIR.mkdir(parents=True, exist_ok=True)
+ROOT = Path(__file__).parent.absolute()
+
+TMP = Path('/tmp/myconky')
+TMP.mkdir(parents=True, exist_ok=True)
 
 class Conky:
     def make_conkyrc(self):
-        out = DIR.joinpath(f'conkyrc.{self.__class__.__name__}')
+        out = TMP.joinpath(f'conkyrc.{self.__class__.__name__}')
         with out.open('w') as f:
             for rc in self.RC:
+                rc = ROOT.joinpath(rc)
                 content = Path(rc).read_text()
                 f.write(f'# === {rc} ===\n')
                 f.write(content)
