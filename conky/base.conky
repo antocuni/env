@@ -24,7 +24,6 @@ own_window_argb_value 255
 own_window_colour black
 double_buffer yes
 
-draw_shades yes
 draw_outline no
 draw_borders no      # Draw borders around text
 draw_graph_borders no # Draw borders around graphs

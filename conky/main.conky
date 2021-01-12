@@ -14,6 +14,7 @@ net_avg_samples 2
 use_spacer no
 short_units on
 
+draw_shades yes
 default_color yellow
 
 TEXT
