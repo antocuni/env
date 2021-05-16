@@ -330,6 +330,10 @@ then
     fi
     unset __conda_setup
     # <<< conda initialize <<<
+
+    # to enable tab completion:
+    # conda install -c conda-forge conda-bash-completion
+    # https://github.com/tartansandal/conda-bash-completion
 fi
 
 if [ -d ~/ccache ]
