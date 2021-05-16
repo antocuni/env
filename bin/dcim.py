@@ -4,6 +4,7 @@
 dcim.py /media/antocuni/6330-3432/DCIM/100CANON/ ~/foto/unsorted/
 """
 
+import os
 import sys
 import pathlib
 import shutil
@@ -31,7 +32,9 @@ class DCIM:
 
     def do_import(self):
         last_imported = None
-        for f in sorted(self.src.iterdir()):
+        # sort by modification time
+        files = sorted(self.src.iterdir(), key=os.path.getmtime)
+        for f in files:
             if f.name > self.last_imported:
                 d = get_date(f)
                 dst_folder = self.dst.joinpath(d.strftime('%Y-%m-%d'))
@@ -45,6 +48,11 @@ class DCIM:
             self.dst.joinpath('last_imported.txt').write_text(f.name)
 
 def main():
+    print('XXXX this is wrong!')
+    print('if f.name > self.last_imported:')
+    print('consider the case: IMG_6963.JPG and MVI_6962.MP4')
+    return
+
     if len(sys.argv) != 3:
         print('Usage: dcim.py FROM TO')
         print('Example:')
