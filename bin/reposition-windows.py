@@ -119,7 +119,7 @@ def main_laptop():
         win.set_decorations(False)
         win.sticky()
         win.resize_and_move(x=PANEL, y=1440-960, w=1428, h=960)
-        set_hexchat_font(12)
+        set_hexchat_font(13)
 
     for win in Window.by_class('google-chrome.Google-chrome'):
         # position this at the center of the main screen
