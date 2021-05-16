@@ -72,7 +72,7 @@
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(package-selected-packages
    (quote
-    (ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
+    (scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(reb-re-syntax (quote string))
  '(rst-level-face-base-color "blackn")
