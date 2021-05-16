@@ -18,13 +18,16 @@ def show(cls, i, no_switch, spawn=None):
 
     If there are less windows than i, activate the first.
 
-    The logic is to prefer windows which are on the active desktop first. If
-    there is NO window of that class on the active desktop, then consider also
-    the windows on other desktops
+    The logic is to prefer:
+      1. sticky windows first
+      2. windows which are on the active desktop
+      3. if there is NO window of that class on the active desktop, then consider also
+         the windows on other desktops
     """
     desktop = wmctrl.Desktop.get_active()
     # try to find the windows on the current desktop
-    wlist = [w for w in WLIST if w.wm_class == cls and w.desktop == desktop.num]
+    wlist = ([w for w in WLIST if w.wm_class == cls and w.desktop == -1] +
+             [w for w in WLIST if w.wm_class == cls and w.desktop == desktop.num])
     if not wlist and not no_switch:
         # try to find the windows on all desktops
         wlist = [w for w in WLIST if w.wm_class == cls]
