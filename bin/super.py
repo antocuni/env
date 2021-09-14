@@ -90,7 +90,7 @@ def main():
     elif arg == 'F2':
         os.system('/home/antocuni/env/conky/myconky.py')
         os.system('reposition-windows.py')
-        return os.system('kdb')
+        return os.system('kbd')
     elif arg == 'F3':    return os.system('kbd')
     elif arg == 'F11':   return os.system('reposition-windows.py emergency')
     elif arg == 'F12':   return os.system('auto-xrandr.sh')
