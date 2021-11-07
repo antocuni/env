@@ -8,6 +8,14 @@ OFF='\x1b[0m'
 
 target=$1
 session=$2
+
+case "$3 $4" in
+    "-O exit")
+        echo "ssh $1 -O exit"
+        ssh $1 -O exit
+        exit
+esac
+
 if [ -z "$session" ]
 then
     ssh $1 "screen -list |
