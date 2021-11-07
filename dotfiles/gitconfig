@@ -15,6 +15,8 @@
   rmbranch = !sh -c 'git branch -d $1 && git push --delete origin $1' -
   autodiff = diff ':!*/autogen_*.*'
 
+  # this creates a tag "tmp" on the commit where we branched from upstream/master
+  # git tag tmp `git merge-base HEAD upstream/master `
 
 [pull]
   ff = yes
@@ -51,3 +53,5 @@
 
 [pretty]
     csv = format:\"%h\",\"%ai\",\"%s\"
+[cola]
+	spellcheck = false
