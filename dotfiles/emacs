@@ -16,6 +16,7 @@
  '(ansi-color-names-vector
    ["black" "red" "green" "yellow" "#4646FF" "magenta" "cyan" "white"])
  '(auto-revert-interval 1)
+ '(auto-revert-remote-files nil)
  '(blink-cursor-mode nil)
  '(c-basic-offset 4)
  '(c-offsets-alist (quote ((brace-list-intro . +))))
@@ -72,7 +73,7 @@
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(package-selected-packages
    (quote
-    (scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
+    (git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(reb-re-syntax (quote string))
  '(rst-level-face-base-color "blackn")
@@ -441,13 +442,8 @@
 ;(global-set-key [(control x) (x)] 'electric-buffer-list)
 (global-set-key [(control x) (x)] 'ibuffer)
 
-; these are eaten by fluxbox now :-(
 (global-set-key (quote [s-left]) 'swbuff-switch-to-previous-buffer)
 (global-set-key (quote [s-right]) 'swbuff-switch-to-next-buffer)
-
-; use these as fallback
-(global-set-key [(meta left)] 'swbuff-switch-to-previous-buffer)
-(global-set-key [(meta right)] 'swbuff-switch-to-next-buffer)
 
 (global-set-key [(control meta l)]
 		(function (lambda ()
@@ -958,8 +954,9 @@ Argument REPLACE String used to replace the matched strings in the buffer.
       (set-face-foreground 'region "black")
       (set-face-foreground 'lazy-highlight "black")
       (set-face-background 'lazy-highlight "yellow")
-      (setq term-default-fg-color (face-foreground term-current-face))
-      (setq term-default-bg-color (face-background term-current-face)))))
+      ;(setq term-default-fg-color (face-foreground term-current-face))
+      ;(setq term-default-bg-color (face-background term-current-face))
+      )))
 
 (setq my-theme-is-dark t)
 (defun my-theme-set ()
@@ -970,6 +967,7 @@ Argument REPLACE String used to replace the matched strings in the buffer.
       ;; once, I get weird colors
       (color-theme-jsc-light)
       (color-theme-jsc-light)
+      (set-face-foreground 'font-lock-negation-char-face "black")
     )))
 
 (defun my-theme-toggle ()
