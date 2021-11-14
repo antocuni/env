@@ -1,3 +1,5 @@
+# -*- mode: conf -*-
+
 xinerama_head 1
 alignment top_left
 minimum_size 750 1

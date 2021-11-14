@@ -2,7 +2,7 @@
 
 xinerama_head 1
 alignment top_left
-minimum_size 660 240
+minimum_size 660 260
 gap_y 2320
 gap_x 780
 
@@ -11,8 +11,8 @@ total_run_times 0  # run forever
 
 draw_shades no
 
-xftfont Bitstream Vera Sans Mono:size=12
+xftfont Bitstream Vera Sans Mono:size=11
 default_color white
 
 TEXT
-${execpi 600 /home/antocuni/bin/calendarterm.py --conky}
+${execpi 600 /home/antocuni/bin/calendarterm.py --conky --max-lines 10}

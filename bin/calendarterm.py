@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 
+"""
+Usage: calendarterm.py [options]
+
+Options:
+  --conky                 Output colors in conky mode
+  --max-lines=N           Maximum number of lines to print
+  -h --help               show this
+"""
+
 import sys
+import docopt
 import datetime
 from pathlib import Path
 from icalevents import icalevents
@@ -45,13 +55,20 @@ class Color:
 
 
 
-def main(conky):
-    if conky:
+def main():
+    args = docopt.docopt(__doc__)
+    if args['--conky']:
         color = conky_color
     else:
         #color = dummy_color
         color = ansi_color
+    max_lines = args['--max-lines']
+    if max_lines is None:
+        max_lines = sys.maxsize
+    else:
+        max_lines = int(max_lines)
 
+    lines_printed = 0
     start = datetime.date.today()
     events = icalevents.events(URL, start=start)
     events.sort()
@@ -75,8 +92,12 @@ def main(conky):
             # tomorrow
             line = color('yellow', line)
 
-        print(line)
+        if lines_printed == max_lines - 1:
+            print('...')
+            break
+        else:
+            print(line)
+            lines_printed += 1
 
 if __name__ == '__main__':
-    conky = '--conky' in sys.argv
-    main(conky)
+    main()
