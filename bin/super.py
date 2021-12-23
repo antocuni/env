@@ -117,7 +117,7 @@ def main():
     elif arg == '3':       return show(CHROME, 'cycle')
     elif arg == 'q':       return show('web.whatsapp.com.Google-chrome')
     elif arg == 'w':       return show(TELEGRAM)
-    #elif arg == 'e':      return show('mail.google.com.Google-chrome', 0, no_switch)
+    elif arg == 'e':       return steal_and_show('mail.google.com.Google-chrome', on_already_active='move_to_0')
     elif arg == 'a':       return show(MATTERMOST)
     elif arg == 's':       return show('hexchat.Hexchat')
     elif arg == 'prtscrn': return take_screenshot()
