@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+"""
+ZEAL user contributed docsets:
+https://zealusercontributions.vercel.app/
+"""
+
 import sys
 import os
 import wmctrl
@@ -12,7 +17,7 @@ TELEGRAM = 'Telegram.TelegramDesktop'
 
 WLIST = wmctrl.Window.list()
 
-def show(cls, i=0, spawn=None):
+def show(wm_class, i=0, spawn=None):
     """
     Activate the i-th window of the given class.
     If there are less windows than i, activate the first.
@@ -22,15 +27,16 @@ def show(cls, i=0, spawn=None):
       2. windows which are on the active desktop
 
     """
+    # find the windows visible on the current desktop, sticky windows first
     desktop = wmctrl.Desktop.get_active()
-    # try to find the windows on the current desktop
-    wlist = ([w for w in WLIST if w.wm_class == cls and w.desktop == -1] +
-             [w for w in WLIST if w.wm_class == cls and w.desktop == desktop.num])
+    wlist = [w for w in WLIST if w.wm_class == wm_class and w.desktop in (-1, desktop.num)]
+    wlist.sort(key=lambda w: w.desktop)
+    #
     if not wlist:
         # no windows found
         if spawn:
             return os.system(spawn)
-        print 'No windows found: %s' % cls
+        print 'No windows found: %s' % wm_class
         return 1
     #
     if i == 'cycle':
@@ -41,10 +47,11 @@ def show(cls, i=0, spawn=None):
     wlist[i].activate()
     return 0
 
-def show_zeal():
-    # ZEAL user contributed docsets:
-    # https://zealusercontributions.vercel.app/
-    wlist = ([w for w in WLIST if w.wm_class == 'zeal.Zeal'])
+def steal_and_show(wm_class, spawn=None):
+    """
+    Steal a window from other desktops, and show it.
+    """
+    wlist = ([w for w in WLIST if w.wm_class == wm_class])
     if wlist:
         # move the window to the current desktop and activate
         w = wlist[0]
@@ -52,13 +59,8 @@ def show_zeal():
         if w.desktop != desktop.num:
             w.move_to_destktop(desktop.num)
         w.activate()
-    else:
-        # no window just run zeal. This works in two cases:
-        #  1. if zeal is already in the taskbar, it does the right thing and
-        #     open a window
-        #  2. if zeal hasn't started yet, it opens it
-        os.system('zeal')
-
+    elif spawn:
+        os.system(spawn)
 
 def cycle(wlist):
     # cycle through the list of windows
@@ -100,8 +102,8 @@ def main():
     elif arg == 'a':       return show(MATTERMOST)
     elif arg == 's':       return show('hexchat.Hexchat')
     elif arg == 'prtscrn': return take_screenshot()
-    elif arg == 'esc':     return show('goldendict.GoldenDict', spawn='goldendict')
-    elif arg == 'F1':      return show_zeal()
+    elif arg == 'esc':     return steal_and_show('goldendict.GoldenDict', spawn='goldendict')
+    elif arg == 'F1':      return steal_and_show('zeal.Zeal', spawn='zeal')
     elif arg == 'F2':
         os.system('/home/antocuni/env/conky/myconky.py')
         os.system('reposition-windows.py')
