@@ -47,20 +47,39 @@ def show(wm_class, i=0, spawn=None):
     wlist[i].activate()
     return 0
 
-def steal_and_show(wm_class, spawn=None):
+def steal_and_show(wm_class, spawn=None, on_already_active=None):
     """
     Steal a window from other desktops, and show it.
+
+    It assumes that there is only a window of the given class.
+
+    on_already_active determines what to do if the window is already active:
+      - 'move_to_0': move it to desktop 0
+      - 'killall': runs 'killall %s' % spawn
     """
+    assert on_already_active in (None, 'move_to_0', 'killall')
+    # check whether the window exists and spawn if not
     wlist = ([w for w in WLIST if w.wm_class == wm_class])
-    if wlist:
-        # move the window to the current desktop and activate
-        w = wlist[0]
-        desktop = wmctrl.Desktop.get_active()
-        if w.desktop != desktop.num:
-            w.move_to_destktop(desktop.num)
-        w.activate()
-    elif spawn:
-        os.system(spawn)
+    if not wlist:
+        if spawn:
+            return os.system(spawn)
+        return 1
+    #
+    # check whether the window is already active
+    win = wlist[0]
+    current = wmctrl.Window.get_active()
+    if win.id == current.id:
+        if on_already_active == 'move_to_0':
+            win.move_to_destktop(0)
+            return 0
+        elif on_already_active == 'killall':
+            return os.system('killall %s' % spawn)
+    #
+    # window found: move it to the current desktop (if necessary) and activate
+    desktop = wmctrl.Desktop.get_active()
+    if win.desktop != desktop.num:
+        win.move_to_destktop(desktop.num)
+    win.activate()
 
 def cycle(wlist):
     # cycle through the list of windows
@@ -102,7 +121,7 @@ def main():
     elif arg == 'a':       return show(MATTERMOST)
     elif arg == 's':       return show('hexchat.Hexchat')
     elif arg == 'prtscrn': return take_screenshot()
-    elif arg == 'esc':     return steal_and_show('goldendict.GoldenDict', spawn='goldendict')
+    elif arg == 'esc':     return steal_and_show('goldendict.GoldenDict', spawn='goldendict', on_already_active='killall')
     elif arg == 'F1':      return steal_and_show('zeal.Zeal', spawn='zeal')
     elif arg == 'F2':
         os.system('/home/antocuni/env/conky/myconky.py')
