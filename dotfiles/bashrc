@@ -129,6 +129,8 @@ fi
 # convert raw files to dng
 alias dng='wine ~/.wine/drive_c/Program\ Files/Adobe/Adobe\ DNG\ Converter/Adobe\ DNG\ Converter.exe'
 
+alias siril='siril -d "`pwd`"'
+
 unset -f check
 
 
