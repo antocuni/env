@@ -46,6 +46,25 @@ def show(cls, i, no_switch, spawn=None):
     wlist[i].activate()
     return 0
 
+def show_zeal():
+    # ZEAL user contributed docsets:
+    # https://zealusercontributions.vercel.app/
+    wlist = ([w for w in WLIST if w.wm_class == 'zeal.Zeal'])
+    if wlist:
+        # move the window to the current desktop and activate
+        w = wlist[0]
+        desktop = wmctrl.Desktop.get_active()
+        if w.desktop != desktop.num:
+            w.move_to_destktop(desktop.num)
+        w.activate()
+    else:
+        # no window just run zeal. This works in two cases:
+        #  1. if zeal is already in the taskbar, it does the right thing and
+        #     open a window
+        #  2. if zeal hasn't started yet, it opens it
+        os.system('zeal')
+
+
 def cycle(wlist):
     # cycle through the list of windows
     current = wmctrl.Window.get_active()
@@ -87,6 +106,8 @@ def main():
     elif arg == 's':     return show('hexchat.Hexchat', 0, no_switch)
     elif arg == 'prtscrn': return take_screenshot()
     elif arg == 'esc':   return show('goldendict.GoldenDict', 0, no_switch, spawn='goldendict')
+    elif arg == 'F1':
+        show_zeal()
     elif arg == 'F2':
         os.system('/home/antocuni/env/conky/myconky.py')
         os.system('reposition-windows.py')
