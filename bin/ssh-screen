@@ -10,7 +10,9 @@ target=$1
 session=$2
 
 case "$3 $4" in
-    "-O exit")
+    "-O exit" | "-Oexit ")
+        echo "ssh $1 -O cancel"
+        ssh $1 -O cancel  # force-close port forwarding
         echo "ssh $1 -O exit"
         ssh $1 -O exit
         exit
