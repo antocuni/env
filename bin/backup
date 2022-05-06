@@ -8,19 +8,23 @@
 # then run this script
  
 REPOSITORY="/media/antocuni/My Passport/borg-repo/"
- 
+
 borg create --progress --verbose --stats --compression lz4      \
     "$REPOSITORY::home-`date +%Y-%m-%d`"                        \
     /home/antocuni/                                             \
     --exclude-caches	                                        \
     --exclude /home/antocuni/.cache                             \
-    --exclude /home/foto                                        \
+    --exclude /home/antocuni/foto                               \
+    --exclude '*.vmem'
 
 # borg prune -v $REPOSITORY \
     # --keep-daily=1 --keep-weekly=1 --keep-monthly=1
  
 # --- USEFULL SHIT ---
- 
+
+export BORG_REPO="/media/antocuni/My Passport/borg-repo/"
+export BORG_PASSPHRASE="..."
+
 # go in to repo folder, to list available backups:
 #   borg list .
 # to mount one of them:
