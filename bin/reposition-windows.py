@@ -17,10 +17,13 @@ def set_hexchat_font(size):
     os.system("hexchat -e -c 'set text_font Inconsolata Medium %d'" % size)
     os.system("hexchat -e -c 'gui apply'")
 
-def main_dock():
+def main_dock(flavor=None):
     X0 = 0       # x position of the leftmost screen
     X1 = 1440    # x position of the center screen
     X2 = X1+3840 # x position of the rightmost screen
+    PANEL = 0
+    if flavor == 'betahaus':
+        X1 = X2 = 2560
 
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
@@ -34,7 +37,7 @@ def main_dock():
 
     for win in Window.by_class('mail.google.com.Google-chrome'):
         unmaximize(win)
-        win.resize_and_move(x=1440+64, y=0, w=1740, h=1803)
+        win.resize_and_move(x=X1+70, y=0, w=1740, h=1803)
 
     for win in Window.by_class('web.whatsapp.com.Google-chrome'):
         unmaximize(win)
@@ -44,36 +47,41 @@ def main_dock():
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
-        win.set_decorations(True)
-        win.resize_and_move(x=-18, y=1225, w=1476, h=1108)
-        win.sticky()
-
-    mattermost_class = 'mattermost.smithersbet.com.Google-chrome' # chrome webapp
-    #mattermost_class = 'mattermost.Mattermost' # native app
-    for win in Window.by_class(mattermost_class):
-        unmaximize(win)
-        win.set_decorations(False)
-        win.resize_and_move(x=X2, y=0, w=1080, h=956)
+        if flavor == 'betahaus':
+            win.set_decorations(False)
+            win.resize_and_move(x=0, y=480, w=1440, h=770)
+        else:
+            win.set_decorations(True)
+            win.resize_and_move(x=-18, y=1225, w=1476, h=1108)
         win.sticky()
 
     for win in Window.by_class('slack.Slack'):
         unmaximize(win)
-        win.set_decorations(False)
-        win.resize_and_move(x=X2, y=0, w=1080, h=956)
+        if flavor == 'betahaus':
+            win.set_decorations(True)
+            win.resize_and_move(x=X1+70, y=0, w=1740, h=2010)
+        else:
+            win.set_decorations(False)
+            win.resize_and_move(x=X2, y=0, w=1080, h=956)
         win.sticky()
 
     for win in Window.by_class('hexchat.Hexchat'):
         unmaximize(win)
         win.set_decorations(False)
-        win.resize_and_move(x=X2, y=960, w=1080, h=960)
         win.sticky()
-        set_hexchat_font(9)
+        if flavor == 'betahaus':
+            set_hexchat_font(16)
+            win.resize_and_move(x=1280, y=0, w=1280, h=1440)
+        else:
+            set_hexchat_font(9)
+            win.resize_and_move(x=X2, y=960, w=1080, h=960)
 
     for win in Window.by_class('google-chrome.Google-chrome'):
         # position this at the center of the main screen
         W = 2000
         X = X1 + PANEL + (3840-2000-PANEL)/2
-        win.resize_and_move(x=X, y=0, w=W, h=2000)
+        #win.resize_and_move(x=X, y=0, w=W, h=2050)
+        win.resize_and_move(x=X, y=-19, w=W, h=2050)
 
     for win in Window.by_class('vmplayer.Vmplayer'):
         win.move(X1, 0)
@@ -100,19 +108,14 @@ def main_laptop():
     for win in Window.by_class('web.whatsapp.com.Google-chrome'):
         unmaximize(win)
         win.set_decorations(False)
+        win.sticky()
         win.resize_and_move(x=PANEL, y=0, w=1428, h=900)
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
         win.set_decorations(False)
+        win.sticky()
         win.resize_and_move(x=PANEL, y=200, w=1428, h=700)
-
-    mattermost_class = 'mattermost.smithersbet.com.Google-chrome' # chrome webapp
-    #mattermost_class = 'mattermost.Mattermost' # native app
-    for win in Window.by_class(mattermost_class):
-        unmaximize(win)
-        win.set_decorations(False)
-        win.resize_and_move(x=PANEL, y=0, w=1428, h=956)
 
     for win in Window.by_class('hexchat.Hexchat'):
         unmaximize(win)
@@ -125,17 +128,24 @@ def main_laptop():
         # position this at the center of the main screen
         W = 1800
         X = PANEL + (2560-W-PANEL)/2
-        win.resize_and_move(x=X, y=0, w=W, h=1440)
+        # I don't know why, but with y=0 it's not at the actual top. Maybe it
+        # has something to do with chrome's own title bar
+        Y = -20
+        win.resize_and_move(x=X, y=Y, w=W, h=1440)
 
     for win in Window.by_class('conky.conky'):
         win.sticky()
 
 
 def autodetect():
-    USB_KEYBOARD_ID="04f2:0111"
-    ret = os.system('lsusb -d ' + USB_KEYBOARD_ID)
+    DOCKING_USB_KEYBOARD_ID="04f2:0111"
+    BETAHAUS_USB_KEYBOARD_ID="046d:c31c"
+    ret = os.system('lsusb -d ' + DOCKING_USB_KEYBOARD_ID)
     if ret == 0:
         return 'docking'
+    ret = os.system('lsusb -d ' + BETAHAUS_USB_KEYBOARD_ID)
+    if ret == 0:
+        return 'betahaus'
     return 'laptop'
 
 
@@ -159,5 +169,7 @@ if __name__ == '__main__':
         main_emergency()
     elif conf == 'docking':
         main_dock()
+    elif conf == 'betahaus':
+        main_dock(flavor='betahaus')
     else:
         main_laptop()

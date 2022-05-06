@@ -10,8 +10,6 @@ import os
 import wmctrl
 
 CHROME = 'google-chrome.Google-chrome'
-MATTERMOST = 'mattermost.smithersbet.com.Google-chrome' # chrome webapp
-#MATTERMOST = 'mattermost.Mattermost' # native app
 TELEGRAM = 'Telegram.TelegramDesktop'
 #TELEGRAM = 'crx_hadgilakbfohcfcgfbioeeehgpkopaga.Google-chrome' # chrome webapp
 
@@ -57,7 +55,7 @@ def steal_and_show(wm_class, spawn=None, on_already_active=None):
       - 'move_to_0': move it to desktop 0
       - 'killall': runs 'killall %s' % spawn
     """
-    assert on_already_active in (None, 'move_to_0', 'killall')
+    assert on_already_active in (None, 'move_to_0', 'minimize', 'killall')
     # check whether the window exists and spawn if not
     wlist = ([w for w in WLIST if w.wm_class == wm_class])
     if not wlist:
@@ -72,6 +70,8 @@ def steal_and_show(wm_class, spawn=None, on_already_active=None):
         if on_already_active == 'move_to_0':
             win.move_to_destktop(0)
             return 0
+        elif on_already_active == 'minimize':
+            return os.system('xdotool windowminimize %s' % win.id)
         elif on_already_active == 'killall':
             return os.system('killall %s' % spawn)
     #
@@ -118,11 +118,11 @@ def main():
     elif arg == 'q':       return show('web.whatsapp.com.Google-chrome')
     elif arg == 'w':       return show(TELEGRAM)
     elif arg == 'e':       return steal_and_show('mail.google.com.Google-chrome', on_already_active='move_to_0')
-    elif arg == 'a':       return show(MATTERMOST)
+    elif arg == 'a':       return show('slack.Slack')
     elif arg == 's':       return show('hexchat.Hexchat')
     elif arg == 'prtscrn': return take_screenshot()
-    elif arg == 'esc':     return steal_and_show('goldendict.GoldenDict', spawn='goldendict', on_already_active='killall')
-    elif arg == 'F1':      return steal_and_show('zeal.Zeal', spawn='zeal')
+    elif arg == 'esc':     return steal_and_show('goldendict.GoldenDict', spawn='goldendict', on_already_active='minimize')
+    elif arg == 'F1':      return steal_and_show('zeal.Zeal', spawn='zeal', on_already_active='minimize')
     elif arg == 'F2':
         os.system('/home/antocuni/env/conky/myconky.py')
         os.system('reposition-windows.py')

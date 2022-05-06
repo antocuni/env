@@ -1,13 +1,18 @@
 #!/bin/bash
 
 # my usb keyboard
-USB_KEYBOARD_ID="04f2:0111"
+DOCKING_USB_KEYBOARD_ID="04f2:0111"
+BETAHAUS_USB_KEYBOARD_ID="046d:c31c"
 
-if ! lsusb -d $USB_KEYBOARD_ID
+if lsusb -d $DOCKING_USB_KEYBOARD_ID
 then
-    echo "only laptop"
-    ~/.screenlayout/laptop.sh
-else
     echo "docking station"
     ~/.screenlayout/docking.sh
+elif lsusb -d $BETAHAUS_USB_KEYBOARD_ID
+then
+    echo "betahaus"
+    ~/.screenlayout/betahaus.sh
+else
+    echo "only laptop"
+    ~/.screenlayout/laptop.sh
 fi
