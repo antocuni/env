@@ -13,9 +13,21 @@ xkb_symbols "apple_trick" {
 };
 
 
-partial alphanumeric_keys
-xkb_symbols "caps_lock" {
+# old code to map caps_lock to a key
+# partial alphanumeric_keys
+# xkb_symbols "caps_lock" {
 #    key <CAPS> { [ XF86Memo ] };
+# };
+
+# new code: caps lock is Menu, Shift+CapsLock is caps lock
+# https://unix.stackexchange.com/a/128757
+partial modifier_keys
+xkb_symbols "caps_lock" {
+    key <CAPS> {
+        type[Group1] = "TWO_LEVEL",
+        symbols[Group1] = [ Menu, Caps_Lock ],
+        actions[Group1] = [ NoAction(), LockMods(modifiers=Lock) ]
+    };
 };
 
 partial modifier_keys
