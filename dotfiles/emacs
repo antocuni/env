@@ -28,6 +28,7 @@
    (quote
     (auto-revert-find-file-function global-auto-complete-mode-check-buffers recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode global-eldoc-mode-check-buffers global-font-lock-mode-check-buffers epa-file-find-file-hook vc-refresh-state)))
  '(flyspell-issue-message-flag nil)
+ '(git-link-use-commit t)
  '(grep-save-buffers nil)
  '(ibuffer-default-directory "~")
  '(ibuffer-default-sorting-mode (quote filename/process))
@@ -73,7 +74,7 @@
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(package-selected-packages
    (quote
-    (thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
+    (unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(reb-re-syntax (quote string))
  '(rst-level-face-base-color "blackn")
@@ -712,7 +713,7 @@ the new line indented."
 (global-auto-revert-mode 1)
 
 
-;(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 ;(setq before-save-hook nil)
 
 
@@ -993,6 +994,8 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (interactive)
   (delete-indentation 1))
 (global-set-key (kbd "C-^") 'top-join-line)
+
+(global-set-key (kbd "C-M-q") 'unfill-paragraph)
 
 ; disable C++ namespace indentation
 (defconst my-pytorch-cc-style
