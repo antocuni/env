@@ -5,6 +5,8 @@ alignment top_left
 minimum_size 750 1
 gap_y 2320
 
+gap_x 2560 + 78
+
 update_interval 2.0
 total_run_times 0  # run forever
 
@@ -20,7 +22,7 @@ draw_shades yes
 default_color yellow
 
 TEXT
-# ${color}host  :${color} ${nodename} 
+# ${color}host  :${color} ${nodename}
 # ${color}os    :${color white} ${sysname} ${kernel}
 # ${color}CPU   :${color white} ${freq}Mhz ${color white}
 # $hr
@@ -30,7 +32,7 @@ TEXT
 # ${color}ram   :${color white} $memperc% $membar
 # $stippled_hr
 # ${color}/     : ${color white}${fs_free /} ${fs_bar /}
-# ${color}/data : ${color white}${fs_free /data} ${fs_bar /data} 
+# ${color}/data : ${color white}${fs_free /data} ${fs_bar /data}
 # $stippled_hr
 # ${color}date  : ${color white}${time %a,} ${time %B %e %G}
 # ${color}time  : ${color white}${time %H:%M:%S} ${color white}

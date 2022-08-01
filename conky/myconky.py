@@ -34,7 +34,7 @@ class Calendar(Conky):
 def main():
     os.system('killall conky')
     Main().run()
-    Calendar().run()
+    #Calendar().run()
 
 
 if __name__ == '__main__':
