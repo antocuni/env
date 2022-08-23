@@ -70,7 +70,7 @@ def main_dock(flavor=None):
         win.set_decorations(False)
         win.sticky()
         if flavor == 'betahaus':
-            set_hexchat_font(16)
+            set_hexchat_font(18)
             win.resize_and_move(x=1280, y=0, w=1280, h=1440)
         else:
             set_hexchat_font(9)
@@ -138,11 +138,11 @@ def main_laptop():
 
 
 def autodetect():
-    DOCKING_USB_KEYBOARD_ID="04f2:0111"
+    MELE_USB_KEYBOARD_ID="04f2:0111"
     BETAHAUS_USB_KEYBOARD_ID="046d:c31c"
-    ret = os.system('lsusb -d ' + DOCKING_USB_KEYBOARD_ID)
+    ret = os.system('lsusb -d ' + MELE_USB_KEYBOARD_ID)
     if ret == 0:
-        return 'docking'
+        return 'mele'
     ret = os.system('lsusb -d ' + BETAHAUS_USB_KEYBOARD_ID)
     if ret == 0:
         return 'betahaus'
@@ -156,7 +156,7 @@ def main_emergency():
 
 
 if __name__ == '__main__':
-    # usage: reposition-windows.py [autodetect|laptop|docking|emergency]
+    # usage: reposition-windows.py [autodetect|laptop|mele|emergency]
     if len(sys.argv) < 2:
         conf = 'autodetect'
     else:
@@ -167,8 +167,8 @@ if __name__ == '__main__':
 
     if conf == 'emergency':
         main_emergency()
-    elif conf == 'docking':
-        main_dock()
+    elif conf == 'mele':
+        main_dock(flavor='betahaus')
     elif conf == 'betahaus':
         main_dock(flavor='betahaus')
     else:
