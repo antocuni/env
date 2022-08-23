@@ -96,15 +96,16 @@ def notify(summary, body):
     os.system('notify-send "%s" "%s"' % (summary, body))
 
 def take_screenshot():
-    ret = os.system('import /tmp/screenshot.png')
-    if ret != 0:
-        notify('Screenshot failed', 'Cannot run "import"')
-        return ret
-    ret = os.system('xclip -selection clipboard -t image/png -i /tmp/screenshot.png')
-    if ret != 0:
-        notify('Screenshot failed', 'Cannot run "xclip"')
-        return ret
-    return 0
+    return os.system('spectacle -b -r -c')
+    ## ret = os.system('import /tmp/screenshot.png')
+    ## if ret != 0:
+    ##     notify('Screenshot failed', 'Cannot run "import"')
+    ##     return ret
+    ## ret = os.system('xclip -selection clipboard -t image/png -i /tmp/screenshot.png')
+    ## if ret != 0:
+    ##     notify('Screenshot failed', 'Cannot run "xclip"')
+    ##     return ret
+    ## return 0
 
 def main():
     arg = sys.argv[1]
@@ -112,8 +113,8 @@ def main():
 
     if   arg == 'emacs':   return show('emacs.Emacs')
     elif arg == 'term':    return show('gnome-terminal-server.Gnome-terminal', spawn='autoterm')
-    elif arg == '1':       return show(CHROME, 0)
-    elif arg == '2':       return show(CHROME, 1)
+    elif arg == '1':       return show(CHROME, 1)
+    elif arg == '2':       return show(CHROME, 0)
     elif arg == '3':       return show(CHROME, 'cycle')
     elif arg == 'q':       return show('web.whatsapp.com.Google-chrome')
     elif arg == 'w':       return show(TELEGRAM)
@@ -130,6 +131,7 @@ def main():
     elif arg == 'F3':      return os.system('kbd')
     elif arg == 'F11':     return os.system('reposition-windows.py emergency')
     elif arg == 'F12':     return os.system('auto-xrandr.sh')
+    elif arg == 'pause':   return os.system('systemctl suspend')
     else:
         print 'Unknown arg:', arg
 
