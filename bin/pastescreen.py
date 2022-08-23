@@ -19,7 +19,7 @@ else:
     os.system('import %s' % fpath)
     os.system('echo -n wait | xsel -i -b')
 
-os.system('scp %s antocuni.eu:www/antocuni.eu/misc/img' % fpath)
+os.system('scp %s aws:www/antocuni.eu/misc/img' % fpath)
 
 URL = 'http://antocuni.eu/misc/img/%s' % fname
 print URL
