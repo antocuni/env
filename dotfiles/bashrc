@@ -153,7 +153,11 @@ case $USER--`hostname` in
     root--*)                 HCOL=31 ;; # red
     *--bart)                 HCOL=32 ;; # green
     *--homer)                HCOL=33 ;; # yellow
-    *--maggie)               HCOL=32 ;; # green (raspberry)
+
+    # raspberries
+    *--maggie)               HCOL=32 ;; # green
+    *--pi02)                 HCOL=35 ;; # magenta
+    *--pi4)                  HCOL=31 ;; # red
 
     *--qgpu)                 HCOL=32 ;; # green
     *--qgpu2)                HCOL=35 ;; # magenta
@@ -161,6 +165,7 @@ case $USER--`hostname` in
     *--pytorch-dev)          HCOL=37 ;; # white
 
     *)                       HCOL=37 ;; # white
+    #HCOL=36 # blue
 esac
 
 # if we are not on SSH, always use an yellow prompt
