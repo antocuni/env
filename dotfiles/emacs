@@ -74,7 +74,7 @@
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(package-selected-packages
    (quote
-    (unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
+    (lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(reb-re-syntax (quote string))
  '(rst-level-face-base-color "blackn")
@@ -603,6 +603,7 @@ the new line indented."
   (let ((sum 0))
     (while (re-search-forward "[0-9]*\\.?[0-9]+" nil t)
       (setq sum (+ sum (string-to-number (match-string 0)))))
+    (kill-new (number-to-string sum))
     (message "Sum: %f" sum)))
 
 

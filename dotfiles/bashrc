@@ -87,6 +87,10 @@ function gwenview()
     QT_SCREEN_SCALE_FACTORS= /usr/bin/gwenview "$@"
 }
 
+function activate_emsdk() {
+    source ~/anaconda/emsdk/emsdk_env.sh
+}
+
 gdbem () { emacs -nw --eval "(gdb \"gdb --cd=`pwd` --annotate=3 $*\")";}
 
 
@@ -344,3 +348,10 @@ then
     export PATH=~/ccache/lib:$PATH
     export CUDA_NVCC_EXECUTABLE=~/ccache/cuda/nvcc
 fi
+
+# =========
+#    nvm
+# =========
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
