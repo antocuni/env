@@ -96,7 +96,18 @@ def notify(summary, body):
     os.system('notify-send "%s" "%s"' % (summary, body))
 
 def take_screenshot():
-    return os.system('spectacle -b -r -c')
+    # spectacle doesn't have a command line option to hide the mouse
+    # pointer. As a workaround, I move the mouse in a corner, start
+    # spectacle, mouve the mouse back, and wait for spectacle to finish
+    cmd = """
+    eval $(xdotool getmouselocation --shell);
+    xdotool mousemove 10000 10000
+    spectacle -b -r -c &
+    sleep 0.5
+    xdotool mousemove $X $Y
+    wait
+    """
+    return os.system(cmd)
     ## ret = os.system('import /tmp/screenshot.png')
     ## if ret != 0:
     ##     notify('Screenshot failed', 'Cannot run "import"')
