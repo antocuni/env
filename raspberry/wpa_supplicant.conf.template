@@ -1,0 +1,14 @@
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=IT
+
+
+network={
+        ssid="the-name-of-the-network"
+        psk="password1"
+}
+
+network={
+        ssid="the-name-of-another-networkd"
+        psk="password2"
+}
