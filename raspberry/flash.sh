@@ -22,6 +22,7 @@ if [ "$#" -eq 0 ]; then
 elif [ "$#" -eq 2 ]; then
     IMAGE=$1
     DEV=$2
+    ls -lh $IMAGE
     CMD="dd if=$IMAGE of=$DEV bs=4M status=progress"
     echo $CMD
     echo "Waiting 5 seconds before starting..."
