@@ -139,11 +139,13 @@ def main_laptop():
 
 def autodetect():
     MELE_USB_KEYBOARD_ID="04f2:0111"
-    BETAHAUS_USB_KEYBOARD_ID="046d:c31c"
+    BETAHAUS_USB_KEYBOARD_ID="046d:c31c"  # logitech wired
+    BERLIN_USB_KEYBOARD_ID="046d:c52b"    # logitech wireless
+
     ret = os.system('lsusb -d ' + MELE_USB_KEYBOARD_ID)
     if ret == 0:
         return 'mele'
-    ret = os.system('lsusb -d ' + BETAHAUS_USB_KEYBOARD_ID)
+    ret = os.system('lsusb -d ' + BERLIN_USB_KEYBOARD_ID)
     if ret == 0:
         return 'betahaus'
     return 'laptop'
