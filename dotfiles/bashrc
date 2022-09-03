@@ -157,6 +157,7 @@ case $USER--`hostname` in
     # raspberries
     *--maggie)               HCOL=32 ;; # green
     *--pi02)                 HCOL=35 ;; # magenta
+    *--skyremote)            HCOL=35 ;; # magenta
     *--pi4)                  HCOL=31 ;; # red
 
     *--qgpu)                 HCOL=32 ;; # green
