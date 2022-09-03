@@ -28,7 +28,7 @@ REPOS = [
 #    ('hg', 'https://bitbucket.org/pypy/pyrepl', '~/src/pyrepl'),
 ]
 
-APT_PACKAGES = ['emacs', 'git', 'build-essential', 'python-dev']
+APT_PACKAGES = ['git', 'build-essential', 'python-dev', 'mg', 'file', 'time']
 APT_PACKAGES_GUI = ['wmctrl', 'libgtk2.0-dev', 'fonts-inconsolata', 'xsel',
                     'hexchat']
 
@@ -70,6 +70,7 @@ def main():
     clone_repos()
     create_symlinks()
     apt_install(APT_PACKAGES)
+    apt_install_emacs(gui)
     if gui:
         GUI_SENTINEL.write_text('this file tells home_setup.py that this is a GUI environment\n')
         apt_install(APT_PACKAGES_GUI)
@@ -163,8 +164,14 @@ def apt_install(package_list):
     ret = os.system('dpkg -s %s >/dev/null 2>&1' % packages)
     if ret != 0:
         print()
-        print(color('install apt-packages', YELLOW))
+        print(color('install apt-packages:', YELLOW), packages)
         sudo('apt-get install %s' % packages)
+
+def apt_install_emacs(gui):
+    if gui:
+        apt_install(['emacs'])
+    else:
+        apt_install(['emacs-nox'])
 
 def apt_install_zeal():
     files = list(Path('/etc/apt/sources.list.d').glob('zeal-developers*'))
