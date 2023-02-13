@@ -28,6 +28,7 @@
    (quote
     (auto-revert-find-file-function global-auto-complete-mode-check-buffers recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode global-eldoc-mode-check-buffers global-font-lock-mode-check-buffers epa-file-find-file-hook vc-refresh-state)))
  '(flyspell-issue-message-flag nil)
+ '(frame-zoom-font-difference 4)
  '(git-link-use-commit t)
  '(grep-save-buffers nil)
  '(ibuffer-default-directory "~")
@@ -74,7 +75,7 @@
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(package-selected-packages
    (quote
-    (lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
+    (lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo)))
  '(python-fill-docstring-style (quote django))
  '(reb-re-syntax (quote string))
  '(rst-level-face-base-color "blackn")
@@ -359,6 +360,7 @@
 (require 'find-file-in-project)
 (global-set-key [(control x) (f)] 'find-file-in-project)
 
+(global-set-key (kbd "C-x C-Q") 'bury-buffer)
 
 ; command on regions
 ; -----------------------
@@ -471,6 +473,17 @@
 (global-set-key [(shift button4)] 'my-scroll-down-one)
 (global-set-key [(control down)] 'my-scroll-up-one)
 (global-set-key [(control up)] 'my-scroll-down-one)
+
+(require 'zoom-frm)
+(define-key ctl-x-map [(control ?+)] 'zoom-in/out)
+(define-key ctl-x-map [(control ?-)] 'zoom-in/out)
+(define-key ctl-x-map [(control ?=)] 'zoom-in/out)
+(define-key ctl-x-map [(control ?0)] 'zoom-in/out)
+
+(global-set-key (vector (list 'control mouse-wheel-down-event))
+                'zoom-all-frames-in)
+(global-set-key (vector (list 'control  mouse-wheel-up-event))
+                'zoom-all-frames-out)
 
 ; rectangle selection
 ; -----------------------
