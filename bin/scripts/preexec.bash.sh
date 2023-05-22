@@ -143,7 +143,7 @@ function preexec_xterm_title_install () {
     else
         MY_HOSTNAME="$HOSTNAME"
     fi
-    
+
     if [ -n "$SSH_CLIENT" ]
     then
         HOST="$MY_HOSTNAME: "
@@ -151,7 +151,7 @@ function preexec_xterm_title_install () {
 
     function precmd () {
         WD=`dirs -0`
-        WD=`echo $WD | sed 's:~/pypy/\(.*\):\1:'`
+        WD=`echo $WD | sed 's:~/pypy/\(.*\):\1:' | sed 's:~/anaconda/\(.*\):\1:'`
         WD=${WD/trunk\/pypy/pypy}
         preexec_xterm_title "${HOST}${USER/antocuni/} $WD $PROMPTCHAR"
         if [[ "$TERM" == screen ]]
