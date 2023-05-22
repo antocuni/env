@@ -67,6 +67,7 @@ export CLASSPATH=$CLASSPATH:/usr/share/java/activation.jar:/usr/share/java/asm-a
 # ================
 export IGNOREEOF=10
 export LESS="-R $LESS"
+export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
 export FIGNORE='~'
 export BROWSER="firefox:mozilla"
 export EDITOR="mg"
@@ -83,3 +84,4 @@ export NO_AT_BRIDGE=1
 if [ -f ~/.bashrc ]; then
 	. ~/.bashrc
 fi
+. "$HOME/.cargo/env"
