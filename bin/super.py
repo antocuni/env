@@ -15,7 +15,7 @@ TELEGRAM = 'Telegram.TelegramDesktop'
 
 WLIST = wmctrl.Window.list()
 
-def show(wm_class, i=0, spawn=None):
+def show(wm_class, i=0, spawn=None, on_already_active=None):
     """
     Activate the i-th window of the given class.
     If there are less windows than i, activate the first.
@@ -42,6 +42,13 @@ def show(wm_class, i=0, spawn=None):
     if i >= len(wlist):
         # not enough windows, fall back to the first
         i = 0
+
+    # check whether the window is already active
+    win = wlist[i]
+    current = wmctrl.Window.get_active()
+    if win.id == current.id and on_already_active == 'minimize':
+        return os.system('xdotool windowminimize %s' % win.id)
+
     wlist[i].activate()
     return 0
 
@@ -71,7 +78,7 @@ def steal_and_show(wm_class, spawn=None, on_already_active=None):
             win.move_to_destktop(0)
             return 0
         elif on_already_active == 'minimize':
-            return os.system('xdotool windowminimize %s' % win.id)
+            return minimize(win)
         elif on_already_active == 'killall':
             return os.system('killall %s' % spawn)
     #
@@ -81,14 +88,29 @@ def steal_and_show(wm_class, spawn=None, on_already_active=None):
         win.move_to_destktop(desktop.num)
     win.activate()
 
+def minimize(win):
+    return os.system('xdotool windowminimize %s' % win.id)
+
+def cycle_classes(*wm_classes):
+    wlist = []
+    for wm_class in wm_classes:
+        wlist += wmctrl.Window.by_class(wm_class)
+    cycle(wlist)
+
+
 def cycle(wlist):
     # cycle through the list of windows
     current = wmctrl.Window.get_active()
-    if current in wlist:
+    if current == wlist[-1]:
+        # this was the last, minimize everything
+        for w in wlist:
+            minimize(w)
+    elif current in wlist:
+        # we are someone in the middle, activate the next
         i = wlist.index(current)
-        i = (i+1) % len(wlist)
-        wlist[i].activate()
+        wlist[i+1].activate()
     else:
+        # activate the first
         wlist[0].activate()
     return 0
 
@@ -127,11 +149,13 @@ def main():
     elif arg == '1':       return show(CHROME, 1)
     elif arg == '2':       return show(CHROME, 0)
     elif arg == '3':       return show(CHROME, 'cycle')
-    elif arg == 'q':       return show('web.whatsapp.com.Google-chrome')
-    elif arg == 'w':       return show(TELEGRAM)
+    elif arg == 'q':       return show('web.whatsapp.com.Google-chrome', on_already_active='minimize')
+    elif arg == 'w':       return show(TELEGRAM, on_already_active='minimize')
     elif arg == 'e':       return steal_and_show('mail.google.com.Google-chrome', on_already_active='move_to_0')
-    elif arg == 'a':       return show('slack.Slack')
-    elif arg == 's':       return show('hexchat.Hexchat')
+    #elif arg == 'a':       return show('slack.Slack', on_already_active='minimize')
+    elif arg == 'a':       return cycle_classes('slack.Slack', 'discord.discord')
+
+    elif arg == 's':       return show('hexchat.Hexchat', on_already_active='minimize')
     elif arg == 'prtscrn': return take_screenshot()
     elif arg == 'esc':     return steal_and_show('goldendict.GoldenDict', spawn='goldendict', on_already_active='minimize')
     elif arg == 'F1':      return steal_and_show('zeal.Zeal', spawn='zeal', on_already_active='minimize')

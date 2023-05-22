@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import sys
 import os
@@ -55,7 +55,7 @@ def main_dock(flavor=None):
             win.resize_and_move(x=-18, y=1225, w=1476, h=1108)
         win.sticky()
 
-    for win in Window.by_class('slack.Slack'):
+    for win in Window.by_class('slack.Slack') + Window.by_class('discord.discord'):
         unmaximize(win)
         if flavor == 'betahaus':
             win.set_decorations(True)
@@ -122,7 +122,7 @@ def main_laptop():
         win.set_decorations(False)
         win.sticky()
         win.resize_and_move(x=PANEL, y=1440-960, w=1428, h=960)
-        set_hexchat_font(13)
+        set_hexchat_font(16)
 
     for win in Window.by_class('google-chrome.Google-chrome'):
         # position this at the center of the main screen
@@ -132,6 +132,12 @@ def main_laptop():
         # has something to do with chrome's own title bar
         Y = -20
         win.resize_and_move(x=X, y=Y, w=W, h=1440)
+
+    for win in Window.by_class('slack.Slack') + Window.by_class('discord.discord'):
+        unmaximize(win)
+        win.set_decorations(False)
+        win.resize_and_move(x=PANEL, y=0, w=1900, h=1440)
+        win.sticky()
 
     for win in Window.by_class('conky.conky'):
         win.sticky()
