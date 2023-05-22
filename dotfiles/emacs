@@ -1023,3 +1023,8 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 ; disable automatic indent of random stuff
 ; https://emacs.stackexchange.com/questions/20896/change-the-behaviour-of-ret-with-electric-indent-to-only-indent-the-new-line
 (setq-default electric-indent-inhibit t)
+
+(defun kill-emacs-and-save ()
+  (interactive)
+  (desktop-save "~/.emacs.d/") ;; use (desktop-read) to reopen all the files
+  (kill-emacs))
