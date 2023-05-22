@@ -21,11 +21,19 @@
 [pull]
   ff = yes
 
+
+# this is the default color theme for diff, but we also include
+# /tmp/gitconfig_colordiff: this is overwritten by
+# ~/bin/switch-gnome-terminal-profile
 [color "diff"]
   meta = white bold
   frag = magenta bold
   old = white
   new = yellow bold
+
+[include]
+  path="/tmp/gitconfig_colordiff"
+
 [push]
 	default = simple
 	followTags = true
