@@ -86,7 +86,7 @@ def main_dock(flavor=None):
         W = 2000
         X = X1 + PANEL + (3840-2000-PANEL)/2
         #win.resize_and_move(x=X, y=0, w=W, h=2050)
-        win.resize_and_move(x=X, y=-19, w=W, h=2050)
+        win.resize_and_move(x=X, y=-54, w=W, h=2050)
 
     for win in Window.by_class('vmplayer.Vmplayer'):
         win.move(X1, 0)
