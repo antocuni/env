@@ -1,11 +1,13 @@
 # -*- mode: conf -*-
 
-xinerama_head 1
-alignment top_left
-minimum_size 750 1
-gap_y 2320
+xinerama_head 0
+alignment bottom_left
+minimum_size 550 1
 
-gap_x 2560 + 78
+ gap_y 0
+# gap_x 56
+# gap_y 2320
+
 
 update_interval 2.0
 total_run_times 0  # run forever
@@ -53,17 +55,17 @@ ${color lightgrey} ${top name 8} ${top cpu 8} ${top mem 8}
 ${color lightgrey} ${top name 9} ${top cpu 9} ${top mem 9}
 ${color lightgrey} ${top name 10} ${top cpu 10} ${top mem 10}
 
-${voffset -240}${offset 400}${color red}Mem usage          CPU%   MEM%
-${offset 400}${color #ddaa00} ${top_mem name 1} ${top_mem cpu 1} ${top_mem mem 1}
-${offset 400}${color lightgrey} ${top_mem name 2} ${top_mem cpu 2} ${top_mem mem 2}
-${offset 400}${color lightgrey} ${top_mem name 3} ${top_mem cpu 3} ${top_mem mem 3}
-${offset 400}${color lightgrey} ${top_mem name 4} ${top_mem cpu 4} ${top_mem mem 4}
-${offset 400}${color lightgrey} ${top_mem name 5} ${top_mem cpu 5} ${top_mem mem 5}
-${offset 400}${color lightgrey} ${top_mem name 6} ${top_mem cpu 6} ${top_mem mem 6}
-${offset 400}${color lightgrey} ${top_mem name 7} ${top_mem cpu 7} ${top_mem mem 7}
-${offset 400}${color lightgrey} ${top_mem name 8} ${top_mem cpu 8} ${top_mem mem 8}
-${offset 400}${color lightgrey} ${top_mem name 9} ${top_mem cpu 9} ${top_mem mem 9}
-${offset 400}${color lightgrey} ${top_mem name 10} ${top_mem cpu 10} ${top_mem mem 10}
+${voffset -175}${offset 290}${color red}Mem usage          CPU%   MEM%
+${offset 290}${color #ddaa00} ${top_mem name 1} ${top_mem cpu 1} ${top_mem mem 1}
+${offset 290}${color lightgrey} ${top_mem name 2} ${top_mem cpu 2} ${top_mem mem 2}
+${offset 290}${color lightgrey} ${top_mem name 3} ${top_mem cpu 3} ${top_mem mem 3}
+${offset 290}${color lightgrey} ${top_mem name 4} ${top_mem cpu 4} ${top_mem mem 4}
+${offset 290}${color lightgrey} ${top_mem name 5} ${top_mem cpu 5} ${top_mem mem 5}
+${offset 290}${color lightgrey} ${top_mem name 6} ${top_mem cpu 6} ${top_mem mem 6}
+${offset 290}${color lightgrey} ${top_mem name 7} ${top_mem cpu 7} ${top_mem mem 7}
+${offset 290}${color lightgrey} ${top_mem name 8} ${top_mem cpu 8} ${top_mem mem 8}
+${offset 290}${color lightgrey} ${top_mem name 9} ${top_mem cpu 9} ${top_mem mem 9}
+${offset 290}${color lightgrey} ${top_mem name 10} ${top_mem cpu 10} ${top_mem mem 10}
 
 # ${color}I/O ${alignr 1}READ
 # ${color #ddaa00} ${top_io name 1} ${alignr 1}${top_io io_read 1}
