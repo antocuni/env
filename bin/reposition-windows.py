@@ -29,9 +29,6 @@ def main_dock(flavor=None):
     ## BIG_W = 3840-70 # 70 is the size of panel
     ## COLUMN = BIG_W / 3.0 # let's divide the screen into 3 columns (plus the panel)
 
-    for win in Window.by_class('xterm.XTerm'):
-        win.resize_and_move(x=0, y=500, w=1000, h=1000)
-
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
         win.set_decorations(False)
