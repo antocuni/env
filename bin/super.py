@@ -146,8 +146,8 @@ def main():
 
     if   arg == 'emacs':   return show('emacs.Emacs')
     elif arg == 'term':    return show('gnome-terminal-server.Gnome-terminal', spawn='autoterm')
-    elif arg == '1':       return show(CHROME, 1)
-    elif arg == '2':       return show(CHROME, 0)
+    elif arg == '1':       return show(CHROME, 1, on_already_active='minimize')
+    elif arg == '2':       return show(CHROME, 0, on_already_active='minimize')
     elif arg == '3':       return show(CHROME, 'cycle')
     elif arg == 'q':       return show('web.whatsapp.com.Google-chrome', on_already_active='minimize')
     elif arg == 'w':       return show(TELEGRAM, on_already_active='minimize')
