@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 """
 ZEAL user contributed docsets:
@@ -34,7 +34,7 @@ def show(wm_class, i=0, spawn=None, on_already_active=None):
         # no windows found
         if spawn:
             return os.system(spawn)
-        print 'No windows found: %s' % wm_class
+        print('No windows found: %s' % wm_class)
         return 1
     #
     if i == 'cycle':
@@ -168,7 +168,7 @@ def main():
     elif arg == 'F12':     return os.system('auto-xrandr.sh')
     elif arg == 'pause':   return os.system('systemctl suspend')
     else:
-        print 'Unknown arg:', arg
+        print('Unknown arg:', arg)
 
 
 

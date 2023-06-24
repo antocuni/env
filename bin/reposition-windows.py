@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 import sys
 import os
@@ -23,12 +23,20 @@ def main_dock(flavor=None):
     X2 = X1+3840 # x position of the rightmost screen
     PANEL = 0
     if flavor == 'betahaus':
-        X1 = X2 = 2560
+        #X1 = X2 = 2560
+        X1 = 0
+
+    ## BIG_W = 3840-70 # 70 is the size of panel
+    ## COLUMN = BIG_W / 3.0 # let's divide the screen into 3 columns (plus the panel)
+
+    for win in Window.by_class('xterm.XTerm'):
+        win.resize_and_move(x=0, y=500, w=1000, h=1000)
 
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
         win.set_decorations(False)
         win.resize_and_move(x=X1+1806, y=0, w=2036, h=1900)
+        #win.resize_and_move(x=X1+70+COLUMN, y=0, w=COLUMN*2, h=1900)
 
     for win in Window.by_role('autoterm'):
         unmaximize(win)

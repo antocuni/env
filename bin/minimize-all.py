@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 import sys
 import os
@@ -22,7 +22,7 @@ def main():
 
     cmd = ' '.join(cmd)
     os.system('xdotool %s' % cmd)
-    
+
 
 if __name__ == '__main__':
     main()
