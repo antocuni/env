@@ -274,19 +274,19 @@ unset GTK2_RC_FILES
 #    virtualenvwrapper
 # =======================
 
-does_function_exist() {
-    declare -f -F $1 > /dev/null
-    return $?
-}
+# does_function_exist() {
+#     declare -f -F $1 > /dev/null
+#     return $?
+# }
 
-# don't re-evaluate virtualenvwrapper if it already exists. It takes ~0.4
-# seconds on my machine :(
-if ! does_function_exist workon && [ -f ~/.local/bin/virtualenvwrapper.sh ]
-then
-    export WORKON_HOME=~/.virtualenvs
-    mkdir -p $WORKON_HOME
-    source ~/.local/bin/virtualenvwrapper.sh
-fi
+# # don't re-evaluate virtualenvwrapper if it already exists. It takes ~0.4
+# # seconds on my machine :(
+# if ! does_function_exist workon && [ -f ~/.local/bin/virtualenvwrapper.sh ]
+# then
+#     export WORKON_HOME=~/.virtualenvs
+#     mkdir -p $WORKON_HOME
+#     source ~/.local/bin/virtualenvwrapper.sh
+# fi
 
 
 
@@ -300,23 +300,23 @@ stty -ixon
 #    start bash-dirhist, if present
 # ====================================
 
-case $0 in
-    -*)
-        # I am not sure why, but on login shell (i.e. whose name starts by
-        # "-"), exec()ing bash-dirhist hangs. This happens e.g. if you login
-        # from a tty
-        ;;
-    *bash-dirhist)
-        # we are already running bash-dirhist, nothing to do
-        ;;
-    *)
-        # try to run bash-dirhist
-        if [ -f $LOCAL/bin/bash-dirhist ]
-        then
-            exec $LOCAL/bin/bash-dirhist
-        fi
-        ;;
-esac
+# case $0 in
+#     -*)
+#         # I am not sure why, but on login shell (i.e. whose name starts by
+#         # "-"), exec()ing bash-dirhist hangs. This happens e.g. if you login
+#         # from a tty
+#         ;;
+#     *bash-dirhist)
+#         # we are already running bash-dirhist, nothing to do
+#         ;;
+#     *)
+#         # try to run bash-dirhist
+#         if [ -f $LOCAL/bin/bash-dirhist ]
+#         then
+#             exec $LOCAL/bin/bash-dirhist
+#         fi
+#         ;;
+# esac
 
 # ==========================
 #    Needed for Adobe AIR
