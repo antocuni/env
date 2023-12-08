@@ -4,8 +4,8 @@ xinerama_head 0
 alignment bottom_left
 minimum_size 550 1
 
- gap_y 0
-# gap_x 56
+gap_x 61
+gap_y 8
 # gap_y 2320
 
 
