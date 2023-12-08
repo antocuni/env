@@ -3,8 +3,26 @@
 # look into the help menu to start the inspector after setting this env var
 #export GTK_DEBUG=interactive
 
-DIR=~/env/hacks/gnome-terminal-hack
-export TERM=xterm-256color
-export GTK2_RC_FILES=$DIR/gtkrc
-export LD_PRELOAD=$DIR/bottomtab.so
-gnome-terminal --load-config $DIR/autoterm-config
+# DIR=~/env/hacks/gnome-terminal-hack
+# export TERM=xterm-256color
+# export GTK2_RC_FILES=$DIR/gtkrc
+# export LD_PRELOAD=$DIR/bottomtab.so
+# gnome-terminal --load-config $DIR/autoterm-config
+
+cat > /tmp/autoterm-kitty-session.conf <<EOF
+# create for tabs
+
+new_tab
+launch
+
+new_tab
+launch
+
+new_tab
+launch
+
+new_tab
+launch
+EOF
+
+kitty --class autoterm --session /tmp/autoterm-kitty-session.conf
