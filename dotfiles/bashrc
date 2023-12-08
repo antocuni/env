@@ -87,12 +87,9 @@ function gwenview()
     QT_SCREEN_SCALE_FACTORS= /usr/bin/gwenview "$@"
 }
 
-function activate_emsdk() {
-    source ~/anaconda/emsdk/emsdk_env.sh
-}
-
 gdbem () { emacs -nw --eval "(gdb \"gdb --cd=`pwd` --annotate=3 $*\")";}
 
+if [ -t 1 ] ; then alias cal="ncal -b" ; else alias cal="/usr/bin/cal" ; fi
 
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
@@ -261,13 +258,17 @@ elif [[ -f /etc/DIR_COLORS ]]; then
     eval `dircolors -b /etc/DIR_COLORS`
 fi
 
-if [ "$TERM" != "emacs" ] && [ "$TERM" != "dumb" ] && [ "$TERM" != "linux" ]
-then
-    . ~/bin/scripts/preexec.bash.sh
-    preexec_xterm_title_install
-fi
 
-unset GTK2_RC_FILES
+## we no longer need to enable this because kitty has native shell integration
+## and supports it natively
+
+# if [ "$TERM" != "emacs" ] && [ "$TERM" != "dumb" ] && [ "$TERM" != "linux" ]
+# then
+#     . ~/bin/scripts/preexec.bash.sh
+#     preexec_xterm_title_install
+# fi
+
+# unset GTK2_RC_FILES
 
 
 # =======================
