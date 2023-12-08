@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 """
 ZEAL user contributed docsets:
@@ -9,6 +9,8 @@ import sys
 import os
 import wmctrl
 
+#TERMINAL = 'gnome-terminal-server.Gnome-terminal'
+TERMINAL = 'autoterm.autoterm'
 CHROME = 'google-chrome.Google-chrome'
 TELEGRAM = 'Telegram.TelegramDesktop'
 #TELEGRAM = 'crx_hadgilakbfohcfcgfbioeeehgpkopaga.Google-chrome' # chrome webapp
@@ -97,7 +99,6 @@ def cycle_classes(*wm_classes):
         wlist += wmctrl.Window.by_class(wm_class)
     cycle(wlist)
 
-
 def cycle(wlist):
     # cycle through the list of windows
     current = wmctrl.Window.get_active()
@@ -114,6 +115,19 @@ def cycle(wlist):
         wlist[0].activate()
     return 0
 
+def focus_mode():
+    current = wmctrl.Window.get_active()
+    if current.wm_class in (TERMINAL, 'emacs.Emacs'):
+        to_keep = wmctrl.Window.by_class(TERMINAL)
+        to_keep += wmctrl.Window.by_class('emacs.Emacs')
+    else:
+        to_keep = [current]
+
+    wlist = wmctrl.Window.list()
+    for win in wlist:
+        if win not in to_keep:
+            minimize(win)
+
 def notify(summary, body):
     os.system('notify-send "%s" "%s"' % (summary, body))
 
@@ -121,31 +135,36 @@ def take_screenshot():
     # spectacle doesn't have a command line option to hide the mouse
     # pointer. As a workaround, I move the mouse in a corner, start
     # spectacle, mouve the mouse back, and wait for spectacle to finish
+    #
+    # UPDATE: in theory, spectacle has a --copy-image option, but it doesn't
+    # seem to work now. Instead, let's save the screenshot to a file and copy
+    # it with xclip
+    #cmd = os.system('import /tmp/screenshot.png')
     cmd = """
     eval $(xdotool getmouselocation --shell);
     xdotool mousemove 10000 10000
-    spectacle -b -r -c &
+    #spectacle --b -r -c &
+    spectacle --background --region -o /tmp/screenshot.png &
     sleep 0.5
     xdotool mousemove $X $Y
     wait
     """
-    return os.system(cmd)
-    ## ret = os.system('import /tmp/screenshot.png')
-    ## if ret != 0:
-    ##     notify('Screenshot failed', 'Cannot run "import"')
-    ##     return ret
-    ## ret = os.system('xclip -selection clipboard -t image/png -i /tmp/screenshot.png')
-    ## if ret != 0:
-    ##     notify('Screenshot failed', 'Cannot run "xclip"')
-    ##     return ret
-    ## return 0
+    ret = os.system(cmd)
+    if ret != 0:
+        notify('Screenshot failed', 'Cannot run "import"')
+        return ret
+    ret = os.system('xclip -selection clipboard -t image/png -i /tmp/screenshot.png')
+    if ret != 0:
+        notify('Screenshot failed', 'Cannot run "xclip"')
+        return ret
+    return 0
 
-def main():
-    arg = sys.argv[1]
-    no_switch = '--no-switch' in sys.argv
+def main(argv):
+    arg = argv[1]
+    no_switch = '--no-switch' in argv
 
     if   arg == 'emacs':   return show('emacs.Emacs')
-    elif arg == 'term':    return show('gnome-terminal-server.Gnome-terminal', spawn='autoterm')
+    elif arg == 'term':    return show(TERMINAL, spawn='autoterm')
     elif arg == '1':       return show(CHROME, 1, on_already_active='minimize')
     elif arg == '2':       return show(CHROME, 0, on_already_active='minimize')
     elif arg == '3':       return show(CHROME, 'cycle')
@@ -167,10 +186,11 @@ def main():
     elif arg == 'F11':     return os.system('reposition-windows.py emergency')
     elif arg == 'F12':     return os.system('auto-xrandr.sh')
     elif arg == 'pause':   return os.system('systemctl suspend')
+    elif arg == 'backspace': return focus_mode()
     else:
         print('Unknown arg:', arg)
 
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))
