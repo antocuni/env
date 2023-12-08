@@ -29,7 +29,7 @@ def startup():
             m = __import__(name, __main__.__dict__, __main__.__dict__, [])
             __main__.__dict__[name] = m
         return m
-    
+
     if sys.version_info < (2,2):
 
         class ModuleLoader:
@@ -44,9 +44,9 @@ def startup():
             def __delattr__(self, attr):
                 delattr(self.__load__(), attr)
         ModuleLoader.__load__ = loadmodule
-        
+
     else:
-        
+
         class ModuleLoader(type(__main__)):
             __slots__ = []
             def __init__(self, name):
@@ -102,7 +102,7 @@ def startup():
     #  Local .pystartup file
     #
     import os, __main__
-    
+
     if os.path.isfile('.pystartup'):
         execfile('.pystartup', __main__.__dict__)
 
@@ -116,5 +116,6 @@ try:
 except NameError:
     pass
 
+sys.antocuni_startup = True
 import fancycompleter
 fancycompleter.interact(persist_history=True)
