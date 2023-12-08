@@ -48,15 +48,15 @@ class DCIM:
             self.dst.joinpath('last_imported.txt').write_text(f.name)
 
 def main():
-    print('XXXX this is wrong!')
-    print('if f.name > self.last_imported:')
-    print('consider the case: IMG_6963.JPG and MVI_6962.MP4')
-    return
+    ## print('XXXX this is wrong!')
+    ## print('if f.name > self.last_imported:')
+    ## print('consider the case: IMG_6963.JPG and MVI_6962.MP4')
+    ## return
 
     if len(sys.argv) != 3:
         print('Usage: dcim.py FROM TO')
         print('Example:')
-        print('    dcim.py /media/antocuni/6330-3432/DCIM/100CANON/ ~/foto/unsorted/')
+        print('    dcim.py /media/antocuni/6330-3432/DCIM/101CANON/ ~/foto/unsorted/')
         return 1
     src = sys.argv[1]
     dst = sys.argv[2]

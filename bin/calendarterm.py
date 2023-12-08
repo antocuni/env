@@ -71,6 +71,7 @@ def main():
     lines_printed = 0
     start = datetime.date.today()
     events = icalevents.events(URL, start=start)
+    #events = icalevents.events(file="/tmp/download/acuni@anaconda.com.ics", start=start)
     events.sort()
     last_day = datetime.date(1, 1, 1) # dummy day
     for ev in events:
