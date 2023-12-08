@@ -13,13 +13,20 @@ TELEGRAM = 'Telegram.TelegramDesktop' # telegram native app
 def unmaximize(win):
     win.set_properties(['remove', 'maximized_vert', 'maximized_horz'])
 
+def maximize(win):
+    win.set_properties(['add', 'maximized_vert', 'maximized_horz'])
+
 def set_hexchat_font(size):
     os.system("hexchat -e -c 'set text_font Inconsolata Medium %d'" % size)
     os.system("hexchat -e -c 'gui apply'")
 
+def set_emacs_font_height(h):
+    elisp = "(set-face-attribute 'default (selected-frame) :height %d)" % h
+    os.system('emacsclient -e "%s"' % elisp)
+
 def main_dock(flavor=None):
     X0 = 0       # x position of the leftmost screen
-    X1 = 1440    # x position of the center screen
+    X1 = 0       # x position of the center screen
     X2 = X1+3840 # x position of the rightmost screen
     PANEL = 0
     if flavor == 'betahaus':
@@ -31,14 +38,16 @@ def main_dock(flavor=None):
 
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
+        set_emacs_font_height(144)
         win.set_decorations(False)
-        win.resize_and_move(x=X1+1806, y=0, w=2036, h=1900)
+        win.resize_and_move(x=X1+1516, y=0, w=2328, h=1900)
         #win.resize_and_move(x=X1+70+COLUMN, y=0, w=COLUMN*2, h=1900)
 
-    for win in Window.by_role('autoterm'):
+    #for win in Window.by_role('autoterm'):
+    for win in Window.by_class('autoterm.autoterm'):
         unmaximize(win)
         win.set_decorations(False)
-        win.resize_and_move(x=X1+1809, y=0, w=2036, h=2160)
+        win.resize_and_move(x=X1+1516, y=0, w=2328, h=2160)
 
     for win in Window.by_class('mail.google.com.Google-chrome'):
         unmaximize(win)
@@ -46,15 +55,15 @@ def main_dock(flavor=None):
 
     for win in Window.by_class('web.whatsapp.com.Google-chrome'):
         unmaximize(win)
-        win.set_decorations(True)
-        win.resize_and_move(x=0, y=0, w=1440, h=1200)
+        win.set_decorations(False)
+        win.resize_and_move(x=X2, y=0, w=1440, h=1440)
         win.sticky()
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
         if flavor == 'betahaus':
             win.set_decorations(False)
-            win.resize_and_move(x=0, y=480, w=1440, h=770)
+            win.resize_and_move(x=X2, y=0, w=1440, h=1440)
         else:
             win.set_decorations(True)
             win.resize_and_move(x=-18, y=1225, w=1476, h=1108)
@@ -76,17 +85,18 @@ def main_dock(flavor=None):
         win.sticky()
         if flavor == 'betahaus':
             set_hexchat_font(18)
-            win.resize_and_move(x=1280, y=0, w=1280, h=1440)
+            win.resize_and_move(x=X2+1280, y=0, w=1280, h=1440)
         else:
             set_hexchat_font(9)
             win.resize_and_move(x=X2, y=960, w=1080, h=960)
 
     for win in Window.by_class('google-chrome.Google-chrome'):
+        unmaximize(win)
         # position this at the center of the main screen
         W = 2000
         X = X1 + PANEL + (3840-2000-PANEL)/2
         #win.resize_and_move(x=X, y=0, w=W, h=2050)
-        win.resize_and_move(x=X, y=-54, w=W, h=2050)
+        win.resize_and_move(x=X, y=-14, w=W, h=2050)
 
     for win in Window.by_class('vmplayer.Vmplayer'):
         win.move(X1, 0)
@@ -96,14 +106,19 @@ def main_dock(flavor=None):
 
 def main_laptop():
     for win in Window.by_class('emacs.Emacs'):
-        unmaximize(win)
+        #unmaximize(win)
         win.set_decorations(False)
+        set_emacs_font_height(154)
         win.resize_and_move(x=526, y=0, w=2036, h=1300)
+        maximize(win)
 
-    for win in Window.by_role('autoterm'):
-        unmaximize(win)
+    #for win in Window.by_role('autoterm'):
+    for win in Window.by_class('autoterm.autoterm'):
+        #unmaximize(win)
         win.set_decorations(False)
-        win.resize_and_move(x=526, y=0, w=2036, h=1460)
+        win.resize_and_move(x=526, y=0, w=2036, h=1440)
+        maximize(win)
+
 
     for win in Window.by_class('mail.google.com.Google-chrome'):
         unmaximize(win)
@@ -114,13 +129,13 @@ def main_laptop():
         unmaximize(win)
         win.set_decorations(False)
         win.sticky()
-        win.resize_and_move(x=PANEL, y=0, w=1428, h=900)
+        win.resize_and_move(x=PANEL, y=0, w=1428, h=1440)
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
         win.set_decorations(False)
         win.sticky()
-        win.resize_and_move(x=PANEL, y=200, w=1428, h=700)
+        win.resize_and_move(x=PANEL, y=0, w=1428, h=1440)
 
     for win in Window.by_class('hexchat.Hexchat'):
         unmaximize(win)
@@ -135,8 +150,8 @@ def main_laptop():
         X = PANEL + (2560-W-PANEL)/2
         # I don't know why, but with y=0 it's not at the actual top. Maybe it
         # has something to do with chrome's own title bar
-        Y = -20
-        win.resize_and_move(x=X, y=Y, w=W, h=1440)
+        Y = -14
+        win.resize_and_move(x=X, y=Y, w=W, h=1498)
 
     for win in Window.by_class('slack.Slack') + Window.by_class('discord.discord'):
         unmaximize(win)
