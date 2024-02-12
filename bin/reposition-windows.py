@@ -25,25 +25,20 @@ def set_emacs_font_height(h):
     os.system('emacsclient -e "%s"' % elisp)
 
 def main_dock(flavor=None):
-    X0 = 0       # x position of the leftmost screen
-    X1 = 0       # x position of the center screen
+    X1 = 0       # x position of the big screen
     X2 = X1+3840 # x position of the rightmost screen
-    PANEL = 0
-    if flavor == 'betahaus':
-        #X1 = X2 = 2560
-        X1 = 0
 
-    ## BIG_W = 3840-70 # 70 is the size of panel
-    ## COLUMN = BIG_W / 3.0 # let's divide the screen into 3 columns (plus the panel)
+    COL0 = PANEL
+    COL1 = 1516
+    COL0_W = COL1-COL0
+    COL1_W = 3840-COL1
 
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
         set_emacs_font_height(144)
         win.set_decorations(False)
         win.resize_and_move(x=X1+1516, y=0, w=2328, h=1900)
-        #win.resize_and_move(x=X1+70+COLUMN, y=0, w=COLUMN*2, h=1900)
 
-    #for win in Window.by_role('autoterm'):
     for win in Window.by_class('autoterm.autoterm'):
         unmaximize(win)
         win.set_decorations(False)
@@ -56,39 +51,39 @@ def main_dock(flavor=None):
     for win in Window.by_class('web.whatsapp.com.Google-chrome'):
         unmaximize(win)
         win.set_decorations(False)
-        win.resize_and_move(x=X2, y=0, w=1440, h=1440)
+        if flavor == 'single-screen':
+            win.resize_and_move(x=PANEL, y=0, w=1440, h=1440)
+        else:
+            win.resize_and_move(x=X2, y=0, w=1440, h=1440)
         win.sticky()
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
-        if flavor == 'betahaus':
-            win.set_decorations(False)
-            win.resize_and_move(x=X2, y=0, w=1440, h=1440)
+        win.set_decorations(False)
+        if flavor == 'single-screen':
+            win.resize_and_move(x=PANEL, y=0, w=1440, h=1440)
         else:
-            win.set_decorations(True)
-            win.resize_and_move(x=-18, y=1225, w=1476, h=1108)
+            win.resize_and_move(x=X2, y=0, w=1440, h=1440)
         win.sticky()
 
     for win in Window.by_class('slack.Slack') + Window.by_class('discord.discord'):
         unmaximize(win)
-        if flavor == 'betahaus':
-            win.set_decorations(True)
-            win.resize_and_move(x=X1+70, y=0, w=1740, h=2010)
-        else:
-            win.set_decorations(False)
-            win.resize_and_move(x=X2, y=0, w=1080, h=956)
         win.sticky()
+        win.set_decorations(False)
+        if flavor == 'single-screen':
+            win.resize_and_move(x=PANEL, y=0, w=1850-PANEL, h=2010)
+        else:
+            win.resize_and_move(x=X1+70, y=0, w=1850-PANEL, h=2010)
 
     for win in Window.by_class('hexchat.Hexchat'):
         unmaximize(win)
         win.set_decorations(False)
         win.sticky()
-        if flavor == 'betahaus':
-            set_hexchat_font(18)
-            win.resize_and_move(x=X2+1280, y=0, w=1280, h=1440)
+        set_hexchat_font(18)
+        if flavor == 'single-screen':
+            win.resize_and_move(x=X1+1516, y=0, w=2328, h=1440)
         else:
-            set_hexchat_font(9)
-            win.resize_and_move(x=X2, y=960, w=1080, h=960)
+            win.resize_and_move(x=X2+1280, y=0, w=1280, h=1440)
 
     for win in Window.by_class('google-chrome.Google-chrome'):
         unmaximize(win)
@@ -164,18 +159,11 @@ def main_laptop():
 
 
 def autodetect():
-    MELE_USB_KEYBOARD_ID="04f2:0111"
-    BETAHAUS_USB_KEYBOARD_ID="046d:c31c"  # logitech wired
-    BERLIN_USB_KEYBOARD_ID="046d:c52b"    # logitech wireless
-
-    ret = os.system('lsusb -d ' + MELE_USB_KEYBOARD_ID)
-    if ret == 0:
-        return 'mele'
-    ret = os.system('lsusb -d ' + BERLIN_USB_KEYBOARD_ID)
-    if ret == 0:
-        return 'betahaus'
-    return 'laptop'
-
+    try:
+        with open('/tmp/antocuni-screen-config') as f:
+            return f.read().strip()
+    except IOError:
+        return 'none'
 
 def main_emergency():
     for win in Window.list():
@@ -192,12 +180,16 @@ if __name__ == '__main__':
 
     if conf == 'autodetect':
         conf = autodetect()
+        print('detected screen config: %s' % conf)
 
     if conf == 'emergency':
         main_emergency()
     elif conf == 'mele':
         main_dock(flavor='betahaus')
-    elif conf == 'betahaus':
-        main_dock(flavor='betahaus')
+    elif conf == 'valtournenche':
+        main_dock(flavor='single-screen')
+    elif conf == 'laptop':
+        main_laptop()
     else:
+        print('WARNING: unsupported screen config: %s' % conf)
         main_laptop()
