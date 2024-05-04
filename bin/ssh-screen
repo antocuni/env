@@ -27,5 +27,14 @@ else
     # -d (-r)       Detach the elsewhere running screen (and reat<xf~/.tach here).
     # -R     Reattach if possible, otherwise start a new session.
     # -S     Name this session <pid>.sockname instead of <pid>.<tty>.<host>.
-    autossh -t $1 "bash -l -c \"screen -RdS $2\""
+
+    if [ "$1" == "dgx" ]
+    then
+        # hack hack hack to use mosh via antomac.
+        # You need to have a script called "./x1" on dgx which starts the screen
+        autossh -t antomac /opt/homebrew/bin/mosh dgx "./$2"
+    else
+        # normal case
+        autossh -t $1 "bash -l -c \"screen -RdS $2\"" #XXX
+    fi
 fi
