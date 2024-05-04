@@ -12,7 +12,7 @@ then
     echo "Dark ==> Light"
     #kitty +kitten themes --reload-in=all Atom One Light
     #kitty +kitten themes --reload-in=all 1984 Light
-    kitty +kitten themes --reload-in=all Alabaster
+    kitty +kitten themes --cache-age=-1 --reload-in=all Alabaster
 
     dconf dump $LIGHT/ | dconf load $DEFAULT/
     dconf write $DEFAULT/visible-name "'Default-Light'"
@@ -27,7 +27,7 @@ EOF
 
 else
     echo "Light ==> Dark"
-    kitty +kitten themes --reload-in=all Default
+    kitty +kitten themes --cache-age=-1 --reload-in=all Default
 
     dconf dump $DARK/ | dconf load $DEFAULT/
     dconf write $DEFAULT/visible-name "'Default-Dark'"

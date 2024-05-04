@@ -40,6 +40,8 @@
  '(ido-default-buffer-method 'selected-window)
  '(ido-enable-flex-matching t)
  '(ido-mode 'both nil (ido))
+ '(impatient-showdown-flavor 'github)
+ '(impatient-showdown-markdown-background-color "#FFF")
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-check-comments nil)
@@ -74,7 +76,7 @@
      (vc-mode vc-mode)
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces))
  '(package-selected-packages
-   '(eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
+   '(impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
  '(python-fill-docstring-style 'django)
  '(reb-re-syntax 'string)
  '(rst-level-face-base-color "blackn")
