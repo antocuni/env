@@ -1,0 +1,3 @@
+#!/bin/sh
+
+wasm2wat "$@" | pygmentize -l wast -P style=rrt

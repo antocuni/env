@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SCALE=$1
+
+for FILE in "$@"
+do
+    echo $FILE
+    mogrify -scale $SCALE "$FILE"
+done
