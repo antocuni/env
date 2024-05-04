@@ -184,8 +184,10 @@ def main(argv):
         return os.system('kbd')
     elif arg == 'F3':      return os.system('kbd')
     elif arg == 'F11':     return os.system('reposition-windows.py emergency')
-    elif arg == 'F12':     return os.system('auto-xrandr.sh')
-    elif arg == 'pause':   return os.system('systemctl suspend')
+    elif arg == 'F12':
+        os.system('auto-xrandr.py')
+        return os.system('reposition-windows.py')
+    elif arg == 'pause':   return os.system('robust-suspend.py')
     elif arg == 'backspace': return focus_mode()
     else:
         print('Unknown arg:', arg)

@@ -2,13 +2,14 @@
 
 ### This script needs to be placed in /lib/systemd/system-sleep/ ###
 
-#echo [`date '+%F %T'`] "antocuni-system-sleep $@" >> /tmp/antocuni-system-sleep.log
+echo [`date '+%F %T'`] [`whoami`] "antocuni-system-sleep $@" >> /tmp/antocuni-system-sleep.log
 
 if [ $1 = pre ]
 then
     DISPLAY=:0.0 ; export DISPLAY
     HOME=/home/antocuni; export HOME
     #/home/antocuni/.screenlayout/laptop.sh
+    /home/antocuni/bin/enable-resume-from-usb.py
 fi
 
 
