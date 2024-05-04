@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# if needed:
+# pip install BetterADBSync
+
+cd "${HOME}/foto/cellulare 4"
+adbsync pull /sdcard/DCIM/Camera .
