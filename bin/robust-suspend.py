@@ -17,6 +17,9 @@ def main():
     os.system("hexchat -e -c 'znc ClearAllBuffers'")
     os.system('sudo enable-resume-from-usb.py')
 
+    os.system('systemctl suspend')
+    return
+
     # try at most N times
     for i in range(1):
         a = time.time()
