@@ -23,7 +23,7 @@ PATH=~/.local/bin:$PATH
 #PATH=~/pypy/default/py/bin:$PATH
 #PATH=~/pypy/default/rpython/bin:$PATH
 #PATH=~/pypy/default/pypy/goal/:$PATH
-PATH=~/env/bin/colorize/:~/env/bin:$PATH
+PATH=~/env/bin/colorize/:~/env/bin:~/env/bin/extra:$PATH
 
 export ANDROID_HOME=/extra/android/android-sdk-linux_x86
 PATH=$PATH:$ANDROID_HOME/emulator
