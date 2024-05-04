@@ -1,0 +1,5 @@
+#!/bin/bash
+
+dirname=$(basename $(pwd))
+echo "Detected project name: $dirname"
+python3 -m venv venv --prompt "$dirname"

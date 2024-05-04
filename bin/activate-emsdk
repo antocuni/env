@@ -1,0 +1,15 @@
+#!/bin/bash
+
+OLD_PATH="$PATH"
+OLD_PS1="$PS1"
+
+function deactivate() {
+    PATH="$OLD_PATH"
+    PS1="$OLD_PS1"
+    unset EMSDK
+    unset EM_CONFIG
+    unset EMSDK_NODE
+}
+
+source ~/anaconda/emsdk/emsdk_env.sh
+PS1="(emsdk) $PS1"
