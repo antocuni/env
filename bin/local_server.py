@@ -11,10 +11,12 @@ class UtilsHandler(SocketServer.StreamRequestHandler):
         argv = self.rfile.read()
         argv = json.loads(argv.decode('utf-8'))
         cmd = argv[0]
-        if cmd not in ('aplay', 'e'):
+        if cmd == 'ping':
+            print >> sys.stderr, ' '.join(argv)
+        elif cmd in ('aplay', 'e'):
+            subprocess.Popen(argv).wait()
+        else:
             print >> sys.stderr, 'Invalid command: %s' % cmd
-            return
-        subprocess.Popen(argv).wait()
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 4242
