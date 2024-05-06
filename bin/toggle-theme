@@ -1,9 +1,23 @@
 #!/bin/bash
 
-touch /tmp/theme
-current=$(cat /tmp/theme)
+# USEFUL kitty shortcuts:
+#   C-S-F5    reload the config
+#
+#   F1        create marker
+#   F2        remove marker
+#
+#   C-S-PgUp  show_last_command_output
+#   C-S-g     show_last_command_output
+#   C-S-A     copy last output to clipboard
+#   C-S-h     show_scrollback
+#
+#   C-S-z     scroll to previous prompt
+#   C-S-x     scroll to next prompt
 
 CONFIG="$HOME/.config/kitty"
+
+touch /tmp/theme
+current=$(cat /tmp/theme)
 
 function reload_kitty_config() {
     killall  -SIGUSR1 kitty
@@ -22,6 +36,10 @@ function switch_to_light() {
     echo "$current ==> light"
     #kitty +kitten themes --reload-in=all Alabaster
     cp $CONFIG/themes/alabaster.conf $CONFIG/current-theme.conf
+    cat >> $CONFIG/current-theme.conf <<EOF
+
+font_size 18.0
+EOF
     reload_kitty_config
 
     cat > /tmp/gitconfig_colordiff <<EOF
