@@ -24,7 +24,16 @@ def set_emacs_font_height(h):
     elisp = "(set-face-attribute 'default (selected-frame) :height %d)" % h
     os.system('emacsclient -e "%s"' % elisp)
 
-def main_dock(flavor=None):
+def get_whatsapps():
+    """
+    Keep in sync with super.py:is_whatsapp
+    """
+    return (
+        Window.by_class('web.whatsapp.com.Google-chrome') +
+        Window.by_name_startswith('https://web.whatsapp.com')
+    )
+
+def main_ext():
     X1 = 0       # x position of the big screen
     X2 = X1+3840 # x position of the rightmost screen
 
@@ -33,57 +42,59 @@ def main_dock(flavor=None):
     COL0_W = COL1-COL0
     COL1_W = 3840-COL1
 
+    XE = 838 # X delta of emacs
+
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
         set_emacs_font_height(144)
         win.set_decorations(False)
-        win.resize_and_move(x=X1+1516, y=0, w=2328, h=1900)
+        win.resize_and_move(x=X1+XE, y=0, w=2328, h=1900)
+
+    for win in Window.by_class('code.Code'):
+        unmaximize(win)
+        #set_emacs_font_height(144)
+        win.set_decorations(False)
+        win.resize_and_move(x=X1+XE, y=0, w=2328, h=1890)
 
     for win in Window.by_class('autoterm.autoterm'):
         unmaximize(win)
         win.set_decorations(False)
-        win.resize_and_move(x=X1+1516, y=0, w=2328, h=2160)
+        win.resize_and_move(x=X1+XE, y=0, w=2328, h=2160)
 
     for win in Window.by_class('mail.google.com.Google-chrome'):
         unmaximize(win)
         win.resize_and_move(x=X1+70, y=0, w=1740, h=1803)
 
-    for win in Window.by_class('web.whatsapp.com.Google-chrome'):
+    for win in get_whatsapps():
         unmaximize(win)
         win.set_decorations(False)
-        if flavor == 'single-screen':
-            win.resize_and_move(x=PANEL, y=0, w=1440, h=1440)
-        else:
-            win.resize_and_move(x=X2, y=0, w=1440, h=1440)
+        win.resize_and_move(x=PANEL, y=0, w=1440, h=1440)
         win.sticky()
 
     for win in Window.by_class(TELEGRAM):
         unmaximize(win)
         win.set_decorations(False)
-        if flavor == 'single-screen':
-            win.resize_and_move(x=PANEL, y=0, w=1440, h=1440)
-        else:
-            win.resize_and_move(x=X2, y=0, w=1440, h=1440)
+        win.resize_and_move(x=PANEL, y=0, w=1440, h=1440)
+        win.sticky()
+
+    for win in Window.by_class('chatgpt.com.Google-chrome'):
+        unmaximize(win)
+        win.set_decorations(False)
+        win.resize_and_move(x=PANEL, y=0, w=1440, h=2160)
         win.sticky()
 
     for win in Window.by_class('slack.Slack') + Window.by_class('discord.discord'):
         unmaximize(win)
         win.sticky()
         win.set_decorations(False)
-        if flavor == 'single-screen':
-            win.resize_and_move(x=PANEL, y=0, w=1850-PANEL, h=2010)
-        else:
-            win.resize_and_move(x=X1+70, y=0, w=1850-PANEL, h=2010)
+        win.resize_and_move(x=PANEL, y=0, w=1850-PANEL, h=2010)
 
     for win in Window.by_class('hexchat.Hexchat'):
         unmaximize(win)
         win.set_decorations(False)
         win.sticky()
         set_hexchat_font(18)
-        if flavor == 'single-screen':
-            win.resize_and_move(x=X1+1516, y=0, w=2328, h=1440)
-        else:
-            win.resize_and_move(x=X2+1280, y=0, w=1280, h=1440)
+        win.resize_and_move(x=X1+1516, y=0, w=2328, h=1440)
 
     for win in Window.by_class('google-chrome.Google-chrome'):
         unmaximize(win)
@@ -120,7 +131,8 @@ def main_laptop():
         win.set_decorations(False)
         win.resize_and_move(x=PANEL, y=0, w=1428, h=1440)
 
-    for win in Window.by_class('web.whatsapp.com.Google-chrome'):
+    #for win in Window.by_class('web.whatsapp.com.Google-chrome'):
+    for win in get_whatsapps():
         unmaximize(win)
         win.set_decorations(False)
         win.sticky()
@@ -172,7 +184,7 @@ def main_emergency():
 
 
 if __name__ == '__main__':
-    # usage: reposition-windows.py [autodetect|laptop|mele|emergency]
+    # usage: reposition-windows.py [autodetect|laptop|ext]
     if len(sys.argv) < 2:
         conf = 'autodetect'
     else:
@@ -184,10 +196,8 @@ if __name__ == '__main__':
 
     if conf == 'emergency':
         main_emergency()
-    elif conf == 'mele':
-        main_dock(flavor='betahaus')
-    elif conf == 'valtournenche':
-        main_dock(flavor='single-screen')
+    elif conf in ('both', 'ext'):
+        main_ext()
     elif conf == 'laptop':
         main_laptop()
     else:

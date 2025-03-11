@@ -1,6 +1,14 @@
 #!/usr/bin/python3
 from colorize import *
 
+
+import signal
+def ignore_sigquit(signum, frame):
+    pass
+
+signal.signal(signal.SIGQUIT, ignore_sigquit)
+
+
 Run(Header(
     RegexpGroupsColors('^(PING )([^ ]*)( \\()([0-9.]+)(\\) .*)$', Underline, Yellow+Bold, White, Cyan+Bold, White),
     RegexpGroupsColors('^([0-9]+ bytes from .+(?: ?\\([0-9.]+\\))?: icmp_seq=)([0-9]+)( ttl=)([0-9]+)( time=)([0-9.]+ [a-z]+)$',

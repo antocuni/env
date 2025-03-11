@@ -14,6 +14,10 @@ lastScreen=1                   # <<<< set lastScreen=0
 location=4
 plugin=org.kde.panel           # <<<< grep for this
 wallpaperplugin=org.kde.image
+
+and then:
+kquitapp plasmashell && kstart plasmashell
+
 """
 
 import sys
@@ -52,7 +56,7 @@ def only_ext():
 
     print(cmd)
     os.system(cmd)
-    write_screen_config("valtournenche")
+    write_screen_config("ext")
 
 def both():
     laptop, ext = find_screens()
@@ -65,7 +69,21 @@ def both():
 
     print(cmd)
     os.system(cmd)
-    write_screen_config("mele")
+    write_screen_config("both")
+
+def r1080p():
+    laptop, ext = find_screens()
+    if ext is None:
+        return only_laptop()
+
+    cmd = (f'xrandr ' +
+           f'--output {ext.name} --mode 1920x1080 --primary '
+           f'--output {laptop.name} --mode 1920x1080 --same-as {ext.name}')
+
+    print(cmd)
+    os.system(cmd)
+    write_screen_config("1080p")
+
 
 # ======
 
@@ -87,8 +105,10 @@ def main():
         only_ext()
     elif what == 'both':
         both()
+    elif what == '1080p':
+        r1080p()
     else:
-        print('Usage: auto-xrandr.py [laptop|ext|both]')
+        print('Usage: auto-xrandr.py [laptop|ext|both|1080p]')
 
 
 if __name__ == '__main__':

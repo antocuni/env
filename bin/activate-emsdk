@@ -3,7 +3,7 @@
 OLD_PATH="$PATH"
 OLD_PS1="$PS1"
 
-function deactivate() {
+function deactivate_emsdk() {
     PATH="$OLD_PATH"
     PS1="$OLD_PS1"
     unset EMSDK
@@ -11,5 +11,6 @@ function deactivate() {
     unset EMSDK_NODE
 }
 
-source ~/anaconda/emsdk/emsdk_env.sh
+#source ~/anaconda/emsdk/emsdk_env.sh
+source ~/anaconda/pyodide/emsdk/emsdk/emsdk_env.sh
 PS1="(emsdk) $PS1"

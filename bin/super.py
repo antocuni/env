@@ -13,9 +13,19 @@ import wmctrl
 TERMINAL = 'autoterm.autoterm'
 CHROME = 'google-chrome.Google-chrome'
 TELEGRAM = 'Telegram.TelegramDesktop'
+CHATGPT = 'chatgpt.com.Google-chrome'
 #TELEGRAM = 'crx_hadgilakbfohcfcgfbioeeehgpkopaga.Google-chrome' # chrome webapp
 
 WLIST = wmctrl.Window.list()
+
+def is_whatsapp(w):
+    """
+    Select whatsapp windows both on chrome and firefox.
+    Keep in sync with reposition-windows.py:get_whatsapps
+    """
+    return (w.wm_name.startswith('https://web.whatsapp.com') or
+            w.wm_class == 'web.whatsapp.com.Google-chrome')
+
 
 def show(wm_class, i=0, spawn=None, on_already_active=None):
     """
@@ -29,7 +39,12 @@ def show(wm_class, i=0, spawn=None, on_already_active=None):
     """
     # find the windows visible on the current desktop, sticky windows first
     desktop = wmctrl.Desktop.get_active()
-    wlist = [w for w in WLIST if w.wm_class == wm_class and w.desktop in (-1, desktop.num)]
+    if wm_class == '--WHATSAPP--':
+        # hack hack: selects both firefox and chrome windows with whatsapp
+        wlist = [w for w in WLIST if is_whatsapp(w) and  w.desktop in (-1, desktop.num)]
+    else:
+        wlist = [w for w in WLIST if w.wm_class == wm_class and w.desktop in (-1, desktop.num)]
+
     wlist.sort(key=lambda w: w.desktop)
     #
     if not wlist:
@@ -94,10 +109,15 @@ def minimize(win):
     return os.system('xdotool windowminimize %s' % win.id)
 
 def cycle_classes(*wm_classes):
+    desktop = wmctrl.Desktop.get_active()
     wlist = []
     for wm_class in wm_classes:
-        wlist += wmctrl.Window.by_class(wm_class)
-    cycle(wlist)
+        wlist += [win for win in wmctrl.Window.by_class(wm_class)
+                  if win.desktop in (-1, desktop.num)]
+    if wlist:
+        cycle(wlist)
+    else:
+        return 1
 
 def cycle(wlist):
     # cycle through the list of windows
@@ -113,6 +133,7 @@ def cycle(wlist):
     else:
         # activate the first
         wlist[0].activate()
+
     return 0
 
 def focus_mode():
@@ -159,18 +180,76 @@ def take_screenshot():
         return ret
     return 0
 
+def current_windows():
+    """
+    Return the list of windows on the current desktop
+    """
+    desktop = wmctrl.Desktop.get_active()
+    return [w for w in wmctrl.Window.list() if w.desktop in (-1, desktop.num)]
+
+
+def show_emacs_or_code():
+    """
+    If vscode is running, show emacs, otherwise show vscode. If none
+    is running, show the last chosen.
+    """
+    wlist = current_windows()
+    has_emacs = any([w.wm_class == 'emacs.Emacs' for w in wlist])
+    has_vscode = any([w.wm_class == 'code.Code' for w in wlist])
+
+    current = wmctrl.Window.get_active()
+    if current.wm_class == 'code.Code' and has_emacs:
+        cycle_classes('code.Code', 'emacs.Emacs')
+        os.system('rm /tmp/vscode')
+    elif current.wm_class == 'emacs.Emacs' and has_vscode:
+        cycle_classes('emacs.Emacs', 'code.Code')
+        os.system('touch /tmp/vscode')
+    else:
+        if os.path.exists('/tmp/vscode'):
+            show('code.Code')
+        else:
+            show_openscad_maybe()
+            show('emacs.Emacs')
+
+def has_emacs():
+    wlist = current_windows()
+    res = any([w.wm_class == 'emacs.Emacs' for w in wlist])
+    #print(res)
+    return int(not res)
+
+
+def show_openscad_maybe():
+    d = wmctrl.Desktop.get_active()
+    if d.name != '3d':
+        return
+    openscad = wmctrl.Window.by_class('openscad.OpenSCAD')
+    if not openscad:
+        return
+    # poor's man way to detect whether openscad if locked to the left
+    w = openscad[0]
+    if w.x == 76 and w.w == 1844:
+        w.activate()
+
+
+
 def main(argv):
     arg = argv[1]
     no_switch = '--no-switch' in argv
 
-    if   arg == 'emacs':   return show('emacs.Emacs')
+    if arg == 'dev':
+        show_openscad_maybe()
+        return
+
+    if   arg == 'emacs':     return show_emacs_or_code()
+    elif arg == 'has_emacs': return has_emacs()
     elif arg == 'term':    return show(TERMINAL, spawn='autoterm')
     elif arg == '1':       return show(CHROME, 1, on_already_active='minimize')
     elif arg == '2':       return show(CHROME, 0, on_already_active='minimize')
     elif arg == '3':       return show(CHROME, 'cycle')
-    elif arg == 'q':       return show('web.whatsapp.com.Google-chrome', on_already_active='minimize')
+    elif arg == 'q':       return show('--WHATSAPP--', on_already_active='minimize')
     elif arg == 'w':       return show(TELEGRAM, on_already_active='minimize')
     elif arg == 'e':       return steal_and_show('mail.google.com.Google-chrome', on_already_active='move_to_0')
+    elif arg == 'tab':     return show(CHATGPT, on_already_active='minimize')
     #elif arg == 'a':       return show('slack.Slack', on_already_active='minimize')
     elif arg == 'a':       return cycle_classes('slack.Slack', 'discord.discord')
 

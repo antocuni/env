@@ -1,5 +1,5 @@
 [user]
-	name = Antonio Cuni\n
+  name = Antonio Cuni
   email = anto.cuni@gmail.com
 
 [color]
@@ -64,3 +64,6 @@
     csv = format:\"%h\",\"%ai\",\"%s\"
 [cola]
 	spellcheck = false
+	startupmode = folder
+[init]
+	defaultBranch = main

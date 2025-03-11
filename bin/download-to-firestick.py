@@ -50,6 +50,11 @@ def get_URLs():
     return urls
 
 def main():
+    LOCAL = False
+    if '--local' in sys.argv:
+        LOCAL = True
+        sys.argv.remove('--local')
+
     if len(sys.argv) >= 2:
         URLs = sys.argv[1:]
     else:
@@ -59,9 +64,18 @@ def main():
     wget = '/data/local/tmp/busybox-armv7l wget'
     for url in URLs:
         print(url)
-        cmd = f"""
-        adb shell 'cd /sdcard/sky && {wget} -c "{url}"'
-        """
+        if LOCAL:
+            cmd = f"""
+            cd /tmp/download/sky && wget -c "{url}"
+            """
+        else:
+            cmd = f"""
+            adb shell 'cd /sdcard/sky && {wget} -c "{url}"'
+            adb shell 'cd /sdcard/sky && {wget} -c "{url}"'
+            adb shell 'cd /sdcard/sky && {wget} -c "{url}"'
+            adb shell 'cd /sdcard/sky && {wget} -c "{url}"'
+            adb shell 'cd /sdcard/sky && {wget} -c "{url}"'
+            """
         print()
         print(cmd)
         os.system(cmd)

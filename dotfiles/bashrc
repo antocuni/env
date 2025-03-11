@@ -133,6 +133,9 @@ alias dng='wine ~/.wine/drive_c/Program\ Files/Adobe/Adobe\ DNG\ Converter/Adobe
 
 alias siril='siril -d "`pwd`"'
 
+
+
+
 unset -f check
 
 
@@ -328,6 +331,7 @@ stty -ixon
 # added by travis gem
 [ -f /home/antocuni/.travis/travis.sh ] && source /home/antocuni/.travis/travis.sh
 
+
 if [ -d ~/miniconda3 ]
 then
     # >>> conda initialize >>>
@@ -344,10 +348,6 @@ then
     fi
     unset __conda_setup
     # <<< conda initialize <<<
-
-    # to enable tab completion:
-    # conda install -c conda-forge conda-bash-completion
-    # https://github.com/tartansandal/conda-bash-completion
 fi
 
 if [ -d ~/ccache ]

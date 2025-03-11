@@ -7,6 +7,7 @@
   (package-initialize))
 
 
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -24,7 +25,7 @@
  '(dabbrev-case-distinction t)
  '(dabbrev-case-fold-search nil)
  '(dired-dwim-target t)
- '(display-fill-column-indicator-character nil)
+ '(display-fill-column-indicator-character 124)
  '(display-fill-column-indicator-column 80)
  '(fill-column 78)
  '(find-file-hook
@@ -39,6 +40,7 @@
  '(ibuffer-expert t)
  '(ido-default-buffer-method 'selected-window)
  '(ido-enable-flex-matching t)
+ '(ido-ignore-files '("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" "\\`~"))
  '(ido-mode 'both nil (ido))
  '(impatient-showdown-flavor 'github)
  '(impatient-showdown-markdown-background-color "#FFF")
@@ -50,7 +52,7 @@
       ("-c")
       "uncompressing" "gzip"
       ("-c" "-q" "-d")
-      nil t "\235"]
+      nil t "\37\235"]
      ["\\.bz2\\(~\\|\\.~[0-9]+~\\)?\\'" "bzip2ing" "bzip2" nil "bunzip2ing" "bzip2"
       ("-d")
       nil t "BZh"]
@@ -61,47 +63,47 @@
       ("-c" "-q")
       "uncompressing" "gzip"
       ("-c" "-q" "-d")
-      t nil "\213"]
+      t nil "\37\213"]
      ["\\.\\(g?z\\|gnumeric\\)\\(~\\|\\.~[0-9]+~\\)?\\'" "compressing" "gzip"
       ("-c" "-q")
       "uncompressing" "gzip"
       ("-c" "-q" "-d")
-      t t "\213"]
+      t t "\37\213"]
      ["\\.dz\\'" nil nil nil "uncompressing" "gzip"
       ("-c" "-q" "-d")
-      nil t "\213"]))
+      nil t "\37\213"]))
  '(menu-bar-mode window-system)
  '(mode-line-format
    '("%e" mode-line-front-space mode-line-mule-info mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification "   " mode-line-position
      (vc-mode vc-mode)
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces))
  '(package-selected-packages
-   '(impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
+   '(gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
  '(python-fill-docstring-style 'django)
  '(reb-re-syntax 'string)
  '(rst-level-face-base-color "blackn")
  '(safe-local-variable-values
    '((encoding . latin-1)
      (encoding . Latin-1)
-     (test-case-name . twisted\.test\.test_defer\,twisted\.test\.test_defgen\,twisted\.internet\.test\.test_inlinecb)
+     (test-case-name . twisted.test.test_defer\,twisted.test.test_defgen\,twisted.internet.test.test_inlinecb)
      (test-case-name . twisted)
-     (test-case-name . twisted\.conch\.test\.test_manhole)
+     (test-case-name . twisted.conch.test.test_manhole)
      (sh-indent-comment . t)
      (pymacs-auto-reload . t)
-     (test-case-name . test\.test_txpostgres)
-     (test-case-name . buildbot\.test\.test_status)
-     (test-case-name . buildbot\.test\.test_run)
-     (test-case-name . buildbot\.test\.test_runner)
-     (test-case-name . buildbot\.test\.test_steps\,buildbot\.test\.test_properties)
-     (test-case-name . twisted\.test\.test_internet\,twisted\.internet\.test\.test_posixbase)
-     (test-case-name . buildbot\.test\.test_slavecommand)
-     (test-case-name . buildbot\.test\.test_steps)
-     (test-case-name . buildbot\.test\.test_vc)
-     (test-case-name . twisted\.test\.test_log)
-     (test-case-name . twisted\.test\.test_application\,twisted\.test\.test_twistd)
-     (test-case-name . twisted\.test\.test_twistd)
-     (test-case-name . buildbot\.test\.test_twisted)
-     (test-case-name . twisted\.web\.test\.test_static)
+     (test-case-name . test.test_txpostgres)
+     (test-case-name . buildbot.test.test_status)
+     (test-case-name . buildbot.test.test_run)
+     (test-case-name . buildbot.test.test_runner)
+     (test-case-name . buildbot.test.test_steps\,buildbot.test.test_properties)
+     (test-case-name . twisted.test.test_internet\,twisted.internet.test.test_posixbase)
+     (test-case-name . buildbot.test.test_slavecommand)
+     (test-case-name . buildbot.test.test_steps)
+     (test-case-name . buildbot.test.test_vc)
+     (test-case-name . twisted.test.test_log)
+     (test-case-name . twisted.test.test_application\,twisted.test.test_twistd)
+     (test-case-name . twisted.test.test_twistd)
+     (test-case-name . buildbot.test.test_twisted)
+     (test-case-name . twisted.web.test.test_static)
      (c-tab-always-indent)
      (c-continued-statement-offset . 2)
      (c-brace-offset . -2)
@@ -116,6 +118,7 @@
  '(scroll-margin 0)
  '(scroll-preserve-screen-position t)
  '(select-enable-clipboard t)
+ '(show-paren-mode nil)
  '(split-height-threshold 100)
  '(tab-width 4)
  '(tool-bar-mode nil)
@@ -170,6 +173,7 @@
 ; XXX: use this to automatically adjust font size based on frame width
 ; https://blog.patshead.com/2016/04/emacs-automatically-adjust-font-size-when-frame-width-changes.html
 
+(set-frame-font "Inconsolata-14" nil t)
 (when nil
   ;; 144 for docked mode, 154 for full-screen on my laptop
   (set-face-attribute 'default (selected-frame) :height 144) ; docked
@@ -203,7 +207,7 @@
 (require 'pypytrace-mode nil t)
 (menu-bar-mode -1)
 
-;(load-file "/home/antocuni/src/pytest-emacs/pytest.el")
+(load-file "/home/antocuni/src/pytest-emacs/pytest.el")
 (require 'capnproto-mode)
 
 (require 'ido)
@@ -330,6 +334,8 @@
 (setq auto-mode-alist
       (append '(("\\.capnp$" . capnproto-mode)) auto-mode-alist))
 
+(add-to-list 'auto-mode-alist '("\\.spy\\'" . python-mode))
+
 ; Custom keybindings
 ; =======================
 
@@ -352,15 +358,19 @@
 
 (global-set-key [(control x) (p)]
 		(function (lambda () (interactive)
-			    (insert "import pdb;pdb.set_trace()"))))
+			    (insert "breakpoint()"))))
 
-(global-set-key [(control x) (w)]
-		(function (lambda () (interactive)
-			    (insert "    dup\n    ldstr \"xxx: \"\n    call void [mscorlib]System.Console::Write(string)\n    call void [mscorlib]System.Console::WriteLine(object)"))))
+; register shortcuts:
+; "C-c s" -->  "C-x r s 0" (copy-to-register 0)
+; "C-c i" -->  "C-x r i 0" (insert-register 0)
+(global-set-key
+ (kbd "C-c s")
+ (lambda () (interactive)
+   (copy-to-register 0 (region-beginning) (region-end))
+   (message "Text copied to register 0. Use C-c i to paste")
+   ))
+(global-set-key (kbd "C-c i") (lambda () (interactive) (insert-register 0)))
 
-(global-set-key [(control c) (w)]
-		(function (lambda () (interactive)
-			    (insert "    ldstr \"xxx\"\n    call void [mscorlib]System.Console::WriteLine(string)\n"))))
 
 (require 'find-file-in-project)
 (global-set-key [(control x) (f)] 'find-file-in-project)
@@ -963,7 +973,7 @@ Argument REPLACE String used to replace the matched strings in the buffer.
       (set-face-foreground 'font-lock-negation-char-face "#e7f6da")
       (set-face-foreground 'link "#8ac6f2")
       (set-face-bold-p 'link t)
-      (set-face-underline-p 'link t)
+      (set-face-underline 'link t)
       ;(set-face-foreground 'show-paren-match-face "#f6f3e8")
       ;(set-face-background 'show-paren-match-face "#857b6f")
       ;(set-face-bold-p 'show-paren-match t)
@@ -993,6 +1003,18 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (interactive)
   (setq my-theme-is-dark (not my-theme-is-dark))
   (my-theme-set))
+
+(defun my-theme-light ()
+  (interactive)
+  (progn
+    (setq my-theme-is-dark nil)
+    (my-theme-set)))
+
+(defun my-theme-dark ()
+  (interactive)
+  (progn
+    (setq my-theme-is-dark t)
+    (my-theme-set)))
 
 (my-theme-set)
 (global-set-key [f12] 'my-theme-toggle)
@@ -1037,3 +1059,33 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 (add-to-list 'load-path "~/pypy/misc/wat-mode/")
 (require 'wat-mode)
+
+(defun open-recentf-files-in-directory (directory)
+  "Open all recent files in the specified DIRECTORY."
+  (interactive "DDirectory: ")
+  (let ((files (seq-filter (lambda (file)
+                              (string-prefix-p (expand-file-name directory) (expand-file-name file)))
+                            recentf-list)))
+    (if files
+        (dolist (file files)
+          (find-file file))
+      (message "No recent files found in %s" directory))))
+
+
+; workaround for emacs >=28: the new python.el wants to syntax-highlight
+; f-string as code, but I don't like it and I want to keep them with the
+; string face. The workaround which I found is to override this regexp so it
+; will never find any f-string
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq-local python--f-string-start-regexp
+                        "i-dont-want-to-highlight-f-strings-asdnsajdnjasdna")))
+
+(defun mypy ()
+  "Run `mypy` from the root directory of the project."
+  (interactive)
+  (let ((project-root (locate-dominating-file default-directory ".git")))
+    (if project-root
+        (let ((default-directory project-root))
+          (compile "mypy"))
+      (message "No .git directory found in the project hierarchy!"))))

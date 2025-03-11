@@ -14,8 +14,8 @@ def log(*args):
 
 def main():
     # clear znc buffers
-    os.system("hexchat -e -c 'znc ClearAllBuffers'")
-    os.system('sudo enable-resume-from-usb.py')
+    #os.system("hexchat -e -c 'znc ClearAllBuffers'")
+    #os.system('sudo enable-resume-from-usb.py')
 
     os.system('systemctl suspend')
     return

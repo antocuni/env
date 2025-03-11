@@ -1,10 +1,12 @@
 # -*- mode: conf -*-
 
 xinerama_head 0
-alignment bottom_left
-minimum_size 550 1
+#alignment bottom_left
+alignment bottom_right
+minimum_size 280 1
 
-gap_x 61
+#gap_x 61
+gap_x 8
 gap_y 8
 # gap_y 2320
 
@@ -43,35 +45,26 @@ TEXT
 # ${color #888888}${downspeedgraph eth0 20,70 ff0000 0000ff}   ${color #888888}${upspeedgraph eth0 20,70 0000ff ff0000}
 #
 #
-${color}Name               CPU%   MEM%
-${color #ddaa00} ${top name 1} ${top cpu 1} ${top mem 1}
-${color lightgrey} ${top name 2} ${top cpu 2} ${top mem 2}
-${color lightgrey} ${top name 3} ${top cpu 3} ${top mem 3}
-${color lightgrey} ${top name 4} ${top cpu 4} ${top mem 4}
-${color lightgrey} ${top name 5} ${top cpu 5} ${top mem 5}
-${color lightgrey} ${top name 6} ${top cpu 6} ${top mem 6}
-${color lightgrey} ${top name 7} ${top cpu 7} ${top mem 7}
-${color lightgrey} ${top name 8} ${top cpu 8} ${top mem 8}
-${color lightgrey} ${top name 9} ${top cpu 9} ${top mem 9}
-${color lightgrey} ${top name 10} ${top cpu 10} ${top mem 10}
+${color}Name                     ${goto 140}  CPU%       ${goto 220}  MEM%
+${color   #ddaa00} ${top name 1} ${goto 140}${top cpu 1} ${goto 220}${top mem 1}
+${color lightgrey} ${top name 2} ${goto 140}${top cpu 2} ${goto 220}${top mem 2}
+${color lightgrey} ${top name 3} ${goto 140}${top cpu 3} ${goto 220}${top mem 3}
+${color lightgrey} ${top name 4} ${goto 140}${top cpu 4} ${goto 220}${top mem 4}
+${color lightgrey} ${top name 5} ${goto 140}${top cpu 5} ${goto 220}${top mem 5}
+${color lightgrey} ${top name 6} ${goto 140}${top cpu 6} ${goto 220}${top mem 6}
 
-${voffset -175}${offset 290}${color red}Mem usage          CPU%   MEM%
-${offset 290}${color #ddaa00} ${top_mem name 1} ${top_mem cpu 1} ${top_mem mem 1}
-${offset 290}${color lightgrey} ${top_mem name 2} ${top_mem cpu 2} ${top_mem mem 2}
-${offset 290}${color lightgrey} ${top_mem name 3} ${top_mem cpu 3} ${top_mem mem 3}
-${offset 290}${color lightgrey} ${top_mem name 4} ${top_mem cpu 4} ${top_mem mem 4}
-${offset 290}${color lightgrey} ${top_mem name 5} ${top_mem cpu 5} ${top_mem mem 5}
-${offset 290}${color lightgrey} ${top_mem name 6} ${top_mem cpu 6} ${top_mem mem 6}
-${offset 290}${color lightgrey} ${top_mem name 7} ${top_mem cpu 7} ${top_mem mem 7}
-${offset 290}${color lightgrey} ${top_mem name 8} ${top_mem cpu 8} ${top_mem mem 8}
-${offset 290}${color lightgrey} ${top_mem name 9} ${top_mem cpu 9} ${top_mem mem 9}
-${offset 290}${color lightgrey} ${top_mem name 10} ${top_mem cpu 10} ${top_mem mem 10}
+${color red}Mem usage                ${goto 140}  CPU%           ${goto 220}  MEM%
+${color   #ddaa00} ${top_mem name 1} ${goto 140}${top_mem cpu 1} ${goto 220}${top_mem mem 1}
+${color lightgrey} ${top_mem name 2} ${goto 140}${top_mem cpu 2} ${goto 220}${top_mem mem 2}
+${color lightgrey} ${top_mem name 3} ${goto 140}${top_mem cpu 3} ${goto 220}${top_mem mem 3}
+${color lightgrey} ${top_mem name 4} ${goto 140}${top_mem cpu 4} ${goto 220}${top_mem mem 4}
+${color lightgrey} ${top_mem name 5} ${goto 140}${top_mem cpu 5} ${goto 220}${top_mem mem 5}
+${color lightgrey} ${top_mem name 6} ${goto 140}${top_mem cpu 6} ${goto 220}${top_mem mem 6}
 
-# ${color}I/O ${alignr 1}READ
-# ${color #ddaa00} ${top_io name 1} ${alignr 1}${top_io io_read 1}
-# ${color lightgrey} ${top_io name 2} ${alignr 1}${top_io io_read 2}
-# ${color lightgrey} ${top_io name 3} ${alignr 1}${top_io io_read 3}
-# ${color}${alignr 1}WRITE
-# ${color #ddaa00} ${top_io name 1} ${alignr 1}${top_io io_write 1}
-# ${color lightgrey} ${top_io name 2} ${alignr 1}${top_io io_write 2}
-# ${color lightgrey} ${top_io name 3} ${alignr 1}${top_io io_write 3}
+${color}I/O                        ${goto 140}  READ                ${goto 220}WRITE
+${color   #ddaa00} ${top_io name 1}${goto 140}  ${top_io io_read 1} ${goto 220}${top_io io_write 1}
+${color lightgrey} ${top_io name 2}${goto 140}  ${top_io io_read 2} ${goto 220}${top_io io_write 2}
+${color lightgrey} ${top_io name 3}${goto 140}  ${top_io io_read 3} ${goto 220}${top_io io_write 3}
+${color lightgrey} ${top_io name 4}${goto 140}  ${top_io io_read 4} ${goto 220}${top_io io_write 4}
+${color lightgrey} ${top_io name 5}${goto 140}  ${top_io io_read 5} ${goto 220}${top_io io_write 5}
+${color lightgrey} ${top_io name 6}${goto 140}  ${top_io io_read 6} ${goto 220}${top_io io_write 6}

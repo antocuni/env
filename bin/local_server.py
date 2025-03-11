@@ -10,10 +10,11 @@ class UtilsHandler(SocketServer.StreamRequestHandler):
     def handle(self):
         argv = self.rfile.read()
         argv = json.loads(argv.decode('utf-8'))
+        print(argv)
         cmd = argv[0]
         if cmd == 'ping':
             print >> sys.stderr, ' '.join(argv)
-        elif cmd in ('aplay', 'e'):
+        elif cmd in ('aplay', 'e', 'xdg-open'):
             subprocess.Popen(argv).wait()
         else:
             print >> sys.stderr, 'Invalid command: %s' % cmd

@@ -29,6 +29,7 @@ function switch_to_dark() {
     cp $CONFIG/themes/default.conf $CONFIG/current-theme.conf
     reload_kitty_config
     rm -f /tmp/gitconfig_colordiff
+    emacsclient -e "(my-theme-dark)"
     echo dark > /tmp/theme
 }
 
@@ -50,6 +51,7 @@ EOF
   old = "#000000" "#dddddd" # black over gray
   new = "#000000" "#bbffbb" # black over pastel green
 EOF
+    emacsclient -e "(my-theme-light)"
     echo light > /tmp/theme
 }
 

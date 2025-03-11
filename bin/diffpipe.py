@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 import sys
-from color import color, YELLOW, GRAY
+from color import color, YELLOW, GRAY, RED
 
 def main():
     for line in sys.stdin:
         if line.startswith('+'):
             sys.stdout.write(color(line, YELLOW))
         elif line.startswith('-'):
-            sys.stdout.write(color(line, GRAY, bg=0))
+            sys.stdout.write(color(line, RED, bg=0))
         else:
             sys.stdout.write(line)
 

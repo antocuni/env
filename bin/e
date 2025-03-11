@@ -2,9 +2,12 @@
 
 function do_local()
 {
-    if super.py emacs --no-switch
+    if super.py has_emacs
     then
-        # there is already an emacs frame on this desktop, just use it
+        # there is already an emacs frame on this desktop, just use it.
+        # Make sure that the right frame is in focus, so that emacsclient just
+        # uses it.
+        super.py emacs
         emacsclient -n -e "(other-window 1)" > /dev/null
         emacsclient -n "$@"
     elif emacsclient -e '(version)' &>/dev/null
@@ -18,12 +21,25 @@ function do_local()
     fi
 }
 
+function do_local_code()
+{
+    # if the arguments are in the form +LINENO FILE, transform them into --goto FILE:LINENO
+    if [ -n "$1" ] && [ "${1:0:1}" == "+" ]
+    then
+        ARGS=(--goto "$2:${1:1}")
+        shift 2
+    else
+        ARGS=()
+    fi
+    code --reuse-window "${ARGS[@]}" "$@"
+}
+
 function do_remote()
 {
     for FILE in "$@"
     do
         case $FILE in
-            +*) 
+            +*)
                 GOTO=$FILE
                 ;;
             *)
@@ -35,10 +51,10 @@ function do_remote()
     done
 }
 
-
-if [ -n "$SSH_CONNECTION" ]
-then
+if [ -n "$SSH_CONNECTION" ]; then
     do_remote "$@"
+elif [ -f /tmp/vscode ]; then
+    do_local_code "$@"
 else
     do_local "$@"
 fi
