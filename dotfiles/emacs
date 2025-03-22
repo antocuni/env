@@ -1019,11 +1019,12 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 (my-theme-set)
 (global-set-key [f12] 'my-theme-toggle)
 
-(defun my-frame-config (frame)
-  "Custom behaviours for new frames."
-  (with-selected-frame frame
-    (if (display-graphic-p)
-        (my-theme-set))))
+ (defun my-frame-config (frame)
+   "Custom behaviours for new frames."
+   (with-selected-frame frame
+     (when (display-graphic-p)
+       (set-frame-font "Inconsolata-14" nil nil)
+       (my-theme-set))))
 
 (my-frame-config (selected-frame))
 ;; and later
@@ -1087,5 +1088,5 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (let ((project-root (locate-dominating-file default-directory ".git")))
     (if project-root
         (let ((default-directory project-root))
-          (compile "mypy"))
+          (compile "./venv/bin/mypy"))
       (message "No .git directory found in the project hierarchy!"))))
