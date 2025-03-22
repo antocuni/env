@@ -1090,3 +1090,5 @@ Argument REPLACE String used to replace the matched strings in the buffer.
         (let ((default-directory project-root))
           (compile "./venv/bin/mypy"))
       (message "No .git directory found in the project hierarchy!"))))
+
+(load-file "~/env/elisp/myllm.el")
