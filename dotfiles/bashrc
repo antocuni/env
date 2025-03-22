@@ -6,7 +6,7 @@ if [ -r /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-[ -f /home/antocuni/.settings ] && . /home/antocuni/.settings
+#[ -f /home/antocuni/.settings ] && . /home/antocuni/.settings
 
 if [[ $- != *i* ]] ; then
         # Shell is non-interactive.  Be done now!
@@ -107,6 +107,7 @@ alias dmesg="dmesg --human"
 alias ddmesg="/bin/dmesg"
 
 alias xs='xdg-open'
+alias claude='claude-logging'
 
 #alias hg="/usr/bin/python -s -E `which hg`" # else hg it's awfully slow to start
 alias mcd='mount /mnt/cdrom'
@@ -365,3 +366,4 @@ export NVM_DIR="$HOME/.nvm"
 . "$HOME/.cargo/env"
 
 auto-ssh-agent
+eval "$(starship init bash)"

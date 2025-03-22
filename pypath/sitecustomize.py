@@ -15,7 +15,7 @@ def info(type, value, tb):
     if type is bdb.BdbQuit:
         print('bdb.BdbQuit', file=sys.stderr)
         return
-    if getattr(sys, 'antocuni_startup', False):
+    if getattr(sys, 'antocuni_startup', False) or not ontty:
         # You are in interactive mode or don't have a tty-like
         # device, so call the default hook
         sys.__excepthook__(type, value, tb)
