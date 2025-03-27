@@ -32,4 +32,4 @@ Otherwise, insert the result after the region/line."
                     (insert "\n" output)))))))
       (kill-buffer result-buffer))))
 
-(global-set-key (kbd "C-x C-<return>") 'myllm)
+;(global-set-key (kbd "C-x C-<return>") 'myllm)
