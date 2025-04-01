@@ -45,6 +45,10 @@ TEXT
 # ${color #888888}${downspeedgraph eth0 20,70 ff0000 0000ff}   ${color #888888}${upspeedgraph eth0 20,70 0000ff ff0000}
 #
 #
+# display "TODO" only if ~/todo.txt is not empty in conky
+${color}TODO
+${color white}${execi 60 nl -w3 -s' ' ~/todo.txt}
+
 ${color}Name                     ${goto 140}  CPU%       ${goto 220}  MEM%
 ${color   #ddaa00} ${top name 1} ${goto 140}${top cpu 1} ${goto 220}${top mem 1}
 ${color lightgrey} ${top name 2} ${goto 140}${top cpu 2} ${goto 220}${top mem 2}
