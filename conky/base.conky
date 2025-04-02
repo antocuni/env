@@ -26,4 +26,4 @@ default_shade_color darkgrey
 default_outline_color lightgrey
 
 uppercase no # set to yes if you want all text to be in uppercase
-override_utf8_locale no # Force UTF8?
+override_utf8_locale yes # Force UTF8?

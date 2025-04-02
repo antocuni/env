@@ -49,6 +49,8 @@ TEXT
 ${color}TODO
 ${color white}${execi 60 nl -w3 -s' ' ~/todo.txt}
 
+${color white}${execpi 2 aws-check-credentials.sh}
+
 ${color}Name                     ${goto 140}  CPU%       ${goto 220}  MEM%
 ${color   #ddaa00} ${top name 1} ${goto 140}${top cpu 1} ${goto 220}${top mem 1}
 ${color lightgrey} ${top name 2} ${goto 140}${top cpu 2} ${goto 220}${top mem 2}
