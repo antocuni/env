@@ -2,4 +2,5 @@
 
 dirname=$(basename $(pwd))
 echo "Detected project name: $dirname"
-python3 -m venv venv --without-pip --prompt "$dirname"
+#python3 -m venv venv --without-pip --prompt "$dirname"
+python3 -m venv venv --prompt "$dirname"
