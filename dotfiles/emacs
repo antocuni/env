@@ -1112,13 +1112,10 @@ Argument REPLACE String used to replace the matched strings in the buffer.
              :mime-types ("image/jpeg" "image/png")
              :description "Claude 3.5 Haiku - Anthropic's smaller, faster model"))
   :key "bedrock")
-;; (gptel-make-openai "bedrock"
-;;   :host "localhost:9456"
-;;   :protocol "http"
-;;   :endpoint "/api/v1/chat/completions"
-;;   :models '("us.anthropic.claude-3-7-sonnet-20250219-v1:0"
-;;             "us.anthropic.claude-3-5-haiku-20241022-v1:0")
-;;   :key "bedrock")
+;; ===== IMPORTANT ====
+;; after restart, use C-u C-c C-RET and change the default backend for
+;; "us.anthropic....", else it tries to uses ChatGPT.
+
 
 (global-set-key (kbd "C-x C-<return>") 'gptel-send)
 ;; to remove a backend
@@ -1129,82 +1126,3 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 ;; (dolist (backend gptel--known-backends)
 ;;   (princ (format "%S\n" backend)))
-
-(defun gptel-list-backends ()
-  "Display a human-readable list of all registered gptel backends, models and capabilities."
-  (interactive)
-  (with-current-buffer (get-buffer-create "*GPTel Backends*")
-    (let ((inhibit-read-only t))
-      (erase-buffer)
-      (special-mode)
-      (insert "# GPTel Backends and Models\n\n")
-
-      ;; Loop through all backends
-      (dolist (backend-pair gptel--known-backends)
-        (let* ((backend-name (car backend-pair))
-               (backend (cdr backend-pair))
-               (backend-type (type-of backend)))
-
-          ;; Backend header with type
-          (insert (format "## %s (%s)\n\n"
-                         (propertize backend-name 'face 'font-lock-function-name-face)
-                         (propertize (symbol-name backend-type) 'face 'font-lock-comment-face)))
-
-          ;; Backend details
-          (insert (format "- Host: %s\n" (gptel-backend-host backend)))
-          (insert (format "- Stream: %s\n\n" (if (gptel-backend-stream backend) "Yes" "No")))
-
-          ;; Begin models section
-          (insert "### Models\n\n")
-
-          ;; Loop through models
-          (let ((models (gptel-backend-models backend)))
-            (if (not models)
-                (insert "  No models defined.\n\n")
-              (dolist (model models)
-                (let ((capabilities (gptel--model-capabilities model))
-                      (mime-types (gptel--model-mimes model)))
-
-                  ;; Model name
-                  (insert (format "#### %s\n\n"
-                                 (propertize (symbol-name model) 'face 'font-lock-variable-name-face)))
-
-                  ;; Model capabilities
-                  (if capabilities
-                      (insert (format "- Capabilities: %s\n"
-                                     (mapconcat (lambda (cap)
-                                                  (propertize (symbol-name cap)
-                                                             'face 'font-lock-builtin-face))
-                                                capabilities ", ")))
-                    (insert "- Capabilities: None\n"))
-
-                  ;; MIME types
-                  (if mime-types
-                      (insert (format "- MIME Types: %s\n"
-                                     (mapconcat #'identity mime-types ", ")))
-                    (insert "- MIME Types: None\n"))
-
-                  ;; Model description
-                  (when-let ((desc (get model :description)))
-                    (insert (format "- Description: %s\n" desc)))
-
-                  ;; Context window
-                  (when-let ((ctx (get model :context-window)))
-                    (insert (format "- Context Window: %sk tokens\n" ctx)))
-
-                  ;; Costs
-                  (when-let ((ic (get model :input-cost))
-                            (oc (get model :output-cost)))
-                    (insert (format "- Costs: $%.2f/M input tokens, $%.2f/M output tokens\n"
-                                    (/ ic 100.0) (/ oc 100.0))))
-
-                  ;; Cutoff date
-                  (when-let ((cutoff (get model :cutoff-date)))
-                    (insert (format "- Knowledge cutoff: %s\n" cutoff)))
-
-                  (insert "\n")))))))
-
-      ;; Show the buffer
-      (goto-char (point-min))
-      (display-buffer (current-buffer))
-      (message "GPTel backends and models displayed in buffer *GPTel Backends*"))))
