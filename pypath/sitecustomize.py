@@ -32,6 +32,15 @@ sys.excepthook = info
 
 if sys.version_info < (3, 0):
     import __builtin__ as builtins
+
+    def breakpoint():
+        import pdb
+        import sys
+        frame = sys._getframe(1) # caller
+        pdb.Pdb().set_trace(frame)
+
+    builtins.breakpoint = breakpoint
+
 else:
     import builtins
 
