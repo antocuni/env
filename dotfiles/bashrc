@@ -107,7 +107,11 @@ alias dmesg="dmesg --human"
 alias ddmesg="/bin/dmesg"
 
 alias xs='xdg-open'
-alias claude='claude-logging'
+
+# try to circumvent this problem
+# https://antocuni.eu/2025/07/07/claude-code-modified-my-bashrc-without-asking/
+alias claude='claude-logging'    # I expect this to be deleted
+alias 'claude'='claude-logging'  # I hope this will survive
 
 #alias hg="/usr/bin/python -s -E `which hg`" # else hg it's awfully slow to start
 alias mcd='mount /mnt/cdrom'
