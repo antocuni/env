@@ -15,6 +15,11 @@
   rmbranch = !sh -c 'git branch -d $1 && git push --delete origin $1' -
   autodiff = diff ':!*/autogen_*.*'
 
+  # Difftastic aliases, so `git dlog` is `git log` with difftastic and so on.
+  dlog = -c diff.external=difft log --ext-diff
+  dshow = -c diff.external=difft show --ext-diff
+  ddiff = -c diff.external=difft diff
+
   # this creates a tag "tmp" on the commit where we branched from upstream/master
   # git tag tmp `git merge-base HEAD upstream/master `
 
