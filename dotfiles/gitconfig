@@ -43,6 +43,7 @@
 [push]
 	default = simple
 	followTags = true
+	autoSetupRemote = true
 [core]
 	excludesfile = /home/antocuni/.gitignore
 	editor = emacsclient
