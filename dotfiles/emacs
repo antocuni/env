@@ -1061,7 +1061,7 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 (add-to-list 'load-path "~/pypy/misc/wat-mode/")
 (require 'wat-mode)
 
-(defun open-recentf-files-in-directory (directory)
+(defun recentf-antocuni-open-files-in-directory (directory)
   "Open all recent files in the specified DIRECTORY."
   (interactive "DDirectory: ")
   (let ((files (seq-filter (lambda (file)
