@@ -161,10 +161,11 @@ def main_laptop():
         win.resize_and_move(x=X, y=Y, w=W, h=1498)
 
     for win in Window.by_class('slack.Slack') + Window.by_class('discord.discord'):
-        unmaximize(win)
+        #unmaximize(win)
         win.set_decorations(False)
-        win.resize_and_move(x=PANEL, y=0, w=1900, h=1440)
+        #win.resize_and_move(x=PANEL, y=0, w=1900, h=1440)
         win.sticky()
+        maximize(win)
 
     for win in Window.by_class('conky.conky'):
         win.sticky()
