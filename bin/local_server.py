@@ -45,9 +45,39 @@ class UtilsHandler(socketserver.StreamRequestHandler):
         time.sleep(x)
         self.reply('OK')
 
+    def do_sleep_hook(self, phase, sleep_type):
+        ## if phase == 'pre':
+        ##     self.reply('goodnight')
+        ##     return
+
+        if phase == 'post' and sleep_type == 'suspend':
+            auto_xrandr()
+            self.reply('good morning')
+
 
 class ReusableTCPServer(socketserver.TCPServer):
     allow_reuse_address = True
+
+
+def auto_xrandr():
+    """
+    run auto-xrandr.py, and reposition-windows.py ONLY if we switched
+    screen config
+    """
+    def get_config():
+        try:
+            with open('/tmp/antocuni-screen-config') as f:
+                return f.read().strip()
+        except IOError:
+            return 'none'
+
+    old_config = get_config()
+    subprocess.run('auto-xrandr.py')
+    new_config = get_config()
+    print(f'[auto-xrandr.py] {old_config} => {new_config}')
+    if old_config != new_config:
+        subprocess.run('reposition-windows.py')
+
 
 
 if __name__ == "__main__":

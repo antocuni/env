@@ -6,16 +6,9 @@ echo [`date '+%F %T'`] [`whoami`] "antocuni-system-sleep $@" >> /tmp/antocuni-sy
 
 if [ $1 = pre ]
 then
-    DISPLAY=:0.0 ; export DISPLAY
-    HOME=/home/antocuni; export HOME
-    #/home/antocuni/.screenlayout/laptop.sh
+    # we need to run this here because it needs root
     /home/antocuni/bin/enable-resume-from-usb.py
 fi
 
-
-if [ $1 = post ] && [ $2 = suspend ]
-then
-    DISPLAY=:0.0 ; export DISPLAY
-    HOME=/home/antocuni; export HOME
-    #(sleep 2; /home/antocuni/bin/kbd; /home/antocuni/bin/auto-xrandr.sh)
-fi
+# local_server.py runs auto-xrandr.py & co.
+/home/antocuni/bin/local_exec.py --wait sleep_hook $1 $2
