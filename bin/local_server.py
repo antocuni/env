@@ -4,7 +4,7 @@ import sys
 import subprocess
 import json
 import socketserver
-
+import time
 
 class UtilsHandler(socketserver.StreamRequestHandler):
     def handle(self):
@@ -25,8 +25,15 @@ class UtilsHandler(socketserver.StreamRequestHandler):
             print(" ".join(argv), file=sys.stderr)
         elif cmd in ("aplay", "e", "xdg-open"):
             subprocess.run(argv)
+        elif cmd  == "sleep":
+            self.do_sleep(*argv[1:])
         else:
             print(f"Invalid command: {cmd}", file=sys.stderr)
+
+    def do_sleep(self, x):
+        x = float(x)
+        time.sleep(x)
+        self.wfile.write(b'OK\n')
 
 
 class ReusableTCPServer(socketserver.TCPServer):
