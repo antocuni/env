@@ -7,33 +7,43 @@ import socketserver
 import time
 
 class UtilsHandler(socketserver.StreamRequestHandler):
+    def reply(self, s):
+        print("[send]", s)
+        bs = (s + "\n").encode("utf-8")
+        self.wfile.write(bs)
+
     def handle(self):
         raw = self.rfile.read()  # bytes until client closes
         try:
             argv = json.loads(raw.decode("utf-8"))
         except Exception as e:
-            print(f"Invalid JSON payload: {e}", file=sys.stderr)
+            self.reply(f"Invalid JSON payload: {e}")
             return
 
-        print(argv)
+        print("[recv]", " ".join(argv))
         if not argv:
-            print("Empty argv", file=sys.stderr)
+            self.reply("no command")
             return
 
         cmd = argv[0]
-        if cmd == "ping":
-            print(" ".join(argv), file=sys.stderr)
-        elif cmd in ("aplay", "e", "xdg-open"):
+        if cmd in ("aplay", "e", "xdg-open"):
             subprocess.run(argv)
-        elif cmd  == "sleep":
-            self.do_sleep(*argv[1:])
+            return
+
+        meth = getattr(self, f'do_{cmd}', None)
+        if meth is None:
+            self.reply(f"Invalid command: {cmd}")
         else:
-            print(f"Invalid command: {cmd}", file=sys.stderr)
+            meth(*argv[1:])
+
+    def do_ping(self, *args):
+        pong = ('pong', ) + args
+        self.reply(" ".join(pong))
 
     def do_sleep(self, x):
         x = float(x)
         time.sleep(x)
-        self.wfile.write(b'OK\n')
+        self.reply('OK')
 
 
 class ReusableTCPServer(socketserver.TCPServer):
