@@ -5,10 +5,17 @@ import subprocess
 import json
 import socketserver
 import time
+from datetime import datetime
+
+
+def log(*args, **kwargs):
+    """Print a log message with timestamp."""
+    timestamp = datetime.now().strftime("[%H:%M]")
+    print(timestamp, *args, **kwargs)
 
 class UtilsHandler(socketserver.StreamRequestHandler):
     def reply(self, s):
-        print("[send]", s)
+        log("[send]", s)
         bs = (s + "\n").encode("utf-8")
         self.wfile.write(bs)
 
@@ -20,7 +27,7 @@ class UtilsHandler(socketserver.StreamRequestHandler):
             self.reply(f"Invalid JSON payload: {e}")
             return
 
-        print("[recv]", " ".join(argv))
+        log("[recv]", " ".join(argv))
         if not argv:
             self.reply("no command")
             return
@@ -46,10 +53,9 @@ class UtilsHandler(socketserver.StreamRequestHandler):
         self.reply('OK')
 
     def do_sleep_hook(self, phase, sleep_type):
-        ## if phase == 'pre':
-        ##     self.reply('goodnight')
-        ##     return
-
+        if phase == 'pre':
+            self.reply('goodnight')
+            return
         if phase == 'post' and sleep_type == 'suspend':
             auto_xrandr()
             self.reply('good morning')
@@ -72,10 +78,14 @@ def auto_xrandr():
             return 'none'
 
     old_config = get_config()
+    log('[screen]', f'current screen config: {old_config}, running auto-xrandr.py')
     subprocess.run('auto-xrandr.py')
     new_config = get_config()
-    print(f'[auto-xrandr.py] {old_config} => {new_config}')
-    if old_config != new_config:
+
+    if old_config == new_config:
+        log('[screen]', f'screen config unchanged')
+    else:
+        log('[screen]', f'{old_config} => {new_config}, running reposition-windows.py')
         subprocess.run('reposition-windows.py')
 
 
