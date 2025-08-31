@@ -11,4 +11,4 @@ then
 fi
 
 # local_server.py runs auto-xrandr.py & co.
-/home/antocuni/bin/local_exec.py --wait sleep_hook $1 $2
+/home/antocuni/bin/local_exec.py sleep_hook $1 $2

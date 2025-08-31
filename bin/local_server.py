@@ -57,6 +57,8 @@ class UtilsHandler(socketserver.StreamRequestHandler):
             self.reply('goodnight')
             return
         if phase == 'post' and sleep_type == 'suspend':
+            log('[resume]', 'waiting for 10 seconds...')
+            time.sleep(10)
             auto_xrandr()
             self.reply('good morning')
 
