@@ -26,7 +26,6 @@
 [pull]
   ff = yes
 
-
 # this is the default color theme for diff, but we also include
 # /tmp/gitconfig_colordiff: this is overwritten by
 # ~/bin/switch-gnome-terminal-profile
@@ -44,32 +43,19 @@
 	default = simple
 	followTags = true
 	autoSetupRemote = true
+
 [core]
 	excludesfile = /home/antocuni/.gitignore
 	editor = emacsclient
-[giggle]
-	main-window-maximized = true
-	main-window-geometry = 1920x1028+0+1
-	main-window-view = HistoryView
-	history-view-vpane-position = 760
-	file-view-vpane-position = 924
-	show-graph = true
-[merge]
-	tool = diffmerge
-    ff = no
-[mergetool "diffmerge"]
-	cmd = /usr/bin/diffmerge --merge --result=$MERGED $LOCAL $BASE $REMOTE
-[mergetool]
-	keepBackup = false
+
 [log]
 	abbrevCommit = true
+
 [pager]
 	branch = false
 
 [pretty]
     csv = format:\"%h\",\"%ai\",\"%s\"
-[cola]
-	spellcheck = false
-	startupmode = folder
+
 [init]
 	defaultBranch = main
