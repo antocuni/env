@@ -57,6 +57,8 @@ def only_ext():
     print(cmd)
     os.system(cmd)
     write_screen_config("ext")
+    if get_theme() == 'light':
+        os.system('toggle-theme')
 
 def both():
     laptop, ext = find_screens()
@@ -70,6 +72,9 @@ def both():
     print(cmd)
     os.system(cmd)
     write_screen_config("both")
+    if get_theme() == 'light':
+        os.system('toggle-theme')
+
 
 def r1080p():
     laptop, ext = find_screens()
@@ -84,8 +89,15 @@ def r1080p():
     os.system(cmd)
     write_screen_config("1080p")
 
-
 # ======
+
+def get_theme():
+    try:
+        with open('/tmp/theme') as f:
+            return f.read().strip()
+    except IOError:
+        return 'dark'
+
 
 def write_screen_config(name):
     with open("/tmp/antocuni-screen-config", "w") as f:
