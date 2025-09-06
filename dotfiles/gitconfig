@@ -19,6 +19,7 @@
   dlog = -c diff.external=difft log --ext-diff
   dshow = -c diff.external=difft show --ext-diff
   ddiff = -c diff.external=difft diff
+  ddist = -c diff.external=difft diff --cached
 
   # this creates a tag "tmp" on the commit where we branched from upstream/master
   # git tag tmp `git merge-base HEAD upstream/master `
@@ -53,6 +54,8 @@
 
 [pager]
 	branch = false
+    ddiff = difft-less
+    ddist = difft-less
 
 [pretty]
     csv = format:\"%h\",\"%ai\",\"%s\"

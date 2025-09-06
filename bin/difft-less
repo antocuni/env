@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# pager for difftastic
+less -R '+/^[A-Za-z][a-z/\.]+' "$@"
