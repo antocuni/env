@@ -42,24 +42,24 @@ def main_ext():
     COL0_W = COL1-COL0
     COL1_W = 3840-COL1
 
-    XE = 838 # X delta of emacs
+    XE = 838+36 # X delta of emacs
 
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
         set_emacs_font_height(144)
         win.set_decorations(False)
-        win.resize_and_move(x=X1+XE, y=0, w=2328, h=1900)
+        win.resize_and_move(x=X1+XE, y=0, w=2552, h=1900)
 
     for win in Window.by_class('code.Code'):
         unmaximize(win)
         #set_emacs_font_height(144)
         win.set_decorations(False)
-        win.resize_and_move(x=X1+XE, y=0, w=2328, h=1890)
+        win.resize_and_move(x=X1+XE, y=0, w=2552, h=1890)
 
     for win in Window.by_class('autoterm.autoterm'):
         unmaximize(win)
         win.set_decorations(False)
-        win.resize_and_move(x=X1+XE, y=0, w=2328, h=2160)
+        win.resize_and_move(x=X1+XE, y=0, w=2552, h=2160)
 
     for win in Window.by_class('mail.google.com.Google-chrome'):
         unmaximize(win)

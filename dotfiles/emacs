@@ -26,8 +26,8 @@
  '(dabbrev-case-fold-search nil)
  '(dired-dwim-target t)
  '(display-fill-column-indicator-character 124)
- '(display-fill-column-indicator-column 80)
- '(fill-column 78)
+ '(display-fill-column-indicator-column 88)
+ '(fill-column 88)
  '(find-file-hook
    '(auto-revert-find-file-function global-auto-complete-mode-check-buffers recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode global-eldoc-mode-check-buffers global-font-lock-mode-check-buffers epa-file-find-file-hook vc-refresh-state))
  '(flyspell-issue-message-flag nil)
@@ -72,7 +72,7 @@
      ["\\.dz\\'" nil nil nil "uncompressing" "gzip"
       ("-c" "-q" "-d")
       nil t "\37\213"]))
- '(menu-bar-mode window-system)
+ '(menu-bar-mode nil)
  '(mode-line-format
    '("%e" mode-line-front-space mode-line-mule-info mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification "   " mode-line-position
      (vc-mode vc-mode)
