@@ -80,30 +80,13 @@
  '(package-selected-packages
    '(ninja-mode gptel gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
  '(python-fill-docstring-style 'django)
+ '(python-indent-def-block-scale 1)
  '(reb-re-syntax 'string)
  '(rst-level-face-base-color "blackn")
  '(safe-local-variable-values
    '((encoding . latin-1)
      (encoding . Latin-1)
-     (test-case-name . twisted.test.test_defer\,twisted.test.test_defgen\,twisted.internet.test.test_inlinecb)
-     (test-case-name . twisted)
-     (test-case-name . twisted.conch.test.test_manhole)
      (sh-indent-comment . t)
-     (pymacs-auto-reload . t)
-     (test-case-name . test.test_txpostgres)
-     (test-case-name . buildbot.test.test_status)
-     (test-case-name . buildbot.test.test_run)
-     (test-case-name . buildbot.test.test_runner)
-     (test-case-name . buildbot.test.test_steps\,buildbot.test.test_properties)
-     (test-case-name . twisted.test.test_internet\,twisted.internet.test.test_posixbase)
-     (test-case-name . buildbot.test.test_slavecommand)
-     (test-case-name . buildbot.test.test_steps)
-     (test-case-name . buildbot.test.test_vc)
-     (test-case-name . twisted.test.test_log)
-     (test-case-name . twisted.test.test_application\,twisted.test.test_twistd)
-     (test-case-name . twisted.test.test_twistd)
-     (test-case-name . buildbot.test.test_twisted)
-     (test-case-name . twisted.web.test.test_static)
      (c-tab-always-indent)
      (c-continued-statement-offset . 2)
      (c-brace-offset . -2)
@@ -554,9 +537,13 @@
 
 ; enable save-place
 ; =======================
-(setq save-place-file "~/.emacs.d/saveplace") ;; keep my ~/ clean
-(setq-default save-place t)                   ;; activate it for all buffers
-(require 'saveplace)                          ;; get the package
+(setq save-place-file "~/.emacs.d/saveplace")
+(save-place-mode 1)  ;; emacs >= 27
+; old emacs versions
+;(setq-default save-place t)                   ;; activate it for all buffers
+;(require 'saveplace)                          ;; get the package
+
+
 
 ; Python mode extensions
 ; =======================
@@ -592,6 +579,21 @@ the new line indented."
           (function (lambda ()
                       (set-process-query-on-exit-flag
                        (get-process "Python") nil))))
+
+
+;; --- Ruff formatter definition ---
+;; this creates the function (ruff-format-on-save-mode)
+(use-package reformatter
+  :ensure t
+  :config
+  (reformatter-define ruff-format
+    :program "ruff"
+    :args '("format" "-")
+    :stdin t
+    :stdout t))
+(menu-bar-mode -1)
+
+
 
 
 ; Shell mode extensions
@@ -1061,7 +1063,7 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 (add-to-list 'load-path "~/pypy/misc/wat-mode/")
 (require 'wat-mode)
 
-(defun recentf-antocuni-open-files-in-directory (directory)
+(defun antocuni-recentf-open-files-in-directory (directory)
   "Open all recent files in the specified DIRECTORY."
   (interactive "DDirectory: ")
   (let ((files (seq-filter (lambda (file)
