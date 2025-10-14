@@ -2,6 +2,7 @@
 
 import sys
 import os
+import shlex
 from wmctrl import Window
 
 PANEL=64
@@ -20,9 +21,17 @@ def set_hexchat_font(size):
     os.system("hexchat -e -c 'set text_font Inconsolata Medium %d'" % size)
     os.system("hexchat -e -c 'gui apply'")
 
-def set_emacs_font_height(h):
-    elisp = "(set-face-attribute 'default (selected-frame) :height %d)" % h
-    os.system('emacsclient -e "%s"' % elisp)
+def set_emacs(*, font_height, fullscreen):
+    h = font_height
+    fs = "t" if fullscreen else "nil"
+    elisp = f"""
+        (progn
+          (set-face-attribute 'default (selected-frame) :height {h})
+          (antocuni-set-fullscreen {fs}))
+    """
+    print(elisp)
+    os.system('emacsclient -e %s' % shlex.quote(elisp))
+
 
 def get_whatsapps():
     """
@@ -46,13 +55,12 @@ def main_ext():
 
     for win in Window.by_class('emacs.Emacs'):
         unmaximize(win)
-        set_emacs_font_height(144)
+        set_emacs(font_height=144, fullscreen=False)
         win.set_decorations(False)
         win.resize_and_move(x=X1+XE, y=0, w=2552, h=1900)
 
     for win in Window.by_class('code.Code'):
         unmaximize(win)
-        #set_emacs_font_height(144)
         win.set_decorations(False)
         win.resize_and_move(x=X1+XE, y=0, w=2552, h=1890)
 
@@ -114,9 +122,9 @@ def main_laptop():
     for win in Window.by_class('emacs.Emacs'):
         #unmaximize(win)
         win.set_decorations(False)
-        set_emacs_font_height(154)
-        win.resize_and_move(x=526, y=0, w=2036, h=1300)
-        maximize(win)
+        set_emacs(font_height=144, fullscreen=True)
+        #win.resize_and_move(x=526, y=0, w=2036, h=1300)
+        #maximize(win)
 
     #for win in Window.by_role('autoterm'):
     for win in Window.by_class('autoterm.autoterm'):

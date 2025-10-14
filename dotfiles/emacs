@@ -163,6 +163,18 @@
   (set-face-attribute 'default (selected-frame) :height 154) ; laptop
   )
 
+;; this is called by reposition-windows.py
+(defun antocuni-set-fullscreen (target)
+  "Set fullscreen to TARGET (t for fullscreen, nil for windowed).
+Only toggles if the current state differs from TARGET."
+  (interactive)
+  (let* ((fullscreen-param (frame-parameter nil 'fullscreen))
+         (is-fullscreen (if (or (eq fullscreen-param 'fullboth)
+                                (eq fullscreen-param 'fullscreen))
+                            t
+                          nil)))
+    (when (not (eq is-fullscreen target))
+      (toggle-frame-fullscreen))))
 
 
 ;; use a smaller font on bart
