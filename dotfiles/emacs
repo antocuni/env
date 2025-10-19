@@ -78,7 +78,7 @@
      (vc-mode vc-mode)
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces))
  '(package-selected-packages
-   '(ninja-mode gptel gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
+   '(diff-hl ninja-mode gptel gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
  '(python-fill-docstring-style 'django)
  '(python-indent-def-block-scale 1)
  '(reb-re-syntax 'string)
@@ -110,7 +110,7 @@
  '(uniquify-buffer-name-style 'post-forward-angle-brackets nil (uniquify))
  '(user-mail-address "anto.cuni@gmail.com")
  '(vc-follow-symlinks t)
- '(vc-handled-backends nil)
+ '(vc-handled-backends '(Git))
  '(vc-hg-log-switches nil)
  '(web-mode-markup-indent-offset 2))
 
