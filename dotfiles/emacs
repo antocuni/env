@@ -24,6 +24,7 @@
    '((brace-list-intro first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)))
  '(dabbrev-case-distinction t)
  '(dabbrev-case-fold-search nil)
+ '(diff-hl-draw-borders t)
  '(dired-dwim-target t)
  '(display-fill-column-indicator-character 124)
  '(display-fill-column-indicator-column 88)
@@ -119,11 +120,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 144 :family "Inconsolata"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#202020" :foreground "#f6f3e8" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 120 :width normal :foundry "CYRE" :family "Inconsolata Nerd Font Mono"))))
  '(bold ((t (:size "" :bold t))))
  '(bold-italic ((t (:bold t :italic nil))))
  '(diff-added ((t (:inherit diff-changed :foreground "yellow"))))
  '(diff-context ((((class color grayscale) (min-colors 88)) (:inherit shadow :foreground "white"))))
+ '(diff-hl-change ((t (:foreground "blue3"))))
+ '(diff-hl-insert ((t (:inherit diff-added :foreground "yellow"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "grey"))))
  '(dired-flagged ((t (:inherit font-lock-warning-face :background "#F88" :foreground "black"))))
  '(dired-mark ((t (:inherit font-lock-constant-face :foreground "red"))))
