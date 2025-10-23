@@ -125,7 +125,7 @@
  '(bold-italic ((t (:bold t :italic nil))))
  '(diff-added ((t (:inherit diff-changed :foreground "yellow"))))
  '(diff-context ((((class color grayscale) (min-colors 88)) (:inherit shadow :foreground "white"))))
- '(diff-hl-change ((t (:foreground "blue3"))))
+ '(diff-hl-change ((t (:foreground "cyan"))))
  '(diff-hl-insert ((t (:inherit diff-added :foreground "yellow"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "grey"))))
  '(dired-flagged ((t (:inherit font-lock-warning-face :background "#F88" :foreground "black"))))
