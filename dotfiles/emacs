@@ -25,6 +25,7 @@
  '(dabbrev-case-distinction t)
  '(dabbrev-case-fold-search nil)
  '(diff-hl-draw-borders t)
+ '(diff-hl-margin-mode t)
  '(dired-dwim-target t)
  '(display-fill-column-indicator-character 124)
  '(display-fill-column-indicator-column 88)
@@ -606,9 +607,11 @@ the new line indented."
     :args '("format" "-")
     :stdin t
     :stdout t))
+
+
+
 (menu-bar-mode -1)
-
-
+(scroll-bar-mode -1)
 
 
 ; Shell mode extensions
