@@ -603,7 +603,7 @@ the new line indented."
   :ensure t
   :config
   (reformatter-define ruff-format
-    :program "ruff"
+    :program "/home/antocuni/anaconda/spy/venv/bin/ruff"
     :args '("format" "-")
     :stdin t
     :stdout t))
