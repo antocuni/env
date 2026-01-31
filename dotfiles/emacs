@@ -132,6 +132,7 @@
  '(dired-flagged ((t (:inherit font-lock-warning-face :background "#F88" :foreground "black"))))
  '(dired-mark ((t (:inherit font-lock-constant-face :foreground "red"))))
  '(dired-marked ((t (:inherit dired-mark))))
+ '(fixed-pitch ((t (:family "Inconsolata"))))
  '(font-latex-bold-face ((((class color) (background dark)) (:inherit bold :weight bold))))
  '(font-latex-italic-face ((((class color) (background dark)) (:inherit italic :slant italic :family "Courier New"))))
  '(font-latex-sectioning-5-face ((((class color) (background dark)) (:inherit variable-pitch :weight bold))))
