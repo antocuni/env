@@ -160,3 +160,8 @@ xkb_symbols "emoji" {
 
 
 };
+
+partial alphanumeric_keys
+xkb_symbols "menu_as_f13" {
+    replace key <MENU> { [ F13 ] };
+};
