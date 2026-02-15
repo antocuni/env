@@ -7,7 +7,8 @@ USB_KEYBOARD_ID="04f2:0111"
 if ! lsusb -d $USB_KEYBOARD_ID
 then
    # if we are NOT using my usb keyboard, add remap this key on lenovo keyboard
-   xmodmap -e 'keycode 107 = Menu NoSymbol Menu'
+   #xmodmap -e 'keycode 107 = Menu NoSymbol Menu'
+    xmodmap -e 'keycode 107 = F13 NoSymbol F13'
 fi
 
 if hash synclient 2>/dev/null
