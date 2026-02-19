@@ -1133,12 +1133,23 @@ Argument REPLACE String used to replace the matched strings in the buffer.
             (message "Renamed %s to %s" old-path new-path)))))))
 
 
+
+
+
 (use-package mkdocs-util
   :load-path "~/env/elisp"
   :commands (mkdocs-link))
 
 
 (load-file "~/env/elisp/myllm.el")
+
+;; diff-hl config
+(require 'diff-hl)
+(global-diff-hl-mode 1)
+
+(add-hook 'dired-mode-hook #'diff-hl-dired-mode)
+(with-eval-after-load 'magit
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
 
 (require 'gptel)
