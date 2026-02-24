@@ -1151,6 +1151,9 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 (with-eval-after-load 'magit
   (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
+(diff-hl-flydiff-mode)
+
+
 
 
 ; gptel config
