@@ -1152,23 +1152,63 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
 
-(require 'gptel)
 
-;; add a backend
-(gptel-make-openai "bedrock"
-  :host "localhost:9456"
-  :protocol "http"
-  :endpoint "/api/v1/chat/completions"
+; gptel config
+(require 'gptel)
+(require 'subr-x) ;; string-trim
+
+(defvar antocuni/groq-api-key--cached nil
+  "Cached Groq API key obtained from `llm keys get groq`.")
+
+(defun antocuni/groq-api-key (&optional refresh)
+  "Return Groq API key. With REFRESH (prefix arg), re-fetch it."
+  (when (or refresh (null antocuni/groq-api-key--cached))
+    (unless (executable-find "llm")
+      (error "`llm` executable not found in PATH"))
+    (setq antocuni/groq-api-key--cached
+          (string-trim
+           (with-temp-buffer
+             (unless (zerop (call-process "llm" nil t nil
+                                          "keys" "get" "groq"))
+               (error "Failed to retrieve Groq key via `llm keys get groq`"))
+             (buffer-string)))))
+  antocuni/groq-api-key--cached)
+
+;; Optional interactive command to refresh the cache manually.
+(defun antocuni/groq-api-key-refresh ()
+  "Refresh cached Groq API key."
+  (interactive)
+  (antocuni/groq-api-key 'refresh)
+  (message "Groq API key refreshed."))
+
+(gptel-make-openai "Groq"
+  :protocol "https"
+  :host "api.groq.com"
+  :endpoint "/openai/v1/chat/completions"
   :stream t
-  :models '((us.anthropic.claude-3-7-sonnet-20250219-v1:0
-             :capabilities (media tool-use json)
-             :mime-types ("image/jpeg" "image/png" "image/gif")
-             :description "Claude 3.7 Sonnet - Anthropic's advanced model")
-            (us.anthropic.claude-3-5-haiku-20241022-v1:0
-             :capabilities (media)
-             :mime-types ("image/jpeg" "image/png")
-             :description "Claude 3.5 Haiku - Anthropic's smaller, faster model"))
-  :key "bedrock")
+  :key #'antocuni/groq-api-key
+  :models '(openai/gpt-oss-120b
+            openai/gpt-oss-20b
+            meta/compound
+            meta/compound-mini))
+
+;;(setq gptel--known-backends (assoc-delete-all "Groq" gptel--known-backends))
+
+;; (gptel-make-openai "bedrock"
+;;   :host "localhost:9456"
+;;   :protocol "http"
+;;   :endpoint "/api/v1/chat/completions"
+;;   :stream t
+;;   :models '((us.anthropic.claude-3-7-sonnet-20250219-v1:0
+;;              :capabilities (media tool-use json)
+;;              :mime-types ("image/jpeg" "image/png" "image/gif")
+;;              :description "Claude 3.7 Sonnet - Anthropic's advanced model")
+;;             (us.anthropic.claude-3-5-haiku-20241022-v1:0
+;;              :capabilities (media)
+;;              :mime-types ("image/jpeg" "image/png")
+;;              :description "Claude 3.5 Haiku - Anthropic's smaller, faster model"))
+;;   :key "bedrock")
+
 ;; ===== IMPORTANT ====
 ;; after restart, use C-u C-c C-RET and change the default backend for
 ;; "us.anthropic....", else it tries to uses ChatGPT.
@@ -1178,8 +1218,5 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 ;; to remove a backend
 ;; (setq gptel--known-backends (assoc-delete-all "bedrock" gptel--known-backends))
 ;; pretty print all entries in gptel--known-backends
-;; (dolist (backend gptel--known-backends)
-;;   (princ (format "%S\n" backend)))
-
 ;; (dolist (backend gptel--known-backends)
 ;;   (princ (format "%S\n" backend)))
