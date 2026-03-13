@@ -108,7 +108,8 @@ check monodoc && alias monodoc='/usr/bin/monodoc > /dev/null 2>&1 &'
 alias dmesg="dmesg --human"
 alias ddmesg="/bin/dmesg"
 
-alias xs='xdg-open'
+#alias xs='xdg-open'
+xs() { xdg-open "$@" >/dev/null 2> >(grep -v "Session management error\|KApplicationTrader" >&2); }
 
 #alias hg="/usr/bin/python -s -E `which hg`" # else hg it's awfully slow to start
 alias mcd='mount /mnt/cdrom'
