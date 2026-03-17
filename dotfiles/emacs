@@ -1153,6 +1153,55 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 (diff-hl-flydiff-mode)
 
+; hack for mkdocs admonitions
+
+(defun antocuni/markdown-fill-paragraph (&optional justify)
+  "Fill current paragraph in `markdown-mode`, handling indented admonition bodies.
+
+If point is inside an indented Markdown admonition body, temporarily
+dedent the paragraph, fill it using `fill-column - indentation`, then
+re-indent it.  Otherwise fall back to `fill-paragraph`."
+  (interactive "P")
+  (if (or (not (derived-mode-p 'markdown-mode))
+          (< (current-indentation) 4)
+          (save-excursion
+            (beginning-of-line)
+            (looking-at-p "^[ \t]*$")))
+      (fill-paragraph justify)
+    (let* ((indent (current-indentation))
+           beg
+           end)
+      (save-excursion
+        ;; Beginning of the current indented paragraph.
+        (beginning-of-line)
+        (while (and (not (bobp))
+                    (save-excursion
+                      (forward-line -1)
+                      (and (not (looking-at-p "^[ \t]*$"))
+                           (>= (current-indentation) indent))))
+          (forward-line -1))
+        (setq beg (point))
+
+        ;; End of the current indented paragraph.
+        (goto-char beg)
+        (while (and (not (eobp))
+                    (not (looking-at-p "^[ \t]*$"))
+                    (>= (current-indentation) indent))
+          (forward-line 1))
+        ;; Use a marker so it tracks edits done by fill-region.
+        (setq end (copy-marker (point))))
+
+      (unwind-protect
+          (save-excursion
+            (let ((fill-column (- fill-column indent)))
+              (indent-rigidly beg end (- indent))
+              (fill-region beg end justify)
+              (indent-rigidly beg end indent)))
+        (when (markerp end)
+          (set-marker end nil))))))
+
+(with-eval-after-load 'markdown-mode
+  (define-key markdown-mode-map (kbd "M-q") #'antocuni/markdown-fill-paragraph))
 
 
 
