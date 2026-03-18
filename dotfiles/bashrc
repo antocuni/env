@@ -111,6 +111,11 @@ alias ddmesg="/bin/dmesg"
 #alias xs='xdg-open'
 xs() { xdg-open "$@" >/dev/null 2> >(grep -v "Session management error\|KApplicationTrader" >&2); }
 
+# try to circumvent this problem
+# https://antocuni.eu/2025/07/07/claude-code-modified-my-bashrc-without-asking/
+alias 'claude'='claude --allow-dangerously-skip-permissions'  # I hope this will survive
+
+
 #alias hg="/usr/bin/python -s -E `which hg`" # else hg it's awfully slow to start
 alias mcd='mount /mnt/cdrom'
 alias ucd='umount /mnt/cdrom'
