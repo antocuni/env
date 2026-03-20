@@ -761,6 +761,7 @@ the new line indented."
 
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 (global-auto-revert-mode 1)
+(setq find-file-visit-truename t)
 
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
