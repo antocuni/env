@@ -80,7 +80,7 @@
      (vc-mode vc-mode)
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces))
  '(package-selected-packages
-   '(diff-hl ninja-mode gptel gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link poly-markdown polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
+   '(diff-hl ninja-mode gptel gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
  '(python-fill-docstring-style 'django)
  '(python-indent-def-block-scale 1)
  '(reb-re-syntax 'string)
@@ -1153,8 +1153,9 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 (diff-hl-flydiff-mode)
 
-; hack for mkdocs admonitions
+; ======== markdown and mkdocs customizations ========
 
+; hack for mkdocs admonitions
 (defun antocuni/markdown-fill-paragraph (&optional justify)
   "Fill current paragraph in `markdown-mode`, handling indented admonition bodies.
 
@@ -1204,8 +1205,13 @@ re-indent it.  Otherwise fall back to `fill-paragraph`."
   (define-key markdown-mode-map (kbd "M-q") #'antocuni/markdown-fill-paragraph))
 
 
+; fontify code blocks
+(setq markdown-fontify-code-blocks-natively t)
 
-; gptel config
+
+
+
+; =============== gptel config ======================
 (require 'gptel)
 (require 'subr-x) ;; string-trim
 
