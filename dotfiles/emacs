@@ -1251,6 +1251,10 @@ re-indent it.  Otherwise fall back to `fill-paragraph`."
             meta/compound
             meta/compound-mini))
 
+;; Set Groq as the default backend
+(setq gptel-backend (gptel-get-backend "Groq")
+      gptel-model 'openai/gpt-oss-120b)
+
 ;;(setq gptel--known-backends (assoc-delete-all "Groq" gptel--known-backends))
 
 ;; (gptel-make-openai "bedrock"
