@@ -1,0 +1,14 @@
+#!/bin/bash
+# Custom URL opener for kitty. Silently handles local_server URLs,
+# falls back to xdg-open for everything else.
+
+URL="$1"
+
+case "$URL" in
+    http://localhost:4242/*)
+        curl -s "$URL" > /dev/null 2>&1 &
+        ;;
+    *)
+        xdg-open "$URL"
+        ;;
+esac

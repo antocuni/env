@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 
 import sys
-import argparse
-import socket
 import json
+import socket
+import argparse
+from urllib.request import urlopen, Request
+from urllib.parse import quote
 
 HOST, PORT = "localhost", 4242
+SERVER = f"http://{HOST}:{PORT}"
 
 def main():
     parser = argparse.ArgumentParser(
@@ -20,48 +23,70 @@ def main():
     if not args.command:
         parser.error("no command provided")
 
-    payload = json.dumps(args.command).encode("utf-8")
+    cmd = args.command[0]
+    cmd_args = args.command[1:]
 
-    try:
-        # connect with a short connect timeout
-        with socket.create_connection((HOST, PORT), timeout=5) as sock:
-            if args.wait:
-                # we might read a response; set a 30s overall read timeout
-                sock.settimeout(30)
+    # Build the URL: /CMD?arg0=val0&arg1=val1&...
+    # For "e" command: /e?file=FILE&line=LINE (special handling for +LINE syntax)
+    if cmd == "e":
+        params = []
+        filepath = None
+        line = None
+        for a in cmd_args:
+            if a.startswith("+"):
+                line = a[1:]
+            else:
+                filepath = a
+        if not filepath:
+            print("e: missing file argument", file=sys.stderr)
+            return 1
+        url = f"{SERVER}/e?file={quote(filepath)}"
+        if line:
+            url += f"&line={quote(line)}"
+    else:
+        # Generic: POST /exec with JSON body
+        url = f"{SERVER}/exec"
 
-            # send request
-            sock.sendall(payload)
-
-            if not args.wait:
-                # fire-and-forget: close and exit
-                return 0
-
-            # tell the server we're done sending but keep the socket open for reading
-            try:
-                sock.shutdown(socket.SHUT_WR)
-            except OSError:
-                # if shutdown not supported or already closed, proceed to read anyway
-                pass
-
-            # receive until EOF or timeout
-            chunks = []
-            try:
-                while True:
-                    chunk = sock.recv(4096)
-                    if not chunk:
-                        break
-                    chunks.append(chunk)
-            except socket.timeout:
-                print("Timed out waiting for server reply (30s).", file=sys.stderr)
-                return 3
-
-            if chunks:
-                sys.stdout.write(b"".join(chunks).decode("utf-8", errors="replace"))
+    if args.wait:
+        try:
+            if cmd == "e":
+                req = Request(url)
+            else:
+                payload = json.dumps(args.command).encode("utf-8")
+                req = Request(url, data=payload, headers={"Content-Type": "application/json"})
+            resp = urlopen(req, timeout=30)
+            body = resp.read().decode("utf-8", errors="replace")
+            if body:
+                sys.stdout.write(body)
+                if not body.endswith("\n"):
+                    sys.stdout.write("\n")
             return 0
-
-    except (OSError, ConnectionError) as e:
-        print(str(e), file=sys.stderr)
-        return 2
+        except Exception as e:
+            print(str(e), file=sys.stderr)
+            return 2
+    else:
+        # Fire-and-forget: send raw HTTP request over a socket and close
+        try:
+            path = url[len(SERVER):]
+            if cmd == "e":
+                raw = f"GET {path} HTTP/1.0\r\nConnection: close\r\n\r\n"
+            else:
+                payload = json.dumps(args.command)
+                raw = (
+                    f"POST {path} HTTP/1.0\r\n"
+                    f"Content-Type: application/json\r\n"
+                    f"Content-Length: {len(payload)}\r\n"
+                    f"Connection: close\r\n"
+                    f"\r\n"
+                    f"{payload}"
+                )
+            sock = socket.create_connection((HOST, PORT), timeout=5)
+            sock.sendall(raw.encode("utf-8"))
+            sock.close()
+            return 0
+        except (OSError, ConnectionError) as e:
+            print(str(e), file=sys.stderr)
+            return 2
 
 if __name__ == "__main__":
     sys.exit(main())
