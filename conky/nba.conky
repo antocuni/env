@@ -1,0 +1,16 @@
+# -*- mode: conf -*-
+
+xinerama_head 0
+alignment bottom_right
+minimum_size 280 1
+gap_x 8
+gap_y 440
+
+update_interval 2.0
+total_run_times 0
+
+draw_shades no
+default_color yellow
+
+TEXT
+${execpi 3600 /home/antocuni/env/bin/nba-schedule.py --conky}

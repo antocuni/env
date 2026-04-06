@@ -31,9 +31,13 @@ class Main(Conky):
 class Calendar(Conky):
     RC = ['base.conky', 'calendar.conky']
 
+class Nba(Conky):
+    RC = ['base.conky', 'nba.conky']
+
 def main():
     os.system('killall conky')
     Main().run()
+    Nba().run()
     #Calendar().run()
 
 
