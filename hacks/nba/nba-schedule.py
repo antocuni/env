@@ -383,8 +383,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--days-back', type=int, default=2,
                         help='Days in the past to show (default: 2)')
-    parser.add_argument('--days-ahead', type=int, default=7,
-                        help='Days in the future to show (default: 7)')
+    parser.add_argument('--days-ahead', type=int, default=2,
+                        help='Days in the future to show (default: 2)')
     parser.add_argument('--no-grade', action='store_true',
                         help='Skip grading (faster, no network calls to Sky/LLM)')
     parser.add_argument('--conky', action='store_true',
