@@ -5,6 +5,7 @@ Default: last 2 days + next 7 days.
 Past games are automatically graded via Sky Sport Italy + LLM (cached).
 """
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -20,6 +21,9 @@ ITALY_REGION = 19
 CDN_URL = f"https://cdn.nba.com/static/json/staticData/scheduleLeagueV2_{ITALY_REGION}.json"
 CACHE_FILE = Path.home() / '.cache' / 'nba' / 'grades.json'
 COMMENTARY_CACHE_FILE = Path.home() / '.cache' / 'nba' / 'commentary.json'
+SKY_ARTICLE_LOG = Path.home() / '.cache' / 'nba' / 'sky_article.log'
+SKY_ARTICLE_LOG_MAX_BYTES = 500_000
+SKY_ARTICLE_LOG_BACKUPS = 3
 SKY_SEASON_URL = "https://sport.sky.it/nba/2025/10/09/nba-2025-2026-partite-tv-streaming-sky-now"
 # Wait this long after game tip-off before trying to grade (article won't exist yet)
 GRADE_DELAY = timedelta(hours=5)
@@ -103,11 +107,12 @@ def find_sky_article(target_date: date) -> str | None:
         )
     except Exception:
         return None
-    date_str = target_date.strftime('%Y/%m/%d')
+    candidate_dates = {target_date.strftime('%Y/%m/%d'),
+                       (target_date - timedelta(days=1)).strftime('%Y/%m/%d')}
     for line in result.stdout.splitlines():
         parts = line.split()
         url = parts[-1] if parts else ''
-        if re.search(r'nba.*(partite|risultati).*notte', url) and date_str in url:
+        if re.search(r'nba.*(partite|risultati).*notte', url) and any(d in url for d in candidate_dates):
             return url
     return None
 
@@ -151,26 +156,40 @@ def grade_via_llm(article_text: str, games: list) -> dict[str, int]:
     return grades
 
 
+def _needs_grade(game_id: str, grades: dict, now: datetime) -> bool:
+    entry = grades.get(game_id)
+    if entry is None:
+        return True
+    if entry['grade'] is not None:
+        return False  # already graded
+    # Null grade: retry for up to 24h after the first attempt, then give up
+    checked_at_str = entry.get('checked_at')
+    if not checked_at_str:
+        return True  # old null entry without timestamp — retry once
+    checked_at = datetime.fromisoformat(checked_at_str)
+    return (now - checked_at) < timedelta(hours=24)
+
+
 def grade_past_games(by_day: dict, grades: dict, now: datetime) -> bool:
     """Grade ungraded past games by day. Writes cache if anything changed."""
     updated = False
     for day, games in by_day.items():
         ungraded = [
             g for g in games
-            if g['game_id'] not in grades and g['time'] + GRADE_DELAY < now
+            if _needs_grade(g['game_id'], grades, now) and g['time'] + GRADE_DELAY < now
         ]
         if not ungraded:
             continue
 
         url = find_sky_article(day)
         if not url:
-            # No article found — cache nulls to avoid retrying
             for game in ungraded:
                 grades[game['game_id']] = {
                     'date': day.isoformat(),
                     'away': game['away_tri'],
                     'home': game['home_tri'],
                     'grade': None,
+                    'checked_at': now.isoformat(),
                 }
             updated = True
             continue
@@ -184,6 +203,7 @@ def grade_past_games(by_day: dict, grades: dict, now: datetime) -> bool:
                 'away': game['away_tri'],
                 'home': game['home_tri'],
                 'grade': llm_grades.get(game['game_id']),
+                'checked_at': now.isoformat(),
             }
         updated = True
 
@@ -214,7 +234,36 @@ def fetch_sky_season_article() -> str:
         ['lynx', '-dump', '-nolist', '-stdin'],
         input=resp.text, capture_output=True, text=True, timeout=15,
     )
-    return result.stdout
+    text = result.stdout
+    _log_sky_article(text)
+    return text
+
+
+def _log_sky_article(text: str):
+    SKY_ARTICLE_LOG.parent.mkdir(parents=True, exist_ok=True)
+    digest = hashlib.sha256(text.encode()).hexdigest()
+    hash_file = SKY_ARTICLE_LOG.with_suffix('.log.hash')
+    if hash_file.exists() and hash_file.read_text().strip() == digest:
+        return  # content unchanged, skip
+    _rotate_log(SKY_ARTICLE_LOG, SKY_ARTICLE_LOG_MAX_BYTES, SKY_ARTICLE_LOG_BACKUPS)
+    with SKY_ARTICLE_LOG.open('a') as f:
+        f.write(f"\n{'='*60}\n")
+        f.write(f"Fetched at: {datetime.now(tz=ITALY_TZ).isoformat()}\n")
+        f.write(f"URL: {SKY_SEASON_URL}\n")
+        f.write('='*60 + '\n')
+        f.write(text)
+    hash_file.write_text(digest)
+
+
+def _rotate_log(path: Path, max_bytes: int, backups: int):
+    if not path.exists() or path.stat().st_size < max_bytes:
+        return
+    for i in range(backups - 1, 0, -1):
+        src = Path(f"{path}.{i}")
+        dst = Path(f"{path}.{i + 1}")
+        if src.exists():
+            src.rename(dst)
+    path.rename(Path(f"{path}.1"))
 
 
 def detect_commentary_via_llm(article_text: str, games: list) -> dict[str, str]:
@@ -222,13 +271,24 @@ def detect_commentary_via_llm(article_text: str, games: list) -> dict[str, str]:
     Ask LLM to label each game as 'italian' or 'original' based on the Sky article.
     Returns {game_id: 'italian' | 'original'}.
     """
-    game_list = ', '.join(f"{g['away_tri']} @ {g['home_tri']}" for g in games)
+    game_list = ', '.join(
+        f"{g['away_tri']} @ {g['home_tri']} on {g['time'].strftime('%Y-%m-%d')}"
+        for g in games
+    )
     system_prompt = (
         "You will receive a Sky Sport Italy NBA broadcast schedule. "
-        "For each game, determine if Italian commentary is available "
-        "(either live or as a replay — if there are named Italian commentators, it counts). "
+        "For each game, determine if Italian commentary is available — "
+        "either for the live broadcast or for any replay of that game. "
+        "If named Italian commentators appear anywhere for that game (live or replay), label it 'italian'. "
+        "The article may not mention the live broadcast time; in that case use the replay date "
+        "to identify which game in a series it refers to (e.g. a replay on April 20 belongs to the game "
+        "played on the night of April 19-20). "
+        "The article may list multiple games between the same two teams (playoff series): "
+        "match each request to the correct game by date. "
+        "If the live game is marked '***UNICO PASSAGGIO***' with only 'commento originale' and no named "
+        "Italian commentators anywhere for that game entry, label it 'original'. "
         f"Label ONLY these games: {game_list}. "
-        "Output ONLY lines in the exact format: 'TRI1 @ TRI2: italian' or 'TRI1 @ TRI2: original'. "
+        "Output ONLY lines in the exact format: 'TRI1 @ TRI2 on YYYY-MM-DD: italian' or 'TRI1 @ TRI2 on YYYY-MM-DD: original'. "
         "Nothing else."
     )
     result = subprocess.run(
@@ -237,11 +297,15 @@ def detect_commentary_via_llm(article_text: str, games: list) -> dict[str, str]:
     )
     detected = {}
     for line in result.stdout.splitlines():
-        m = re.match(r'^([A-Z]+)\s*@\s*([A-Z]+)\s*:\s*(italian|original)', line.strip(), re.IGNORECASE)
+        m = re.match(
+            r'^([A-Z]+)\s*@\s*([A-Z]+)\s+on\s+(\d{4}-\d{2}-\d{2})\s*:\s*(italian|original)',
+            line.strip(), re.IGNORECASE,
+        )
         if m:
-            away_tri, home_tri, label = m.group(1), m.group(2), m.group(3).lower()
+            away_tri, home_tri, date_str, label = m.group(1), m.group(2), m.group(3), m.group(4).lower()
             for g in games:
-                if g['away_tri'] == away_tri and g['home_tri'] == home_tri:
+                if (g['away_tri'] == away_tri and g['home_tri'] == home_tri
+                        and g['time'].strftime('%Y-%m-%d') == date_str):
                     detected[g['game_id']] = label
                     break
     return detected
@@ -389,7 +453,18 @@ def main():
                         help='Skip grading (faster, no network calls to Sky/LLM)')
     parser.add_argument('--conky', action='store_true',
                         help='Output in compact conky format')
+    parser.add_argument('--clear-cache', action='store_true',
+                        help='Delete grades and commentary caches, then exit')
     args = parser.parse_args()
+
+    if args.clear_cache:
+        for f in (CACHE_FILE, COMMENTARY_CACHE_FILE):
+            if f.exists():
+                f.unlink()
+                print(f"Deleted {f}")
+            else:
+                print(f"Not found: {f}")
+        return
 
     today = date.today()
     start = today - timedelta(days=args.days_back)
