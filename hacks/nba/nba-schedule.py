@@ -494,7 +494,8 @@ def main():
             print("Nessuna partita trovata nel periodo.")
             return
         print_normal(by_day, today, grades, commentary)
-
+        print()
+        print(SKY_SEASON_URL)
 
 if __name__ == '__main__':
     main()
