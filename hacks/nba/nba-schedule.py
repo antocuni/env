@@ -26,7 +26,7 @@ SKY_ARTICLE_LOG_MAX_BYTES = 500_000
 SKY_ARTICLE_LOG_BACKUPS = 3
 SKY_SEASON_URL = "https://sport.sky.it/nba/2025/10/09/nba-2025-2026-partite-tv-streaming-sky-now"
 # Wait this long after game tip-off before trying to grade (article won't exist yet)
-GRADE_DELAY = timedelta(hours=5)
+GRADE_DELAY = timedelta(hours=3)
 
 OTT_FIELDS = {'intlOttBroadcasters'}
 TV_FIELDS = {'intlTvBroadcasters'}
