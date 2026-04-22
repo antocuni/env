@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 NBA games visible in Italy (Sky Sport / Amazon Prime).
 Default: last 2 days + next 7 days.
@@ -455,7 +455,24 @@ def main():
                         help='Output in compact conky format')
     parser.add_argument('--clear-cache', action='store_true',
                         help='Delete grades and commentary caches, then exit')
+    parser.add_argument('--show-grade-article', metavar='DATE', nargs='?',
+                        const=date.today().isoformat(),
+                        help='Fetch and print the Sky grading article for DATE (YYYY-MM-DD, default: today), then exit')
     args = parser.parse_args()
+
+    if args.show_grade_article is not None:
+        try:
+            target = date.fromisoformat(args.show_grade_article)
+        except ValueError:
+            print(f"Invalid date: {args.show_grade_article!r}. Use YYYY-MM-DD.", file=sys.stderr)
+            sys.exit(1)
+        url = find_sky_article(target)
+        if not url:
+            print(f"No Sky grading article found for {target}.", file=sys.stderr)
+            sys.exit(1)
+        print(f"Article URL: {url}\n", file=sys.stderr)
+        print(fetch_sky_text(url))
+        return
 
     if args.clear_cache:
         for f in (CACHE_FILE, COMMENTARY_CACHE_FILE):
