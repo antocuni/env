@@ -55,7 +55,7 @@ def get_channels(broadcasters: dict) -> list[str]:
     return channels
 
 
-def collect_games(game_dates, start: date, end: date) -> dict[date, list]:
+def collect_games(game_dates, start: date, end: date, all_games: bool = False) -> dict[date, list]:
     """Returns {italian_day: [game_info, ...]} for games with Italian TV coverage."""
     by_day: dict[date, list] = {}
     for gdate in game_dates:
@@ -64,8 +64,10 @@ def collect_games(game_dates, start: date, end: date) -> dict[date, list]:
             continue
         for g in gdate['games']:
             channels = get_channels(g.get('broadcasters', {}))
-            if not channels:
+            if not channels and not all_games:
                 continue
+            if not channels:
+                channels = ['League Pass']
             utc_dt = datetime.fromisoformat(g['gameDateTimeUTC'].replace('Z', '+00:00'))
             italy_dt = utc_dt.astimezone(ITALY_TZ)
             d = italy_dt.date()
@@ -445,10 +447,12 @@ def print_conky(by_day: dict, today: date, grades: dict, commentary: dict):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--days-back', type=int, default=2,
+    parser.add_argument('-B', '--days-back', type=int, default=2,
                         help='Days in the past to show (default: 2)')
-    parser.add_argument('--days-ahead', type=int, default=1,
+    parser.add_argument('-A', '--days-ahead', type=int, default=1,
                         help='Days in the future to show (default: 1)')
+    parser.add_argument('--all', action='store_true',
+                        help='Show all games, even without Sky/Prime coverage')
     parser.add_argument('--no-grade', action='store_true',
                         help='Skip grading (faster, no network calls to Sky/LLM)')
     parser.add_argument('--conky', action='store_true',
@@ -493,7 +497,7 @@ def main():
         print(f"Error fetching schedule: {e}", file=sys.stderr)
         sys.exit(1)
 
-    by_day = collect_games(game_dates, start, end)
+    by_day = collect_games(game_dates, start, end, all_games=args.all)
     grades = load_grades()
     commentary = load_commentary()
 

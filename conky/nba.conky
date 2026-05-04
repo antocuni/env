@@ -13,4 +13,4 @@ draw_shades no
 default_color yellow
 
 TEXT
-${execpi 3600 /home/antocuni/env/bin/nba-schedule.py --conky}
+${execpi 3600 /home/antocuni/env/bin/nba-schedule.py --conky --all}
