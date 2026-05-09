@@ -14,6 +14,7 @@ JOB_FILTER=""
 FULL_LOG=false
 WATCH_MODE=false
 WATCH_INTERVAL=10
+PYTEST_MODE=false
 
 # Colors — set unconditionally so subshells inherit them; stripped below if not a tty
 BOLD=$'\033[1m'
@@ -29,27 +30,38 @@ if [ ! -t 1 ]; then
     BOLD="" RED="" GREEN="" YELLOW="" BLUE="" CYAN="" DIM="" RESET=""
 fi
 
-# Pre-process --watch long option into -W for getopts
+usage() {
+    cat <<EOF
+Usage: gh-logs [-n LINES] [-j PATTERN] [-A] [-W|--watch] [--pytest] [-h|--help]
+  -n LINES    Tail lines per failed step (default: 30)
+  -j PATTERN  Show only jobs matching PATTERN (case-insensitive)
+  -A          Show full log (no tail)
+  -W/--watch  Refresh every 10s, output pinned to bottom
+  --pytest    Print just the names of failed pytest tests
+  -h/--help   Show this help
+EOF
+}
+
+# Pre-process long options into short ones for getopts
 NEWARGS=()
 for arg in "$@"; do
-    [ "$arg" = "--watch" ] && NEWARGS+=("-W") || NEWARGS+=("$arg")
+    case "$arg" in
+        --watch) NEWARGS+=("-W") ;;
+        --pytest) NEWARGS+=("-P") ;;
+        --help) NEWARGS+=("-h") ;;
+        *) NEWARGS+=("$arg") ;;
+    esac
 done
 set -- "${NEWARGS[@]}"
 
-while getopts "n:j:AWh" opt; do
+while getopts "n:j:AWPh" opt; do
     case "$opt" in
         n) TAIL_LINES="$OPTARG" ;;
         j) JOB_FILTER="$OPTARG" ;;
         A) FULL_LOG=true ;;
         W) WATCH_MODE=true ;;
-        h)
-            echo "Usage: gh-logs [-n LINES] [-j PATTERN] [-A] [-W|--watch]"
-            echo "  -n LINES    Tail lines per failed step (default: 30)"
-            echo "  -j PATTERN  Show only jobs matching PATTERN (case-insensitive)"
-            echo "  -A          Show full log (no tail)"
-            echo "  -W/--watch  Refresh every 10s, output pinned to bottom"
-            exit 0
-            ;;
+        P) PYTEST_MODE=true ;;
+        h) usage; exit 0 ;;
         *) exit 1 ;;
     esac
 done
@@ -155,7 +167,14 @@ run_once() {
         fi
 
         echo
-        if [ "$FULL_LOG" = true ]; then
+        if [ "$PYTEST_MODE" = true ]; then
+            FAILED_TESTS=$(echo "$USEFUL_LOG" | grep -oE '^FAILED [^ ]+' | sed 's/^FAILED //' | sort -u)
+            if [ -n "$FAILED_TESTS" ]; then
+                echo "$FAILED_TESTS"
+            else
+                echo "${DIM}(no pytest FAILED lines found)${RESET}"
+            fi
+        elif [ "$FULL_LOG" = true ]; then
             echo "$USEFUL_LOG"
         else
             echo "$USEFUL_LOG" | tail -n "$TAIL_LINES"
