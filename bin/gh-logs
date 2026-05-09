@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+# Show logs from failed GitHub Actions jobs for the current branch.
+#
+# Usage: gh-logs [-n LINES] [-j PATTERN] [-A] [-W]
+#   -n LINES    Number of tail lines to show per failed step (default: 30)
+#   -j PATTERN  Show only jobs matching PATTERN (case-insensitive)
+#   -A          Show full log (no tail)
+#   -W          Watch mode: refresh every 10s, output at bottom of screen
+
+set -euo pipefail
+
+TAIL_LINES=30
+JOB_FILTER=""
+FULL_LOG=false
+WATCH_MODE=false
+WATCH_INTERVAL=10
+
+# Colors — set unconditionally so subshells inherit them; stripped below if not a tty
+BOLD=$'\033[1m'
+RED=$'\033[31m'
+GREEN=$'\033[32m'
+YELLOW=$'\033[33m'
+BLUE=$'\033[34m'
+CYAN=$'\033[36m'
+DIM=$'\033[2m'
+RESET=$'\033[0m'
+
+if [ ! -t 1 ]; then
+    BOLD="" RED="" GREEN="" YELLOW="" BLUE="" CYAN="" DIM="" RESET=""
+fi
+
+# Pre-process --watch long option into -W for getopts
+NEWARGS=()
+for arg in "$@"; do
+    [ "$arg" = "--watch" ] && NEWARGS+=("-W") || NEWARGS+=("$arg")
+done
+set -- "${NEWARGS[@]}"
+
+while getopts "n:j:AWh" opt; do
+    case "$opt" in
+        n) TAIL_LINES="$OPTARG" ;;
+        j) JOB_FILTER="$OPTARG" ;;
+        A) FULL_LOG=true ;;
+        W) WATCH_MODE=true ;;
+        h)
+            echo "Usage: gh-logs [-n LINES] [-j PATTERN] [-A] [-W|--watch]"
+            echo "  -n LINES    Tail lines per failed step (default: 30)"
+            echo "  -j PATTERN  Show only jobs matching PATTERN (case-insensitive)"
+            echo "  -A          Show full log (no tail)"
+            echo "  -W/--watch  Refresh every 10s, output pinned to bottom"
+            exit 0
+            ;;
+        *) exit 1 ;;
+    esac
+done
+
+# Strip GH Actions timestamp prefix from log lines
+strip_timestamps() {
+    sed 's/^[0-9T:.Z-]* //'
+}
+
+run_once() {
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+    # Get all workflow runs for this branch, pick the latest commit's runs.
+    ALL_RUNS=$(gh run list --branch "$BRANCH" --json databaseId,status,conclusion,name,headSha,url 2>/dev/null)
+
+    if [ "$(echo "$ALL_RUNS" | jq 'length')" -eq 0 ]; then
+        echo "${RED}No workflow runs found for branch '$BRANCH'.${RESET}" >&2
+        exit 1
+    fi
+
+    LATEST_SHA=$(echo "$ALL_RUNS" | jq -r '.[0].headSha')
+    RUNS_FOR_SHA=$(echo "$ALL_RUNS" | jq --arg sha "$LATEST_SHA" '[.[] | select(.headSha == $sha)]')
+
+    echo "${BOLD}Branch:${RESET} $BRANCH @ ${CYAN}${LATEST_SHA:0:8}${RESET}"
+    echo "${BOLD}Workflows:${RESET}"
+    echo "$RUNS_FOR_SHA" | jq -r '.[] | "\(.conclusion)\t\(.name)\t\(.url)"' | while IFS=$'\t' read -r conclusion name url; do
+        if [ "$conclusion" = "failure" ]; then
+            echo "  ${RED}✗ $name${RESET}  ${DIM}$url${RESET}"
+        elif [ "$conclusion" = "success" ]; then
+            echo "  ${GREEN}✓ $name${RESET}  ${DIM}$url${RESET}"
+        else
+            echo "  ${YELLOW}● $name${RESET} ($conclusion)  ${DIM}$url${RESET}"
+        fi
+    done
+    echo
+
+    # Collect failed jobs across all workflow runs for this commit
+    FAILED_JOBS="[]"
+    while read -r RUN_ID; do
+        JOBS=$(gh run view "$RUN_ID" --json jobs \
+            | jq -r '[.jobs[] | select(.conclusion == "failure")]')
+        FAILED_JOBS=$(echo "$FAILED_JOBS" "$JOBS" | jq -s '.[0] + .[1]')
+    done < <(echo "$RUNS_FOR_SHA" | jq -r '.[].databaseId')
+
+    FAILED_JOBS=$(echo "$FAILED_JOBS" | jq 'sort_by(.completedAt)')
+    NUM_FAILED=$(echo "$FAILED_JOBS" | jq 'length')
+
+    if [ "$NUM_FAILED" -eq 0 ]; then
+        NUM_ONGOING=$(echo "$RUNS_FOR_SHA" | jq '[.[] | select(.status != "completed")] | length')
+        if [ "$NUM_ONGOING" -gt 0 ]; then
+            echo "${YELLOW}$NUM_ONGOING workflow(s) still running.${RESET}"
+        else
+            echo "${GREEN}No failed jobs.${RESET}"
+        fi
+        return 0
+    fi
+
+    echo "${RED}${BOLD}$NUM_FAILED failed job(s).${RESET}"
+    echo
+
+    # Filter jobs by pattern if -j was given
+    if [ -n "$JOB_FILTER" ]; then
+        FAILED_JOBS=$(echo "$FAILED_JOBS" | jq --arg pat "$JOB_FILTER" '[.[] | select(.name | test($pat; "i"))]')
+        NUM_MATCHED=$(echo "$FAILED_JOBS" | jq 'length')
+        if [ "$NUM_MATCHED" -eq 0 ]; then
+            echo "No failed jobs matching '${YELLOW}$JOB_FILTER${RESET}'."
+            return 0
+        fi
+    fi
+
+    echo "$FAILED_JOBS" | jq -c '.[]' | while read -r JOB; do
+        JOB_ID=$(echo "$JOB" | jq -r '.databaseId')
+        JOB_NAME=$(echo "$JOB" | jq -r '.name')
+        JOB_URL=$(echo "$JOB" | jq -r '.url')
+
+        # Get failed step names for display
+        FAILED_STEPS=$(echo "$JOB" | jq -r '[.steps[] | select(.conclusion == "failure")] | .[].name')
+
+        echo "${BOLD}${RED}===========================================${RESET}"
+        echo "${BOLD}${RED}Job: $JOB_NAME${RESET}"
+        echo "${DIM}$JOB_URL${RESET}"
+        echo "${YELLOW}Failed step(s): $FAILED_STEPS${RESET}"
+        echo "${BOLD}${RED}===========================================${RESET}"
+
+        # Download the full job log
+        LOG=$(gh api "repos/{owner}/{repo}/actions/jobs/$JOB_ID/logs" 2>/dev/null || true)
+
+        if [ -z "$LOG" ]; then
+            echo "(Could not fetch logs for job $JOB_ID)"
+            echo
+            continue
+        fi
+
+        # Extract the useful part: everything up to (and including) the ##[error] line,
+        # which marks where the step actually failed.
+        # Then strip timestamps for readability.
+        ERROR_LINE=$(echo "$LOG" | grep -n '##\[error\]Process completed with exit code' | tail -1 | cut -d: -f1)
+
+        if [ -n "$ERROR_LINE" ]; then
+            USEFUL_LOG=$(echo "$LOG" | head -n "$ERROR_LINE" | strip_timestamps)
+        else
+            USEFUL_LOG=$(echo "$LOG" | strip_timestamps)
+        fi
+
+        echo
+        if [ "$FULL_LOG" = true ]; then
+            echo "$USEFUL_LOG"
+        else
+            echo "$USEFUL_LOG" | tail -n "$TAIL_LINES"
+            TOTAL=$(echo "$USEFUL_LOG" | wc -l)
+            if [ "$TOTAL" -gt "$TAIL_LINES" ]; then
+                echo
+                echo "${DIM}... ($TOTAL lines total, showing last $TAIL_LINES. Use -A for full log.)${RESET}"
+            fi
+        fi
+
+        echo
+    done
+}
+
+if [ "$WATCH_MODE" = true ]; then
+    tmpfile=$(mktemp /tmp/gh-logs.XXXXXX)
+    # Restore cursor and clean up temp file on exit
+    trap 'rm -f "$tmpfile"; tput cnorm 2>/dev/null || true' EXIT INT TERM
+
+    # Hide cursor for cleaner refresh
+    tput civis 2>/dev/null || true
+
+    while true; do
+        run_once > "$tmpfile" 2>&1 || true
+
+        TERM_ROWS=$(tput lines)
+        OUTPUT_LINES=$(wc -l < "$tmpfile")
+        FOOTER="${DIM}[watch: refreshing every ${WATCH_INTERVAL}s — Ctrl-C to quit]${RESET}"
+
+        # Clear screen without scroll (avoids the blank-screen flash of `clear`)
+        printf '\033[H\033[J'
+
+        # Pad with blank lines to push output to the bottom
+        CONTENT_LINES=$(( OUTPUT_LINES + 1 ))  # +1 for footer
+        if [ "$CONTENT_LINES" -lt "$TERM_ROWS" ]; then
+            PADDING=$(( TERM_ROWS - CONTENT_LINES ))
+            printf '%*s' "$PADDING" '' | tr ' ' '\n'
+        fi
+
+        cat "$tmpfile"
+        printf "%b\n" "$FOOTER"
+
+        sleep "$WATCH_INTERVAL"
+    done
+else
+    run_once
+fi
