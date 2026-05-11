@@ -114,7 +114,7 @@ def find_sky_article(target_date: date) -> str | None:
     for line in result.stdout.splitlines():
         parts = line.split()
         url = parts[-1] if parts else ''
-        if re.search(r'nba.*(partite|risultati).*notte', url) and any(d in url for d in candidate_dates):
+        if re.search(r'nba.*(partite|risultati)', url) and any(d in url for d in candidate_dates):
             return url
     return None
 
@@ -421,10 +421,11 @@ def print_conky(by_day: dict, today: date, grades: dict, commentary: dict):
             label += ' ◀'
         print(f'${{color orange}}{label}')
         for g in games:
-            short_channels = ' / '.join(
-                'Sky' if 'sky' in ch.lower() else 'Prime'
-                for ch in g['channels']
-            )
+            def _short(ch):
+                if 'sky' in ch.lower(): return 'Sky'
+                if 'prime' in ch.lower(): return 'Prime'
+                return ''
+            short_channels = ' / '.join(_short(ch) for ch in g['channels'])
             matchup = f"{g['away_tri']} @ {g['home_tri']}"
             color = game_color(g, now)
             entry = grades.get(g['game_id'])
@@ -451,8 +452,8 @@ def main():
                         help='Days in the past to show (default: 2)')
     parser.add_argument('-A', '--days-ahead', type=int, default=1,
                         help='Days in the future to show (default: 1)')
-    parser.add_argument('--all', action='store_true',
-                        help='Show all games, even without Sky/Prime coverage')
+    parser.add_argument('--all', action=argparse.BooleanOptionalAction, default=True,
+                        help='Show all games, even without Sky/Prime coverage (default: on)')
     parser.add_argument('--no-grade', action='store_true',
                         help='Skip grading (faster, no network calls to Sky/LLM)')
     parser.add_argument('--conky', action='store_true',
