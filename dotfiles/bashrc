@@ -379,3 +379,6 @@ function bedrock-setup() {
 
 auto-ssh-agent
 eval "$(starship init bash)"
+
+export PATH="/home/antocuni/.pixi/bin:$PATH"
+eval "$(pixi completion --shell bash)"
