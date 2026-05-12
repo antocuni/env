@@ -35,7 +35,11 @@ TV_FIELDS = {'intlTvBroadcasters'}
 # ── schedule ──────────────────────────────────────────────────────────────────
 
 def fetch_schedule():
-    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Referer': 'https://www.nba.com/schedule',
+        'Origin': 'https://www.nba.com',
+    }
     resp = requests.get(CDN_URL, headers=headers, timeout=30)
     resp.raise_for_status()
     return resp.json()['leagueSchedule']['gameDates']
