@@ -20,6 +20,7 @@
   dshow = -c diff.external=difft show --ext-diff
   ddiff = -c diff.external=difft diff
   ddist = -c diff.external=difft diff --cached
+  uncommit = !git reset HEAD~ && git log -1 --pretty=%B ORIG_HEAD > \"$(git rev-parse --git-dir)/MERGE_MSG\"
 
   # this creates a tag "tmp" on the commit where we branched from upstream/master
   # git tag tmp `git merge-base HEAD upstream/master `
