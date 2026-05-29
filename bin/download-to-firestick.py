@@ -31,8 +31,8 @@ def resolve_ip(url):
 
 def get_URLs():
     #ROOT = 'http://home.antocuni.eu:43780/'
-    #ROOT = 'http://c.uni.cx:43780/'
-    ROOT = 'http://pi4.local/'
+    ROOT = 'http://c.uni.cx:43780/'
+    #ROOT = 'http://pi4.local/'
     auth = HTTPBasicAuth('antocuni', 'sky')
     r = re.compile('(?<=href=").*?(?=")')
     resp = requests.get(ROOT, auth=auth)
