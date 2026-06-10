@@ -86,7 +86,11 @@
  '(reb-re-syntax 'string)
  '(rst-level-face-base-color "blackn")
  '(safe-local-variable-values
-   '((eval c-set-offset 'topmost-intro 0)
+   '((eval c-set-offset 'knr-argdecl-intro
+           [0])
+     (eval c-set-offset 'knr-argdecl
+           [0])
+     (eval c-set-offset 'topmost-intro 0)
      (encoding . latin-1)
      (encoding . Latin-1)
      (sh-indent-comment . t)

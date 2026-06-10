@@ -12,7 +12,7 @@
   ci = commit -a
   dist = diff --staged
   st = status
-  rmbranch = !sh -c 'git branch -d $1 && git push --delete origin $1' -
+  cleanup-branches = !git fetch --prune && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -I{} sh -c 'git branch -d "{}" 2>/dev/null || echo "skipped: {}"'
   autodiff = diff ':!*/autogen_*.*'
 
   # Difftastic aliases, so `git dlog` is `git log` with difftastic and so on.
