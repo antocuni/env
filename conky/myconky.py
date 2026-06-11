@@ -37,7 +37,7 @@ class Nba(Conky):
 def main():
     os.system('killall conky')
     Main().run()
-    Nba().run()
+    #Nba().run()
     #Calendar().run()
 
 
