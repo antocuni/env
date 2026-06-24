@@ -23,6 +23,7 @@ kquitapp plasmashell && kstart plasmashell
 import sys
 import os
 import pyrandr
+from notify_progress import notify_start, notify_close
 
 def find_screens():
     screens = pyrandr.connected_screens()
@@ -111,16 +112,20 @@ def main():
     else:
         what = 'ext'
 
-    if what == 'laptop':
-        only_laptop()
-    elif what == 'ext':
-        only_ext()
-    elif what == 'both':
-        both()
-    elif what == '1080p':
-        r1080p()
-    else:
-        print('Usage: auto-xrandr.py [laptop|ext|both|1080p]')
+    notif_id = notify_start('auto-xrandr', 'changing screen config (%s)...' % what)
+    try:
+        if what == 'laptop':
+            only_laptop()
+        elif what == 'ext':
+            only_ext()
+        elif what == 'both':
+            both()
+        elif what == '1080p':
+            r1080p()
+        else:
+            print('Usage: auto-xrandr.py [laptop|ext|both|1080p]')
+    finally:
+        notify_close(notif_id)
 
 
 if __name__ == '__main__':

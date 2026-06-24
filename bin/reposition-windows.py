@@ -4,6 +4,7 @@ import sys
 import os
 import shlex
 from wmctrl import Window
+from notify_progress import notify_start, notify_close
 
 PANEL=64
 
@@ -203,12 +204,16 @@ if __name__ == '__main__':
         conf = autodetect()
         print('detected screen config: %s' % conf)
 
-    if conf == 'emergency':
-        main_emergency()
-    elif conf in ('both', 'ext'):
-        main_ext()
-    elif conf == 'laptop':
-        main_laptop()
-    else:
-        print('WARNING: unsupported screen config: %s' % conf)
-        main_laptop()
+    notif_id = notify_start('reposition-windows', 'repositioning windows (%s)...' % conf)
+    try:
+        if conf == 'emergency':
+            main_emergency()
+        elif conf in ('both', 'ext'):
+            main_ext()
+        elif conf == 'laptop':
+            main_laptop()
+        else:
+            print('WARNING: unsupported screen config: %s' % conf)
+            main_laptop()
+    finally:
+        notify_close(notif_id)
