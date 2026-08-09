@@ -108,8 +108,9 @@ def main_ext():
     for win in Window.by_class('google-chrome.Google-chrome'):
         unmaximize(win)
         # position this at the center of the main screen
-        W = 2000
-        X = X1 + PANEL + (3840-2000-PANEL)/2
+        W = 2400
+        #X = X1 + PANEL + (3840-2000-PANEL)/2
+        X = X1 + XE - 22
         #win.resize_and_move(x=X, y=0, w=W, h=2050)
         win.resize_and_move(x=X, y=-14, w=W, h=2050)
 
