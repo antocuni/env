@@ -382,3 +382,6 @@ eval "$(starship init bash)"
 
 export PATH="/home/antocuni/.pixi/bin:$PATH"
 eval "$(pixi completion --shell bash)"
+
+# kilo
+export PATH=/home/antocuni/.kilo/bin:$PATH
