@@ -153,6 +153,8 @@ def create_symlinks():
         ('~/env/dotfiles/icons', '~/.icons'),
         ('~/env/dotfiles/sshrc', '~/.ssh/rc'),
         ('~/env/hacks/fijalcolor.py', '~/.config/hexchat/addons/fijalcolor.py'),
+        ('~/env/dotfiles/kilo/kilo.jsonc', '~/.config/kilo/kilo.jsonc'),
+        ('~/env/dotfiles/kilo/tui.jsonc', '~/.config/kilo/tui.jsonc'),
         ]
     for src, dst in more_links:
         src = Path(src).expanduser()

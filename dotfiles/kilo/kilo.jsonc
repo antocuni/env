@@ -1,0 +1,17 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "permission": {
+    "bash": {
+      "which *": "allow",
+      "zig *": "allow",
+      "wasmtime *": "allow",
+      "ls *": "allow",
+      "head *": "allow",
+      "echo *": "allow",
+      "find *": "allow"
+    },
+    "*": {
+      "*": "allow"
+    }
+  }
+}
