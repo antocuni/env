@@ -1,3 +1,13 @@
 {
-  "$schema": "https://app.kilo.ai/tui.json"
+  "$schema": "https://app.kilo.ai/tui.json",
+  "keybinds": {
+    // Scroll the message viewport one line at a time.
+    // ctrl+shift+up/down only work in terminals that support enhanced key
+    // encoding (kitty protocol / CSI-u); ctrl+alt is included as a fallback.
+    "messages_line_up": "ctrl+shift+up,ctrl+alt+up",
+    "messages_line_down": "ctrl+shift+down,ctrl+alt+down",
+    // Page scroll: keep the default pageup/pagedown and add shift+pageup/pagedown.
+    "messages_page_up": "pageup,shift+pageup",
+    "messages_page_down": "pagedown,shift+pagedown"
+  }
 }
