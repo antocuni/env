@@ -13,6 +13,15 @@
     "messages_first": "ctrl+home",
     "messages_last": "ctrl+end",
     // Open the command palette with ctrl+p (default) or alt+x (Emacs M-x).
-    "command_list": "ctrl+p,alt+x"
+    "command_list": "ctrl+p,alt+x",
+    // Home/End: start/end of line (same as ctrl+a / ctrl+e), not whole buffer.
+    "input_line_home": "ctrl+a,home",
+    "input_line_end": "ctrl+e,end",
+    "input_buffer_home": "none",
+    "input_buffer_end": "none",
+    "input_select_line_home": "ctrl+shift+a,shift+home",
+    "input_select_line_end": "ctrl+shift+e,shift+end",
+    "input_select_buffer_home": "none",
+    "input_select_buffer_end": "none"
   }
 }
