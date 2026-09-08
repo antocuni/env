@@ -22,6 +22,8 @@
     "input_select_line_home": "ctrl+shift+a,shift+home",
     "input_select_line_end": "ctrl+shift+e,shift+end",
     "input_select_buffer_home": "none",
-    "input_select_buffer_end": "none"
+    "input_select_buffer_end": "none",
+    // Toggle between light and dark theme mode with ctrl+x then F12.
+    "theme_switch_mode": "<leader>f12"
   }
 }
