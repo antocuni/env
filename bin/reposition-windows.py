@@ -162,9 +162,14 @@ def main_laptop():
         set_hexchat_font(16)
 
     for win in Window.by_class('google-chrome.Google-chrome'):
-        # position this at the center of the main screen
-        W = 1800
-        X = PANEL + (2560-W-PANEL)/2
+        ## # position this at the center of the main screen
+        ## W = 1800
+        ## X = PANEL + (2560-W-PANEL)/2
+
+        ## leave some space on the left but extend to the right
+        X = 400
+        W = 2560-X + 20
+
         # I don't know why, but with y=0 it's not at the actual top. Maybe it
         # has something to do with chrome's own title bar
         Y = -14
