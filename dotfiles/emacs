@@ -202,6 +202,12 @@ Only toggles if the current state differs from TARGET."
 (setq load-path (cons "/home/antocuni/env/elisp" load-path))
 (setq load-path (cons "/home/antocuni/pypy/default/rpython/jit/tool/" load-path))
 (setq minibuffer-max-depth nil)
+;; WHY: the default value (800k) makes Emacs GC very often. Heavy elisp
+;; operations (magit rendering a big diff, lsp, ...) allocate a lot of
+;; short-lived data: with the default threshold they trigger dozens of
+;; collections, measurably slowing down e.g. magit refreshes. 32MB trades a
+;; few MB of RAM for a much lower GC rate.
+(setq gc-cons-threshold (* 32 1024 1024))
 (setq font-lock-auto-fontify 1)
 ;;(setq ansi-term-color-vector [term "dim gray" "red3" "lime green" "yellow3" "DodgerBlue1" "magenta3" "cyan3" "white"]) ; optimized for pdb++
 
@@ -1045,8 +1051,27 @@ Argument REPLACE String used to replace the matched strings in the buffer.
     (setq my-theme-is-dark t)
     (my-theme-set)))
 
-;; magit diff colors: plain wombat look (no bg colors, +/- shown by fg color
-;; only); the current hunk is marked by a slightly darker bg
+;; Magit diff colors, iterated interactively with emacsclient.
+;;
+;; WHY: with magit's default faces, the "current hunk" highlight was barely
+;; distinguishable from the rest of the diff (the highlighted and
+;; non-highlighted grays were too similar), and in the dark theme the context
+;; lines (grey50 on #202020) were hard to read.
+;;
+;; The two themes use opposite strategies:
+;;
+;; - dark (wombat): NO background colors at all, like a plain `git diff` in a
+;;   terminal: +/- shown only by the foreground color. The current hunk is
+;;   marked by painting a slightly darker bg on it. Since faces are set
+;;   globally (set-face-background is not theme-local), switching to light
+;;   must undo all of this, hence every face is set in both branches.
+;;
+;; - light: the classic red/green look, with pastel backgrounds for
+;;   added/removed lines, and a pale yellow bg to mark the current hunk.
+;;
+;; In both themes, the current hunk differs from the others ONLY by its
+;; background: the added/removed lines deliberately keep the same colors as
+;; non-highlighted hunks.
 (defun antocuni-magit-diff-colors-set ()
   (if my-theme-is-dark
       (progn
@@ -1088,6 +1113,10 @@ Argument REPLACE String used to replace the matched strings in the buffer.
       (set-face-background 'magit-diff-removed-highlight "#ffdddd")
       (set-face-foreground 'magit-diff-removed-highlight "#aa2222"))))
 
+;; Called both at startup and on every theme switch (see `my-theme-set`
+;; above): the colors depend on which theme is currently active. The `facep'
+;; check avoids an error if magit is not installed or not yet loaded, since
+;; the faces only come into existence when `magit-diff' is loaded.
 (with-eval-after-load 'magit-diff
   (antocuni-magit-diff-colors-set))
 
@@ -1197,21 +1226,40 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 (load-file "~/env/elisp/myllm.el")
 
-;; diff-hl config
+;; diff-hl config: show git diff markers (colored bars) in the fringe/margin
+;; of every file buffer. See below for the magit-specific performance hack.
 (require 'diff-hl)
 (global-diff-hl-mode 1)
 
 (add-hook 'dired-mode-hook #'diff-hl-dired-mode)
-(with-eval-after-load 'magit
-  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
-;; RET in a diff buffer opens the file in the other window (side-by-side)
+;; RET in a diff buffer opens the file in the other window (side-by-side).
+;;
+;; WHY: magit's default RET (`magit-diff-visit-file') visits "the appropriate
+;; version" of the file, i.e. the version of the side of the diff that the
+;; line under point belongs to. In an unstaged diff, pressing RET on a
+;; *removed* line therefore opens the blob from the index, shown in a virtual
+;; buffer named "file.~{index}~", which is useless when you just want to edit
+;; the real file.
+;;
+;; So we use the worktree variants instead: they always open the actual file
+;; on disk, and -other-window keeps the diff visible side by side (like
+;; `C-x 4 f'), with point moved to the corresponding line.
+;; The blob-from-index version is still available via `C-x 4 RET'
+;; (magit-diff-visit-file-other-window) when needed.
 (with-eval-after-load 'magit-diff
-  (define-key magit-diff-section-map (kbd "RET") #'magit-diff-visit-file-other-window))
+  (define-key magit-diff-section-map (kbd "RET")
+    #'magit-diff-visit-worktree-file-other-window))
 
 ;; "C" in magit buffers: commit what I mean.
-;; If something is staged, commit just that; otherwise behave like
-;; "git commit -a" (stage all modified tracked files and commit them).
+;;
+;; WHY: the magit way to do `git commit -a` requires opening the commit
+;; popup, toggling the -a argument, then confirming: too many steps for the
+;; most common case. This does the right thing in one keypress:
+;; - if something is staged, commit just that (like plain `git commit`);
+;; - if nothing is staged, stage all modified tracked files first
+;;   (exactly what `git commit -a` does).
+;; Note: it shadows `magit-clone`, which is rarely used anyway.
 (defun antocuni/magit-commit-dwim ()
   (interactive)
   (if (magit-anything-staged-p)
@@ -1220,7 +1268,85 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 
 (with-eval-after-load 'magit
   (define-key magit-status-mode-map "C" #'antocuni/magit-commit-dwim)
-  (define-key magit-diff-mode-map "C" #'antocuni/magit-commit-dwim))
+  (define-key magit-diff-mode-map "C" #'antocuni/magit-commit-dwim)
+  ;; Performance: the recommended `diff-hl-magit-post-refresh` hook updates
+  ;; the fringe indicators of EVERY open file buffer of the repo, spawning
+  ;; one `git diff` process per buffer. With ~40 spy buffers open this took
+  ;; ~0.6s on every magit refresh (e.g. after staging a hunk), which made
+  ;; magit feel sluggish. So instead:
+  ;; - we defer the update to an idle timer: magit commands stay instant;
+  ;; - we only update the files which actually appear in the diff buffer
+  ;;   (their state can change), not all open buffers;
+  ;; - we process them in small chunks (see `antocuni/diff-hl-pump'), so the
+  ;;   background update never blocks input for long.
+  ;; The fringe may briefly show a stale indicator for up to ~1s, which is an
+  ;; acceptable price for a snappy magit.
+  (remove-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+  (add-hook 'magit-post-refresh-hook #'antocuni/diff-hl-magit-post-refresh-idle))
+
+;; Files whose fringe indicator still needs an update, filled by
+;; `antocuni/diff-hl-magit-post-refresh-idle' and consumed by the pump below.
+(defvar antocuni/diff-hl-pending-files nil)
+
+(defun antocuni/diff-hl-magit-post-refresh-idle ()
+  "Like `diff-hl-magit-post-refresh', but deferred and cheap.
+Runs on an idle timer (so it does not block the magit command
+which triggered it), and only updates the buffers visiting the
+files shown in the magit diff buffer. Files are deduplicated here
+because the same file typically appears both in the \"Staged
+changes\" and \"Unstaged changes\" sections."
+  (setq antocuni/diff-hl-pending-files
+        (delete-dups (antocuni/diff-hl--collect-magit-files)))
+  (antocuni/diff-hl-pump))
+
+(defun antocuni/diff-hl--collect-magit-files ()
+  "Return the file names shown in all magit diff buffers."
+  (let ((files nil))
+    (dolist (buf (buffer-list))
+      (when (with-current-buffer buf (derived-mode-p 'magit-diff-mode))
+        (setq files
+              (append files
+                      (antocuni/diff-hl--collect-file-names
+                       ;; magit-root-section is the tree of sections displayed
+                       ;; by the magit buffer (files, hunks, ...)
+                       (with-current-buffer buf magit-root-section))))))
+    files))
+
+(defun antocuni/diff-hl--collect-file-names (section)
+  "Return the file names of SECTION and its children, recursively."
+  (when section
+    (let ((files nil))
+      (when (magit-file-section-p section)
+        (push (oref section value) files))
+      (dolist (child (oref section children))
+        (setq files (append (antocuni/diff-hl--collect-file-names child) files)))
+      files)))
+
+(defun antocuni/diff-hl-pump ()
+  "Update diff-hl indicators for a few pending files, then reschedule.
+Each `diff-hl-update' spawns a git subprocess (~50ms); doing all
+of them in one go would freeze input for about a second, so we
+process 3 at a time and reschedule on the idle timer until done.
+Any keystroke makes Emacs non-idle and postpones the next chunk,
+so the pump never gets in the way."
+  (let ((topdirs (make-hash-table :test 'equal))
+        (n 0))
+    (while (and antocuni/diff-hl-pending-files (< n 3))
+      (let* ((file (pop antocuni/diff-hl-pending-files))
+             ;; cache magit-toplevel: it also spawns a git process, and all
+             ;; files in this queue typically belong to the same repo
+             (topdir (gethash file topdirs)))
+        (unless topdir
+          (setq topdir (magit-toplevel))
+          (puthash file topdir topdirs))
+        ;; update the fringe only if we have the file open in a buffer;
+        ;; files which are not being edited don't need it
+        (let ((fbuf (find-buffer-visiting (expand-file-name file topdir))))
+          (when fbuf
+            (with-current-buffer fbuf (diff-hl-update)))))
+      (setq n (1+ n)))
+    (when antocuni/diff-hl-pending-files
+      (run-with-idle-timer 0.15 nil #'antocuni/diff-hl-pump))))
 
 (diff-hl-flydiff-mode)
 
