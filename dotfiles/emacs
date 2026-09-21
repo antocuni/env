@@ -80,7 +80,7 @@
      (vc-mode vc-mode)
      "  " mode-line-modes mode-line-misc-info mode-line-end-spaces))
  '(package-selected-packages
-   '(diff-hl ninja-mode gptel gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
+   '(transient diff-hl ninja-mode gptel gnu-elpa-keyring-update impatient-showdown meson-mode eglot go-mode zig-mode lsp-mode lox-mode dart-mode lua-mode visual-fill-column unfill thrift git-link polymode scad-mode markdown-preview-eww typescript-mode ibuffer-tramp cuda-mode markdown-preview-mode web-mode php-mode magit yaml-mode vbasense unicode-fonts toml-mode sass-mode racer phi-search-mc multi-web-mode markdown-mode llvm-mode kivy-mode jinja2-mode iy-go-to-char highlight fill-column-indicator dockerfile-mode cython-mode company cargo))
  '(python-fill-docstring-style 'django)
  '(python-indent-def-block-scale 1)
  '(reb-re-syntax 'string)
@@ -1024,7 +1024,9 @@ Argument REPLACE String used to replace the matched strings in the buffer.
       (color-theme-jsc-light)
       (color-theme-jsc-light)
       (set-face-foreground 'font-lock-negation-char-face "black")
-    )))
+    ))
+  (when (facep 'magit-diff-context-highlight)
+    (antocuni-magit-diff-colors-set)))
 
 (defun my-theme-toggle ()
   (interactive)
@@ -1042,6 +1044,52 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (progn
     (setq my-theme-is-dark t)
     (my-theme-set)))
+
+;; magit diff colors: plain wombat look (no bg colors, +/- shown by fg color
+;; only); the current hunk is marked by a slightly darker bg
+(defun antocuni-magit-diff-colors-set ()
+  (if my-theme-is-dark
+      (progn
+        ;; normal hunks: default bg, fg colors only
+        (set-face-background 'magit-diff-context nil)
+        (set-face-foreground 'magit-diff-context "#c8c8c8")
+        (set-face-background 'magit-diff-added nil)
+        (set-face-foreground 'magit-diff-added "#fad07a")
+        (set-face-background 'magit-diff-removed nil)
+        (set-face-foreground 'magit-diff-removed "#ff6c6c")
+        (set-face-background 'magit-diff-hunk-heading nil)
+        (set-face-foreground 'magit-diff-hunk-heading "#909090")
+        ;; current hunk: darker bg, same fg colors
+        (set-face-background 'magit-diff-context-highlight "#333333")
+        (set-face-foreground 'magit-diff-context-highlight "#d4d4d4")
+        (set-face-background 'magit-diff-added-highlight "#333333")
+        (set-face-foreground 'magit-diff-added-highlight "#fad07a")
+        (set-face-background 'magit-diff-removed-highlight "#333333")
+        (set-face-foreground 'magit-diff-removed-highlight "#ff6c6c")
+        (set-face-background 'magit-diff-hunk-heading-highlight "#454545")
+        (set-face-background 'magit-section-highlight "#2a2a2a"))
+    ;; light theme: classic red/green diff with bg colors; the fg-only
+    ;; "plain" look is only for the dark theme
+    (progn
+      (set-face-background 'magit-diff-context "white")
+      (set-face-foreground 'magit-diff-context "grey50")
+      (set-face-background 'magit-diff-added "#ddffdd")
+      (set-face-foreground 'magit-diff-added "#22aa22")
+      (set-face-background 'magit-diff-removed "#ffdddd")
+      (set-face-foreground 'magit-diff-removed "#aa2222")
+      (set-face-background 'magit-diff-hunk-heading "grey90")
+      (set-face-foreground 'magit-diff-hunk-heading nil)
+      (set-face-background 'magit-section-highlight "grey95")
+      (set-face-background 'magit-diff-hunk-heading-highlight "#ecd97f")
+      (set-face-background 'magit-diff-context-highlight "#fdf7c3")
+      (set-face-foreground 'magit-diff-context-highlight "grey50")
+      (set-face-background 'magit-diff-added-highlight "#ddffdd")
+      (set-face-foreground 'magit-diff-added-highlight "#22aa22")
+      (set-face-background 'magit-diff-removed-highlight "#ffdddd")
+      (set-face-foreground 'magit-diff-removed-highlight "#aa2222"))))
+
+(with-eval-after-load 'magit-diff
+  (antocuni-magit-diff-colors-set))
 
 (my-theme-set)
 (global-set-key [f12] 'my-theme-toggle)
@@ -1156,6 +1204,23 @@ Argument REPLACE String used to replace the matched strings in the buffer.
 (add-hook 'dired-mode-hook #'diff-hl-dired-mode)
 (with-eval-after-load 'magit
   (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
+
+;; RET in a diff buffer opens the file in the other window (side-by-side)
+(with-eval-after-load 'magit-diff
+  (define-key magit-diff-section-map (kbd "RET") #'magit-diff-visit-file-other-window))
+
+;; "C" in magit buffers: commit what I mean.
+;; If something is staged, commit just that; otherwise behave like
+;; "git commit -a" (stage all modified tracked files and commit them).
+(defun antocuni/magit-commit-dwim ()
+  (interactive)
+  (if (magit-anything-staged-p)
+      (magit-commit-create)
+    (magit-commit-create (list "--all"))))
+
+(with-eval-after-load 'magit
+  (define-key magit-status-mode-map "C" #'antocuni/magit-commit-dwim)
+  (define-key magit-diff-mode-map "C" #'antocuni/magit-commit-dwim))
 
 (diff-hl-flydiff-mode)
 
