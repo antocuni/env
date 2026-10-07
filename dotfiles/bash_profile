@@ -71,8 +71,14 @@ export LESS="-R $LESS"
 export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
 export FIGNORE='~'
 #export BROWSER="firefox:mozilla"
-export EDITOR="mg"
-export GIT_EDITOR="mg"
+
+# export EDITOR="mg"
+# export GIT_EDITOR="mg"
+
+export EDITOR="emacsclient"
+export GIT_EDITOR="emacsclient"
+
+
 export IPOD_MOUNTPOINT=/mnt/usb
 #export MAKEFLAGS="-j2"
 export GCC_COLORS=1
