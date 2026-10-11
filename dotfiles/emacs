@@ -1251,6 +1251,12 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (define-key magit-diff-section-map (kbd "RET")
     #'magit-diff-visit-worktree-file-other-window))
 
+;; WHY: in magit buffers, C-<tab> is bound to `magit-section-cycle' (cycle
+;; section visibility), shadowing the global binding to `other-window'. TAB
+;; already toggles sections, so C-<tab> can keep its usual meaning here too.
+(with-eval-after-load 'magit-section
+  (define-key magit-section-mode-map (kbd "C-<tab>") #'other-window))
+
 ;; "C" in magit buffers: commit what I mean.
 ;;
 ;; WHY: the magit way to do `git commit -a` requires opening the commit
