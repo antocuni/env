@@ -1162,6 +1162,25 @@ Argument REPLACE String used to replace the matched strings in the buffer.
   (kill-emacs))
 
 
+; git-link
+; ==========
+
+;; Like `git-link', but always link to "origin" (the canonical repository)
+;; instead of to the fork the PR comes from. Equivalent to typing
+;; `C-u M-x git-link' and picking origin at the prompt, minus the prompt.
+;; Note: this uses the commit hash (see `git-link-use-commit'), so it is a
+;; stable link; picking a remote here does not change which revision is used.
+(defun git-link-origin ()
+  "Like `git-link', but always link to the \"origin\" remote."
+  (interactive)
+  ;; `git-link-default-remote' makes `git-link--remote' resolve to origin, and
+  ;; letting `current-prefix-arg' nil makes sure that git-link uses it instead
+  ;; of prompting for a remote name (which it does when called with a prefix)
+  (let ((git-link-default-remote "origin")
+        (current-prefix-arg nil))
+    (call-interactively #'git-link)))
+
+
 (add-to-list 'load-path "~/pypy/misc/wat-mode/")
 (require 'wat-mode)
 
