@@ -1032,7 +1032,14 @@ Argument REPLACE String used to replace the matched strings in the buffer.
       (set-face-foreground 'font-lock-negation-char-face "black")
     ))
   (when (facep 'magit-diff-context-highlight)
-    (antocuni-magit-diff-colors-set)))
+    (antocuni-magit-diff-colors-set))
+  ;; diff-hl draws its margin indicators ("+"/"-"/"!") with the
+  ;; `diff-hl-insert' and `diff-hl-change' faces.  The defaults (yellow "+",
+  ;; cyan "!") are readable on the dark background but nearly invisible on the
+  ;; light one, so set them per theme, like the magit colors above.
+  (when (facep 'diff-hl-insert)
+    (set-face-foreground 'diff-hl-insert (if my-theme-is-dark "yellow" "DarkGoldenrod"))
+    (set-face-foreground 'diff-hl-change (if my-theme-is-dark "cyan" "DarkCyan"))))
 
 (defun my-theme-toggle ()
   (interactive)
