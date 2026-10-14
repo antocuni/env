@@ -155,6 +155,9 @@ def create_symlinks():
         ('~/env/hacks/fijalcolor.py', '~/.config/hexchat/addons/fijalcolor.py'),
         ('~/env/dotfiles/kilo/kilo.jsonc', '~/.config/kilo/kilo.jsonc'),
         ('~/env/dotfiles/kilo/tui.jsonc', '~/.config/kilo/tui.jsonc'),
+        ('~/env/dotfiles/kilo/skill', '~/.config/kilo/skill'),
+        ('~/env/dotfiles/kilo/command', '~/.config/kilo/command'),
+        ('~/env/dotfiles/kilo/AGENTS.md', '~/.config/kilo/AGENTS.md'),
         ]
     for src, dst in more_links:
         src = Path(src).expanduser()
