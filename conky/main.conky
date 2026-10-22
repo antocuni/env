@@ -45,6 +45,10 @@ TEXT
 # ${color #888888}${downspeedgraph eth0 20,70 ff0000 0000ff}   ${color #888888}${upspeedgraph eth0 20,70 0000ff ff0000}
 #
 #
+${color}/tmp/downloads
+${color white}${execi 10 find /tmp/download -maxdepth 1 -type f -printf '%T@ %f\n' 2>/dev/null | sort -rn | head -3 | sed 's/^[0-9.]* //' | cut -c1-37 | sed 's/^/ /'}
+
+#
 # display "TODO" only if ~/todo.txt is not empty in conky
 ${color}TODO
 ${color white}${execi 60 nl -w3 -s' ' ~/todo.txt}
