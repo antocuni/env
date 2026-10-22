@@ -1,0 +1,319 @@
+#!/usr/bin/python3
+# -*- mode: python -*-
+
+"""
+xcp - copy files to the clipboard as a file list, like Dolphin does.
+
+The clipboard gets the same targets that Dolphin sets:
+  text/uri-list, application/x-kde4-urilist, text/plain, text/x-moz-url
+  and application/vnd.portal.filetransfer (when the portal is available).
+
+The process stays in the background and serves the clipboard until another
+application takes it over, then exits.
+"""
+
+import os
+import sys
+import time
+import signal
+import urllib.parse
+
+USAGE = """\
+usage: xcp [options] FILE...
+       xcp                        copy the newest file in /tmp/download
+       xcp [options] -            read paths from stdin, one per line
+
+Copy files to the clipboard as a file list, so they can be pasted in
+programs that accept files (WhatsApp, Telegram, file managers, ...).
+
+With no arguments, xcp copies the most recently modified file in
+/tmp/download and prints its path.
+
+options:
+  -n, --no-portal    do not start a XDG portal file transfer
+  -f, --foreground   do not detach from the terminal
+  -l, --linger SECS  keep the portal transfer alive this long after another
+                     application takes the clipboard (default: 30)
+  -v, --verbose      report portal problems
+  -h, --help         show this help
+"""
+
+DEFAULT_DIR = '/tmp/download'
+
+LINGER_DEFAULT = 30.0
+TEXT_URI_LIST = 'text/uri-list'
+KDE_URI_LIST = 'application/x-kde4-urilist'
+MOZ_URL = 'text/x-moz-url'
+TEXT_PLAIN = 'text/plain'
+PORTAL_KEY = 'application/vnd.portal.filetransfer'
+
+PORTAL_BUS = 'org.freedesktop.portal.Documents'
+PORTAL_PATH = '/org/freedesktop/portal/documents'
+PORTAL_IFACE = 'org.freedesktop.portal.FileTransfer'
+
+
+def die(msg):
+    print('xcp: %s' % msg, file=sys.stderr)
+    sys.exit(1)
+
+
+def parse_args(argv):
+    opts = {'portal': True, 'foreground': False, 'verbose': False,
+            'linger': LINGER_DEFAULT, 'implicit': False}
+    paths = []
+    args = iter(argv)
+    for arg in args:
+        if arg in ('-h', '--help'):
+            print(USAGE, end='')
+            sys.exit(0)
+        elif arg in ('-n', '--no-portal'):
+            opts['portal'] = False
+        elif arg in ('-f', '--foreground'):
+            opts['foreground'] = True
+        elif arg in ('-v', '--verbose'):
+            opts['verbose'] = True
+        elif arg in ('-l', '--linger'):
+            try:
+                opts['linger'] = float(next(args))
+            except (StopIteration, ValueError):
+                die('%s needs a number' % arg)
+        elif arg == '--':
+            paths.extend(args)
+            break
+        elif arg == '-':
+            paths.extend(read_stdin())
+        elif arg.startswith('-'):
+            die('unknown option %r' % arg)
+        else:
+            paths.append(arg)
+    if not paths and not sys.stdin.isatty():
+        paths.extend(read_stdin())
+    if not paths:
+        paths.append(latest_download())
+        opts['implicit'] = True
+    return opts, paths
+
+
+def latest_download():
+    try:
+        names = os.listdir(DEFAULT_DIR)
+    except OSError as e:
+        die('%s: %s' % (DEFAULT_DIR, e.strerror))
+    candidates = []
+    for name in names:
+        if name.startswith('.'):
+            continue
+        path = os.path.join(DEFAULT_DIR, name)
+        if not os.path.isfile(path):
+            continue
+        try:
+            mtime = os.stat(path).st_mtime
+        except OSError:
+            continue
+        candidates.append((mtime, path))
+    if not candidates:
+        die('no files in %s' % DEFAULT_DIR)
+    return max(candidates)[1]
+
+
+def read_stdin():
+    paths = []
+    for line in sys.stdin:
+        line = line.rstrip('\n')
+        if line.strip():
+            paths.append(line)
+    return paths
+
+
+def normalize_paths(paths):
+    result = []
+    for path in paths:
+        path = os.path.abspath(os.path.expanduser(path))
+        if not os.path.exists(path):
+            die('%s: no such file or directory' % path)
+        result.append(path)
+    return result
+
+
+def file_uris(paths):
+    uris = []
+    for path in paths:
+        uri = 'file://' + urllib.parse.quote(path, safe='/')
+        if os.path.isdir(path) and not uri.endswith('/'):
+            uri += '/'
+        uris.append(uri)
+    return uris
+
+
+def make_payloads(paths, key):
+    uris = file_uris(paths)
+    uri_text = ''.join(u + '\r\n' for u in uris)
+    payloads = {
+        TEXT_URI_LIST: uri_text.encode(),
+        KDE_URI_LIST: uri_text.encode(),
+        MOZ_URL: uri_text.encode('utf-16-le'),
+        TEXT_PLAIN: '\n'.join(urllib.parse.unquote(u) for u in uris).encode(),
+    }
+    if key:
+        payloads[PORTAL_KEY] = key.encode()
+    return payloads
+
+
+def start_portal_transfer(paths):
+    from gi.repository import Gio, GLib
+    bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+    reply = bus.call_sync(
+        PORTAL_BUS, PORTAL_PATH, PORTAL_IFACE, 'StartTransfer',
+        GLib.Variant('(a{sv})', ({'autostop': GLib.Variant('b', False)},)),
+        GLib.VariantType('(s)'), Gio.DBusCallFlags.NONE, 5000, None)
+    key = reply.unpack()[0]
+    fdlist = Gio.UnixFDList.new()
+    handles = []
+    for path in paths:
+        fd = os.open(path, os.O_PATH | os.O_CLOEXEC)
+        handles.append(fdlist.append(fd))
+        os.close(fd)
+    bus.call_with_unix_fd_list_sync(
+        PORTAL_BUS, PORTAL_PATH, PORTAL_IFACE, 'AddFiles',
+        GLib.Variant('(saha{sv})', (key, handles, {})),
+        GLib.VariantType('()'), Gio.DBusCallFlags.NONE, 5000, fdlist, None)
+    return bus, key
+
+
+def stop_portal_transfer(bus, key):
+    from gi.repository import Gio, GLib
+    try:
+        bus.call_sync(
+            PORTAL_BUS, PORTAL_PATH, PORTAL_IFACE, 'StopTransfer',
+            GLib.Variant('(s)', (key,)),
+            GLib.VariantType('()'), Gio.DBusCallFlags.NONE, 1000, None)
+    except Exception:
+        pass
+
+
+def serve(paths, opts, ready):
+    from PyQt5.QtCore import QMimeData, QByteArray, QTimer, qInstallMessageHandler
+    from PyQt5.QtGui import QGuiApplication
+
+    if not os.environ.get('DISPLAY') and not os.environ.get('WAYLAND_DISPLAY'):
+        raise RuntimeError('no DISPLAY or WAYLAND_DISPLAY set')
+
+    qInstallMessageHandler(lambda *a: None)
+    app = QGuiApplication([])
+    clipboard = app.clipboard()
+
+    bus = key = None
+    if opts['portal']:
+        try:
+            bus, key = start_portal_transfer(paths)
+        except Exception as e:
+            if opts['verbose']:
+                print('xcp: portal transfer failed: %s' % e, file=sys.stderr)
+
+    mime = QMimeData()
+    for name, data in make_payloads(paths, key).items():
+        mime.setData(name, QByteArray(data))
+    clipboard.setMimeData(mime)
+    if not clipboard.ownsClipboard():
+        raise RuntimeError('could not take clipboard ownership')
+
+    ready()
+
+    state = {'linger': None}
+
+    def tick():
+        if clipboard.ownsClipboard():
+            state['linger'] = None
+        else:
+            now = time.monotonic()
+            if state['linger'] is None:
+                state['linger'] = now
+            elif now - state['linger'] >= opts['linger']:
+                app.quit()
+        return True
+
+    timer = QTimer()
+    timer.timeout.connect(tick)
+    timer.start(1000)
+    signal.signal(signal.SIGTERM, lambda *a: app.quit())
+    signal.signal(signal.SIGINT, lambda *a: app.quit())
+    try:
+        app.exec_()
+    finally:
+        if key:
+            stop_portal_transfer(bus, key)
+
+
+def notify_parent(fd):
+    state = {'closed': False}
+
+    def send(msg):
+        if not state['closed']:
+            state['closed'] = True
+            try:
+                os.write(fd, msg)
+            finally:
+                os.close(fd)
+
+    def ready():
+        send(b'ok\n')
+
+    def error(msg):
+        send(('error: %s\n' % msg).encode())
+    return ready, error
+
+
+def daemonize(paths, opts):
+    read_end, write_end = os.pipe()
+    pid = os.fork()
+    if pid:
+        os.close(write_end)
+        data = b''
+        while not data.endswith(b'\n'):
+            chunk = os.read(read_end, 4096)
+            if not chunk:
+                break
+            data += chunk
+        os.close(read_end)
+        os.waitpid(pid, 0)
+        msg = data.decode(errors='replace').strip()
+        if msg.startswith('error: '):
+            die(msg[len('error: '):])
+        if msg != 'ok':
+            die('background process failed to start')
+        return
+
+    # first child: detach from the terminal and fork again
+    os.close(read_end)
+    os.setsid()
+    if os.fork():
+        os._exit(0)
+
+    # grandchild: the real clipboard owner
+    devnull = os.open(os.devnull, os.O_RDWR)
+    os.dup2(devnull, 0)
+    os.dup2(devnull, 1)
+    os.dup2(devnull, 2)
+    ready, error = notify_parent(write_end)
+    try:
+        serve(paths, opts, ready)
+    except BaseException as e:
+        error(str(e))
+        os._exit(1)
+    os._exit(0)
+
+
+def main(argv):
+    opts, paths = parse_args(argv)
+    paths = normalize_paths(paths)
+    if opts['implicit']:
+        print(paths[0])
+    if opts['foreground']:
+        ready = lambda: None
+        serve(paths, opts, ready)
+    else:
+        daemonize(paths, opts)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
