@@ -15,16 +15,18 @@ from pathlib import Path
 
 import pytz
 import requests
+from curl_cffi import requests as cffi_requests
 
 ITALY_TZ = pytz.timezone('Europe/Rome')
 ITALY_REGION = 19
 CDN_URL = f"https://cdn.nba.com/static/json/staticData/scheduleLeagueV2_{ITALY_REGION}.json"
+SCHEDULE_PAGE_URL = f"https://www.nba.com/schedule?bc=NATL&region={ITALY_REGION}"
 CACHE_FILE = Path.home() / '.cache' / 'nba' / 'grades.json'
 COMMENTARY_CACHE_FILE = Path.home() / '.cache' / 'nba' / 'commentary.json'
 SKY_ARTICLE_LOG = Path.home() / '.cache' / 'nba' / 'sky_article.log'
 SKY_ARTICLE_LOG_MAX_BYTES = 500_000
 SKY_ARTICLE_LOG_BACKUPS = 3
-SKY_SEASON_URL = "https://sport.sky.it/nba/2025/10/09/nba-2025-2026-partite-tv-streaming-sky-now"
+SKY_SEASON_URL = "https://sport.sky.it/nba/nba-2026-2027-partite-tv-streaming-sky-now"
 # Wait this long after game tip-off before trying to grade (article won't exist yet)
 GRADE_DELAY = timedelta(hours=3)
 
@@ -35,12 +37,11 @@ TV_FIELDS = {'intlTvBroadcasters'}
 # ── schedule ──────────────────────────────────────────────────────────────────
 
 def fetch_schedule():
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Referer': 'https://www.nba.com/schedule',
-        'Origin': 'https://www.nba.com',
-    }
-    resp = requests.get(CDN_URL, headers=headers, timeout=30)
+    """Fetch the schedule. The NBA CDN rejects plain HTTP clients, so we use a Chrome-impersonating
+    session that first loads the schedule page to obtain the anti-bot cookies."""
+    session = cffi_requests.Session(impersonate='chrome')
+    session.get(SCHEDULE_PAGE_URL, timeout=30).raise_for_status()
+    resp = session.get(CDN_URL, headers={'Referer': 'https://www.nba.com/', 'Origin': 'https://www.nba.com'}, timeout=30)
     resp.raise_for_status()
     return resp.json()['leagueSchedule']['gameDates']
 
