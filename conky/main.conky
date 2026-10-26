@@ -46,7 +46,7 @@ TEXT
 #
 #
 ${color}/tmp/downloads
-${color white}${execi 10 find /tmp/download -maxdepth 1 -type f -mmin -60 -printf '%T@ %f\n' 2>/dev/null | sort -rn | head -3 | sed 's/^[0-9.]* //' | cut -c1-37 | sed 's/^/ /' | awk '{print} END {while (NR < 3) {print ""; NR++}}'}
+${color white}${execi 1 find /tmp/download -maxdepth 1 -type f -mmin -60 -printf '%T@ %f\n' 2>/dev/null | sort -rn | head -3 | sed 's/^[0-9.]* //' | cut -c1-37 | sed 's/^/ /' | awk '{print} END {while (NR < 3) {print ""; NR++}}'}
 
 #
 # display "TODO" only if ~/todo.txt is not empty in conky

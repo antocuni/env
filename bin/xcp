@@ -306,8 +306,10 @@ def daemonize(paths, opts):
 def main(argv):
     opts, paths = parse_args(argv)
     paths = normalize_paths(paths)
-    if opts['implicit']:
-        print(paths[0])
+    ## if opts['implicit']:
+    ##     print(paths[0])
+    for path in paths:
+        print(path)
     if opts['foreground']:
         ready = lambda: None
         serve(paths, opts, ready)
