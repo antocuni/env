@@ -9,6 +9,9 @@
     // Page scroll: keep the default pageup/pagedown and add shift+pageup/pagedown.
     "messages_page_up": "pageup,shift+pageup",
     "messages_page_down": "pagedown,shift+pagedown",
+    // Jump to the next/previous message with alt+n / alt+p (Emacs style).
+    "messages_next": "alt+n",
+    "messages_previous": "alt+p",
     // Jump to first/last message with ctrl+home / ctrl+end.
     "messages_first": "ctrl+home",
     "messages_last": "ctrl+end",
