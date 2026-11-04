@@ -15,6 +15,9 @@
 #   C-S-x     scroll to next prompt
 
 CONFIG="$HOME/.config/kitty"
+MDFRIED_CONFIG="$HOME/.config/mdfried"
+MDFRIED_DARK_THEME="github-dark"
+MDFRIED_LIGHT_THEME="github-light"
 
 touch /tmp/theme
 current=$(cat /tmp/theme)
@@ -27,6 +30,7 @@ function switch_to_dark() {
     echo "$current ==> dark"
     #kitty +kitten themes --reload-in=all Default
     cp $CONFIG/themes/default.conf $CONFIG/current-theme.conf
+    cp $MDFRIED_CONFIG/themes/$MDFRIED_DARK_THEME.toml $MDFRIED_CONFIG/config.toml
     reload_kitty_config
     rm -f /tmp/gitconfig_colordiff
     emacsclient -e "(my-theme-dark)"
@@ -37,6 +41,7 @@ function switch_to_light() {
     echo "$current ==> light"
     #kitty +kitten themes --reload-in=all Alabaster
     cp $CONFIG/themes/alabaster.conf $CONFIG/current-theme.conf
+    cp $MDFRIED_CONFIG/themes/$MDFRIED_LIGHT_THEME.toml $MDFRIED_CONFIG/config.toml
     cat >> $CONFIG/current-theme.conf <<EOF
 
 font_size 18.0

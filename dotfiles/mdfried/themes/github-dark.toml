@@ -1,0 +1,32 @@
+font_family = "Inconsolata Nerd Font Mono"
+
+[padding]
+type = "centered"
+width = 100
+
+[theme]
+header_color = "#58A6FF"
+emphasis_color = "#D29922"
+prefix_color = "#3FB950"
+
+link_fg = "#58A6FF"
+link_bg = "#161B22"
+hide_urls = true
+
+code_fg = "#C9D1D9"
+code_bg = "#0D1117"
+code_theme = "GitHub Dark"
+
+table_border_color = "#30363D"
+table_header_color = "#58A6FF"
+hr_color = "#30363D"
+
+blockquote_bar = "▌ "
+blockquote_colors = [
+    "#58A6FF",
+    "#3FB950",
+    "#D29922",
+    "#DB6D28",
+    "#BC8CFF",
+    "#39C5CF",
+]

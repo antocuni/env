@@ -1,0 +1,38 @@
+#!/bin/bash
+set -euo pipefail
+
+mode=$(cat /tmp/theme 2>/dev/null || true)
+[[ $mode == light ]] || mode=dark
+[[ $mode == light ]] && theme=github-light || theme=github-dark
+
+themedir="$HOME/.config/mdfried/themes"
+themefile="$themedir/$theme.toml"
+
+bg=$(sed -n 's/^code_bg = "\(.*\)"/\1/p' "$themefile")
+fg=$(sed -n 's/^code_fg = "\(.*\)"/\1/p' "$themefile")
+cursor=$(sed -n 's/^header_color = "\(.*\)"/\1/p' "$themefile")
+selection=$(sed -n 's/^table_border_color = "\(.*\)"/\1/p' "$themefile")
+
+cfgdir=$(mktemp -d)
+pushed=0
+
+cleanup() {
+    if (( pushed )); then
+        printf '\033]30101\a'
+    fi
+    rm -rf "$cfgdir"
+    trap - EXIT INT TERM
+}
+trap cleanup EXIT INT TERM
+
+mkdir -p "$cfgdir/mdfried"
+cp "$themefile" "$cfgdir/mdfried/config.toml"
+
+if [[ ${TERM:-} == xterm-kitty || -n ${KITTY_WINDOW_ID:-} ]]; then
+    printf '\033]30001\a'
+    pushed=1
+    printf '\033]21;background=%s;foreground=%s;cursor=%s;cursor_text=%s;selection_background=%s;selection_foreground=%s\a' \
+        "$bg" "$fg" "$cursor" "$bg" "$selection" "$fg"
+fi
+
+XDG_CONFIG_HOME="$cfgdir" mdfried "$@"
