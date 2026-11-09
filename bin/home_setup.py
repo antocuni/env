@@ -137,7 +137,8 @@ def create_symlinks():
         dst = HOME.joinpath('.' + src.name)
         if (src.name.startswith('.') or
             src.name.endswith('~') or
-            src.name.endswith('.pyc')):
+            src.name.endswith('.pyc') or
+            src.name == 'kitty'):
             continue
         if src.name.endswith('sshrc'):
             continue # this is handled by more_links
@@ -158,6 +159,9 @@ def create_symlinks():
         ('~/env/dotfiles/kilo/skill', '~/.config/kilo/skill'),
         ('~/env/dotfiles/kilo/command', '~/.config/kilo/command'),
         ('~/env/dotfiles/kilo/AGENTS.md', '~/.config/kilo/AGENTS.md'),
+        ('~/env/dotfiles/kitty/kitty.conf', '~/.config/kitty/kitty.conf'),
+        ('~/env/dotfiles/kitty/tab_bar.py', '~/.config/kitty/tab_bar.py'),
+        ('~/env/dotfiles/kitty/themes', '~/.config/kitty/themes'),
         ]
     for src, dst in more_links:
         src = Path(src).expanduser()
