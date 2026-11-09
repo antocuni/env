@@ -603,6 +603,62 @@ the new line indented."
   (setq comment-start "##"))
 
 (add-hook 'python-mode-hook 'my-python-ext)
+
+;; Highlight <ai>...</ai> tags inside Python comments and docstrings.
+;;
+;; WHY: the AI agent marks with <ai>...</ai> the parts of comments and
+;; docstrings that it wrote. They must be easy to spot. A tag can span many
+;; lines (every comment line has its own "#"), so we must also extend the
+;; font-lock region to never split a tag in two.
+(defface my-ai-tag-face
+  '((((class color) (background dark)) (:inherit font-lock-comment-face :foreground "#c9b07a"))
+    (((class color) (background light)) (:inherit font-lock-comment-face :foreground "DarkGoldenrod"))
+    (t (:inherit font-lock-comment-face)))
+  "Face for <ai>...</ai> tags.  Subtler than a warning, but not a plain comment.")
+
+(defconst my-ai-tag-regexp "<ai>\\(?:.\\|\n\\)*?</ai>")
+
+(defun my-ai-tag--nearest (pos)
+  "Return (TYPE . START) for the nearest <ai> or </ai> ending at or before POS."
+  (let (open close)
+    (save-excursion
+      (goto-char pos)
+      (when (re-search-backward "</ai>" nil t)
+        (setq close (cons 'close (match-beginning 0))))
+      (goto-char pos)
+      (when (re-search-backward "<ai>" nil t)
+        (setq open (cons 'open (match-beginning 0)))))
+    (cond ((and open close) (if (> (cdr open) (cdr close)) open close))
+          (open open)
+          (close close))))
+
+(defun my-ai-tag-extend-region ()
+  "Extend the font-lock region so that it never splits an <ai>...</ai> tag."
+  (let ((new-beg font-lock-beg)
+        (new-end font-lock-end)
+        (beg-near (my-ai-tag--nearest font-lock-beg)))
+    (when (eq (car-safe beg-near) 'open)
+      (setq new-beg (cdr beg-near)))
+    (let ((end-near (my-ai-tag--nearest font-lock-end)))
+      (when (eq (car-safe end-near) 'open)
+        (save-excursion
+          (goto-char (cdr end-near))
+          (when (re-search-forward "</ai>" nil t)
+            (setq new-end (max new-end (match-end 0)))))))
+    (when (or (/= new-beg font-lock-beg)
+              (/= new-end font-lock-end))
+      (setq font-lock-beg new-beg
+            font-lock-end new-end)
+      t)))
+
+(defun my-ai-tag-setup ()
+  (setq-local font-lock-multiline t)
+  (font-lock-add-keywords nil `((,my-ai-tag-regexp (0 'my-ai-tag-face t))) 'append)
+  (add-hook 'font-lock-extend-region-functions #'my-ai-tag-extend-region nil t))
+
+(add-hook 'python-mode-hook #'my-ai-tag-setup)
+(add-hook 'python-ts-mode-hook #'my-ai-tag-setup)
+
 (add-hook 'inferior-python-mode-hook
           (function (lambda ()
                       (set-process-query-on-exit-flag
