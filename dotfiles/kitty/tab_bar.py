@@ -3,8 +3,14 @@ import os
 import runpy
 import traceback
 from kitty.fast_data_types import Screen
-from kitty.tab_bar import DrawData, ExtraData, TabBarData, draw_title
+from kitty.tab_bar import DrawData, ExtraData, TabAccessor, TabBarData, draw_title
 from kitty.utils import color_as_int
+
+# Kilo's TUI plugin prefixes its tab titles with 🟨 as a marker.  Draw a text
+# square instead of the emoji: text glyphs share the title's baseline, while the
+# emoji fallback font draws the glyph lower (it cannot be nudged in a one-row
+# tab bar).
+ICON = '\u25a0'
 
 def as_rgb(x: int) -> int:
     return (x << 8) | 2
@@ -39,7 +45,6 @@ def fix_title(title):
     title = title.replace('~/anaconda/', '🅐 /')
     title = title.replace('~/pypy/misc', '🅟 /🅜 /')
     title = title.replace('~/pypy/', '🅟 /')
-    title = title.replace('🅚 ', '🅚  ')
     if is_DEBUG():
         title = '🚧 ' + title
     return title
@@ -55,9 +60,18 @@ def _draw_tab(
 
     orig_fg = screen.cursor.fg
     orig_bg = screen.cursor.bg
-    left_sep, right_sep = ('', '')
-
     title = fix_title(tab.title)
+    color_icon = False
+    if title.startswith('\U0001F7E8 '):
+        # replace the emoji marker with ICON, keeping the same number of cells
+        title = ICON + ' ' + title[len('\U0001F7E8 '):]
+        color_icon = True
+    # Kilo tabs get chevron caps; all other tabs keep the rounded powerline
+    # caps.  active_exe is the foreground process of the tab's active window.
+    if TabAccessor(tab.tab_id).active_exe == 'kilo':
+        left_sep, right_sep = ('\ue0b2', '\ue0b0')
+    else:
+        left_sep, right_sep = ('\ue0b6', '\ue0b4')
 
     # I don't really understand why I need the -5, but it seems that without it, the text overflows and I get '...' even for short tab titles
     tab_width = (screen.columns) // sys.NTABS - 5
@@ -84,7 +98,17 @@ def _draw_tab(
     else:
         draw_sep(left_sep)
         screen.draw(' ')
-        draw_title(draw_data, screen, tab, index)
+        if color_icon and ICON in title:
+            pre, post = title.split(ICON, 1)
+            screen.draw(pre)
+            fg = screen.cursor.fg
+            # color only the icon (goldenrod), leave the title in the tab fg
+            screen.cursor.fg = as_rgb(0xdaa520)
+            screen.draw(ICON)
+            screen.cursor.fg = fg
+            screen.draw(post)
+        else:
+            draw_title(draw_data, screen, tab, index)
         extra = screen.cursor.x - before - max_title_length
         print("extra:%d" %(extra))
         if extra >= 0:

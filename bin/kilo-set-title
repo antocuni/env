@@ -62,4 +62,4 @@ if [ ! -w "$dev" ]; then
     exit 1
 fi
 
-printf '\033]0;🅚 %s\007' "$(shorten "$dir")" > "$dev"
+printf '\033]0;🟨 %s\007' "$(shorten "$dir")" > "$dev"

@@ -1,5 +1,8 @@
 {
   "$schema": "https://app.kilo.ai/tui.json",
+  "plugin": [
+    "file:///home/antocuni/env/dotfiles/kilo/tui/kilo-antocuni.ts"
+  ],
   "keybinds": {
     // Scroll the message viewport one line at a time.
     // ctrl+shift+up/down only work in terminals that support enhanced key
