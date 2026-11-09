@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euo pipefail
+
+cd "$HOME/env"
+if git diff HEAD --quiet; then
+    echo "Nothing to commit"
+    exit 0
+fi
+
+msg=$(git diff HEAD | llm 'Write a git commit message for the staged diff. Reply with only the message: one short summary line, no code fences, no quotes, no explanation.')
+if [ -z "$msg" ]; then
+    echo "Empty commit message" >&2
+    exit 1
+fi
+
+pager=${PAGER:-less}
+{
+    printf 'Commit message:\n\n%s\n\nDiff:\n\n' "$msg"
+    git diff HEAD | diffpipe.py
+} | $pager
+
+read -r -p 'Proceed with commit? [Y/n] ' answer
+case "$answer" in
+    ''|y|Y) ;;
+    *) echo 'Aborted'; exit 1 ;;
+esac
+git add -u
+git commit -m "$msg"
