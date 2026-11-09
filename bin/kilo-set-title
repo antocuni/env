@@ -1,0 +1,65 @@
+#!/bin/bash
+
+find_kilo_pid() {
+    local pid=$$
+    while [ "$pid" -gt 1 ]; do
+        local comm
+        comm=$(ps -o comm= -p "$pid" 2>/dev/null)
+        if [ "$comm" = kilo ]; then
+            echo "$pid"
+            return 0
+        fi
+        pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+        [ -n "$pid" ] || return 1
+    done
+    return 1
+}
+
+shorten() {
+    local p="${1/#$HOME/\~}"
+    p="${p//'~/anaconda/'/'🅐 /'}"
+    p="${p//'~/pypy/misc/'/'🅟 /🅜 /'}"
+    p="${p//'~/pypy/misc'/'🅟 /🅜 /'}"
+    p="${p//'~/pypy/'/'🅟 /'}"
+    printf '%s' "$p"
+}
+
+if [ $# -gt 1 ]; then
+    echo "usage: $(basename "$0") [DIR]" >&2
+    exit 1
+fi
+
+if [ -n "$1" ]; then
+    case $1 in
+        /*) dir=$1 ;;
+        *) dir=$PWD/$1 ;;
+    esac
+else
+    dir=$PWD
+fi
+
+if [ ! -d "$dir" ]; then
+    echo "kilo-set-title: not a directory: $dir" >&2
+    exit 1
+fi
+
+kilo_pid=$(find_kilo_pid) || {
+    echo "kilo-set-title: no kilo parent process found" >&2
+    exit 1
+}
+
+tty=$(ps -o tty= -p "$kilo_pid" | tr -d ' ')
+case $tty in
+    ''|'?')
+        echo "kilo-set-title: kilo pid $kilo_pid has no controlling terminal" >&2
+        exit 1
+        ;;
+esac
+
+dev=/dev/$tty
+if [ ! -w "$dev" ]; then
+    echo "kilo-set-title: cannot write to $dev" >&2
+    exit 1
+fi
+
+printf '\033]0;🅚 %s\007' "$(shorten "$dir")" > "$dev"
