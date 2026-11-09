@@ -3,7 +3,7 @@ import os
 import runpy
 import traceback
 from kitty.fast_data_types import Screen
-from kitty.tab_bar import DrawData, ExtraData, TabAccessor, TabBarData, draw_title
+from kitty.tab_bar import DrawData, ExtraData, TabBarData, draw_title
 from kitty.utils import color_as_int
 
 # Kilo's TUI plugin prefixes its tab titles with 🟨 as a marker.  Draw a text
@@ -66,12 +66,8 @@ def _draw_tab(
         # replace the emoji marker with ICON, keeping the same number of cells
         title = ICON + ' ' + title[len('\U0001F7E8 '):]
         color_icon = True
-    # Kilo tabs get chevron caps; all other tabs keep the rounded powerline
-    # caps.  active_exe is the foreground process of the tab's active window.
-    if TabAccessor(tab.tab_id).active_exe == 'kilo':
-        left_sep, right_sep = ('\ue0b2', '\ue0b0')
-    else:
-        left_sep, right_sep = ('\ue0b6', '\ue0b4')
+    # all tabs use the rounded powerline caps
+    left_sep, right_sep = ('\ue0b6', '\ue0b4')
 
     # I don't really understand why I need the -5, but it seems that without it, the text overflows and I get '...' even for short tab titles
     tab_width = (screen.columns) // sys.NTABS - 5
