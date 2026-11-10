@@ -1,0 +1,285 @@
+#!/bin/bash
+set -euo pipefail
+
+HOST=${M5SYNC_HOST:-m5}
+ROOT=${M5SYNC_ROOT:-sync}
+KEEP=${M5SYNC_KEEP:-10}
+
+dry_run=0
+do_delete=1
+default_excludes=1
+git_ignore=1
+backup=1
+extra_excludes=()
+dir=.
+have_dir=0
+tmp_excludes=
+trap '[ -z "$tmp_excludes" ] || rm -f "$tmp_excludes"' EXIT
+
+usage() {
+    cat <<'EOF'
+Usage: m5sync [OPTIONS] [DIR]
+
+Mirror DIR (default: .) to the Mac m5 under ~/sync/<path>.
+
+Options:
+  -n, --dry-run              show changes, write nothing
+      --no-delete            do not delete remote files
+      --no-default-excludes  do not exclude caches (.venv, node_modules, ...)
+      --no-git-ignore        do not exclude git-ignored files
+  -x, --exclude PATTERN      add an rsync exclude pattern (repeatable)
+      --no-backup            do not back up old remote files
+      --keep N               keep the newest N backup runs (default 10)
+  -h, --help                 show this help
+
+Environment:
+  M5SYNC_HOST   remote host (default: m5)
+  M5SYNC_ROOT   remote root directory under $HOME (default: sync)
+  M5SYNC_KEEP   backup runs to keep (default: 10)
+EOF
+}
+
+die() {
+    echo "m5sync: $*" >&2
+    exit 2
+}
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -n|--dry-run)          dry_run=1 ;;
+        --no-delete)           do_delete=0 ;;
+        --no-default-excludes) default_excludes=0 ;;
+        --no-git-ignore)       git_ignore=0 ;;
+        --no-backup)           backup=0 ;;
+        -x|--exclude)
+            [ $# -ge 2 ] || die "$1 requires an argument"
+            extra_excludes+=("$2")
+            shift
+            ;;
+        --exclude=*)           extra_excludes+=("${1#--exclude=}") ;;
+        --keep)
+            [ $# -ge 2 ] || die "--keep requires an argument"
+            KEEP=$2
+            shift
+            ;;
+        --keep=*)              KEEP=${1#--keep=} ;;
+        -h|--help)             usage; exit 0 ;;
+        --)                    shift; break ;;
+        -*)                    die "unknown option: $1" ;;
+        *)
+            if [ "$have_dir" = 1 ]; then
+                die "unexpected argument: $1"
+            fi
+            dir=$1
+            have_dir=1
+            ;;
+    esac
+    shift
+done
+
+if [ $# -gt 0 ]; then
+    [ "$have_dir" = 0 ] || die "unexpected argument: $1"
+    dir=$1
+    have_dir=1
+    [ $# -eq 1 ] || die "unexpected argument: $2"
+fi
+
+case "$KEEP" in
+    ''|*[!0-9]*) die "--keep must be a positive integer" ;;
+esac
+[ "$KEEP" -gt 0 ] || die "--keep must be a positive integer"
+
+[ -d "$dir" ] || die "not a directory: $dir"
+src=$(cd "$dir" && pwd -P)
+
+if [ "$src" = "$HOME" ]; then
+    die "refusing to sync \$HOME itself"
+fi
+
+case "$src" in
+    "$HOME"/*) rel=${src#"$HOME"/} ;;
+    /*)        rel=${src#/} ;;
+    *)         die "cannot map path: $src" ;;
+esac
+
+if [ -z "$rel" ]; then
+    die "refusing to sync the filesystem root"
+fi
+case "$rel" in
+    .m5sync-backup|.m5sync-backup/*)
+        die "refusing to sync the backup area: $rel"
+        ;;
+esac
+
+if [ "$git_ignore" = 1 ]; then
+    repo=$(git -C "$src" rev-parse --show-toplevel 2>/dev/null || true)
+    if [ -n "$repo" ]; then
+        repo=$(cd "$repo" && pwd -P)
+        src_rel=
+        if [ "$src" != "$repo" ]; then
+            case "$src" in
+                "$repo"/*) src_rel=${src#"$repo"/} ;;
+                *)         src_rel= ;;
+            esac
+        fi
+        tmp_excludes=$(mktemp)
+        while IFS= read -r -d '' entry; do
+            if [ -n "$src_rel" ]; then
+                case "$entry" in
+                    "$src_rel"/*) entry=${entry#"$src_rel"/} ;;
+                    *)            continue ;;
+                esac
+            fi
+            pattern=${entry//\\/\\\\}
+            pattern=${pattern//\*/\\*}
+            pattern=${pattern//\?/\\?}
+            pattern=${pattern//\[/\\[}
+            printf '/%s\n' "$pattern" >> "$tmp_excludes"
+        done < <(git -C "$repo" ls-files --others --ignored --exclude-standard --directory -z)
+    fi
+fi
+
+remote_rel="$ROOT/$rel"
+dest="$HOST:$remote_rel"
+
+remote_home=$(ssh "$HOST" 'command -v rsync >/dev/null 2>&1 || { echo "m5sync: remote rsync not found" >&2; exit 1; }; printf %s "$HOME"')
+[ -n "$remote_home" ] || die "cannot get remote home directory"
+remote_dest="$remote_home/$remote_rel"
+
+timestamp=$(date +%Y%m%d-%H%M%S)-$$
+backup_root="$remote_home/$ROOT/.m5sync-backup/$rel"
+backup_ts="$backup_root/$timestamp"
+
+excludes=()
+if [ "$default_excludes" = 1 ]; then
+    excludes+=(
+        .venv/
+        venv/
+        __pycache__/
+        '*.pyc'
+        .mypy_cache/
+        .pytest_cache/
+        .ruff_cache/
+        .tox/
+        node_modules/
+        .pixi/
+        .DS_Store
+    )
+fi
+excludes+=("${extra_excludes[@]}")
+
+echo "source:      $src"
+echo "destination: $dest"
+if [ "$backup" = 1 ]; then
+    echo "backup dir:  $HOST:$backup_ts (created if needed)"
+else
+    echo "backup dir:  disabled"
+fi
+
+if [ "$dry_run" = 0 ]; then
+    ssh "$HOST" "mkdir -p -- $(printf '%q' "$remote_dest")"
+    if [ "$backup" = 1 ]; then
+        ssh "$HOST" "mkdir -p -- $(printf '%q' "$backup_root")"
+    fi
+fi
+
+rsync_args=(-a)
+filter_args=()
+if [ "$do_delete" = 1 ]; then
+    filter_args+=(--delete)
+fi
+for pattern in "${excludes[@]}"; do
+    filter_args+=("--exclude=$pattern")
+done
+if [ -n "$tmp_excludes" ]; then
+    filter_args+=("--exclude-from=$tmp_excludes")
+fi
+rsync_args+=("${filter_args[@]}")
+
+if [ "$dry_run" = 1 ]; then
+    rsync_args+=(-n -i)
+elif [ -t 1 ]; then
+    rsync_args+=(--progress)
+else
+    rsync_args+=(--itemize-changes)
+fi
+
+if [ "$dry_run" = 0 ] && [ "$backup" = 1 ]; then
+    move_list=$(rsync -a -n -i "${filter_args[@]}" "$src/" "$dest/" 2>/dev/null \
+        | awk '
+            /^\*deleting/ {
+                sub(/^\*deleting[ ]*/, "")
+                if ($0 != "" && $0 != "." && $0 != "./") print "D " $0
+                next
+            }
+            /^[<>.c]/ {
+                line = $0
+                sub(/^[^ ]+ /, "", line)
+                if (line != "" && line != "." && line != "./") print "C " line
+            }
+        ' || true)
+    if [ -n "$move_list" ]; then
+        read -r -d '' move_script <<'REMOTE' || true
+set -euo pipefail
+backup=$1
+dest=$2
+mkdir -p -- "$backup"
+while read -r mode rel; do
+    [ -n "$rel" ] || continue
+    case "$rel" in .|./) continue ;; esac
+    if [ "$mode" = D ]; then
+        case "$rel" in */) continue ;; esac
+    fi
+    rel=${rel%/}
+    src="$dest/$rel"
+    if [ -L "$src" ]; then
+        :
+    elif [ ! -e "$src" ]; then
+        continue
+    elif [ "$mode" = C ] && [ -d "$src" ]; then
+        continue
+    fi
+    out="$backup/$rel"
+    mkdir -p -- "$(dirname -- "$out")"
+    if ! mv -f -- "$src" "$out"; then
+        echo "m5sync: cannot back up $rel" >&2
+        continue
+    fi
+    d=$(dirname -- "$src")
+    while [ "$d" != "$dest" ] && [ "$d" != / ] && rmdir -- "$d" 2>/dev/null; do
+        d=$(dirname -- "$d")
+    done
+done
+REMOTE
+        printf '%s\n' "$move_list" \
+            | ssh "$HOST" "bash -c $(printf '%q' "$move_script") _ $(printf '%q' "$backup_ts") $(printf '%q' "$remote_dest")"
+    fi
+fi
+
+set +e
+rsync "${rsync_args[@]}" "$src/" "$dest/"
+rc=$?
+set -e
+
+if [ "$rc" -eq 24 ]; then
+    echo "m5sync: warning: some source files vanished during the transfer" >&2
+elif [ "$rc" -ne 0 ]; then
+    exit "$rc"
+fi
+
+if [ "$dry_run" = 0 ] && [ "$backup" = 1 ]; then
+    read -r -d '' rotate_script <<'REMOTE' || true
+set -euo pipefail
+root=$1
+keep=$2
+[ -d "$root" ] || exit 0
+find "$root" -mindepth 1 -maxdepth 1 -type d -exec basename {} ';' \
+    | sort -r \
+    | tail -n +$((keep + 1)) \
+    | while IFS= read -r name; do
+        [ -n "$name" ] || continue
+        rm -rf -- "$root/$name"
+      done
+REMOTE
+    ssh "$HOST" "bash -c $(printf '%q' "$rotate_script") _ $(printf '%q' "$backup_root") $KEEP"
+fi
