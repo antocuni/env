@@ -26,7 +26,7 @@ function shorten(dir: string): string {
 async function tui(api: Api) {
   let last: string | undefined
 
-  const update = () => {
+  const update = (force = false) => {
     try {
       const route = api?.route?.current
       let dir = api?.state?.path?.directory
@@ -37,7 +37,7 @@ async function tui(api: Api) {
         if (session?.directory) dir = session.directory
       }
       const title = `🟨 ${shorten(dir)}`
-      if (title === last) return
+      if (!force && title === last) return
       const renderer = api?.renderer
       if (!renderer || renderer.isDestroyed) return
       if (typeof renderer.setTerminalTitle !== "function") return
@@ -47,14 +47,27 @@ async function tui(api: Api) {
     }
   }
 
+  // after ctrl-z/fg the shell sets the title to "fg"; restore ours on SIGCONT
+  const onCont = () => update(true)
+  try {
+    process.on("SIGCONT", onCont)
+  } catch {
+  }
+
   update()
+  let ticks = 0
   const timer = setInterval(() => {
     try {
       if (api?.renderer?.isDestroyed) {
         clearInterval(timer)
+        try {
+          process.off("SIGCONT", onCont)
+        } catch {
+        }
         return
       }
-      update()
+      ticks += 1
+      update(ticks % 20 === 0)
     } catch {
     }
   }, 500)
