@@ -6,6 +6,8 @@
 import sys
 import os.path
 import glob
+import platform
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -17,6 +19,8 @@ HOME = Path('~').expanduser()
 ENV = HOME / 'env'
 DOTFILES = ENV / 'dotfiles'
 GUI_SENTINEL = HOME / '.gui'
+MAC = platform.system() == 'Darwin'
+MAC_SKIP = ('xkb', 'Xmodmap.old', 'icons')
 
 REPOS = [
     ('git', 'https://github.com/pytest-dev/py', '~/src/py'),
@@ -69,6 +73,9 @@ def main():
     NO_SUDO = '--nosudo' in sys.argv or '--no-sudo' in sys.argv
     clone_repos()
     create_symlinks()
+    if MAC:
+        mac_setup()
+        return
     apt_install(APT_PACKAGES)
     apt_install_emacs(gui)
     if gui:
@@ -81,6 +88,16 @@ def main():
         check_sysrq()
     elif 'SSH_CLIENT' not in os.environ:
         print(color('WARNING: did you forget --gui?', RED))
+
+
+def mac_setup():
+    print()
+    print(color('brew bundle', YELLOW))
+    if not shutil.which('brew'):
+        print(color('Homebrew not found: install it from https://brew.sh and rerun', RED))
+        sys.exit(1)
+    system('brew bundle --file=%s' % (ENV / 'mac' / 'Brewfile'))
+    GUI_SENTINEL.write_text('this file tells home_setup.py that this is a GUI environment\n')
 
 
 def clone_repos():
@@ -138,14 +155,15 @@ def create_symlinks():
         if (src.name.startswith('.') or
             src.name.endswith('~') or
             src.name.endswith('.pyc') or
-            src.name == 'kitty'):
+            src.name == 'kitty' or
+            (MAC and src.name in MAC_SKIP)):
             continue
         if src.name.endswith('sshrc'):
             continue # this is handled by more_links
         do_symlink(src, dst)
 
     hexchat_dir = os.path.expanduser('~/.config/hexchat')
-    if not os.path.exists(hexchat_dir):
+    if not MAC and not os.path.exists(hexchat_dir):
         os.makedirs(hexchat_dir)
     more_links = [
         ('~/env/bin', '~/bin'),
@@ -162,10 +180,13 @@ def create_symlinks():
         ('~/env/dotfiles/kitty/kitty.conf', '~/.config/kitty/kitty.conf'),
         ('~/env/dotfiles/kitty/tab_bar.py', '~/.config/kitty/tab_bar.py'),
         ('~/env/dotfiles/kitty/themes', '~/.config/kitty/themes'),
+        ('~/env/dotfiles/kitty/os-macos.conf', '~/.config/kitty/os-macos.conf'),
         ]
     for src, dst in more_links:
         src = Path(src).expanduser()
         dst = Path(dst).expanduser()
+        if MAC and ('hexchat' in str(dst) or 'gtk-3.0' in str(dst) or 'icons' in str(dst)):
+            continue
         do_symlink(src, dst)
 
 def apt_install(package_list):
