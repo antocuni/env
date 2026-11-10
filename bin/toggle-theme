@@ -42,9 +42,15 @@ function switch_to_light() {
     #kitty +kitten themes --reload-in=all Alabaster
     cp $CONFIG/themes/alabaster.conf $CONFIG/current-theme.conf
     cp $MDFRIED_CONFIG/themes/$MDFRIED_LIGHT_THEME.toml $MDFRIED_CONFIG/config.toml
+    if [ "$(uname -s)" = Darwin ]
+    then
+        light_font_size=24.0
+    else
+        light_font_size=18.0
+    fi
     cat >> $CONFIG/current-theme.conf <<EOF
 
-font_size 18.0
+font_size $light_font_size
 EOF
     reload_kitty_config
 
