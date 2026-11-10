@@ -370,15 +370,15 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 function bedrock-setup() {
     . ${HOME}/anaconda/bedrock/env.sh
 }
 
 
-auto-ssh-agent
-eval "$(starship init bash)"
+[ "$(uname -s)" = Darwin ] || auto-ssh-agent
+command -v starship >/dev/null && eval "$(starship init bash)"
 
 export PATH="/home/antocuni/.pixi/bin:$PATH"
 eval "$(pixi completion --shell bash)"
@@ -387,4 +387,9 @@ eval "$(pixi completion --shell bash)"
 export PATH=/home/antocuni/.kilo/bin:$PATH
 export KILO_DISABLE_TERMINAL_TITLE=1
 
-eval "$(fzf --bash)"
+command -v fzf >/dev/null && eval "$(fzf --bash)"
+
+if [ "$(uname -s)" = Darwin ] && [ -r ~/.bashrc.darwin ]
+then
+    . ~/.bashrc.darwin
+fi

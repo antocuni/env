@@ -1,0 +1,19 @@
+# -*- mode: shell-script -*-
+# macOS-only interactive settings, sourced from ~/.bashrc
+
+[ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ] && . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
+
+gnu-coreutils-deactivate() {
+    local gnubin="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin" dir
+    local new=()
+    local IFS=:
+    for dir in $PATH
+    do
+        [ "$dir" = "$gnubin" ] || new+=("$dir")
+    done
+    PATH="${new[*]}"
+    export PATH
+    alias ls='ls -G'
+    hash -r
+    echo "GNU coreutils removed from PATH for this session"
+}
