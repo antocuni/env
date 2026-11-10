@@ -38,7 +38,7 @@ Environment:
   M5_HOST / M5SYNC_HOST  remote host (default: m5)
   M5_ROOT / M5SYNC_ROOT  remote root under $HOME (default: sync)
   M5_SESSION             screen session name (default: m5)
-  M5_PYTEST              command run by `m5 pytest`; if unset, uv, pixi, a
+  M5_PYTEST              command run by `m5 pytest`; if unset, pixi, uv, a
                          local .venv, or plain pytest is used as appropriate
 EOF
 }
@@ -343,6 +343,12 @@ spid=
 case "$own" in
     [0-9]*.*) spid=${own%%.*} ;;
 esac
+trap 'interrupted=1' INT
+interrupted=0
+detach_screen() {
+    [ -n "$own" ] || return 0
+    screen -S "${own#*.}" -X detach >/dev/null 2>&1 || true
+}
 printf 'm5: ready. Ctrl-A d detaches.\n'
 while true; do
     if [ -n "$spid" ] && ! kill -0 "$spid" 2>/dev/null; then
@@ -356,8 +362,20 @@ while true; do
         ( eval "$cmd" )
         rc=$?
         printf '\n=== m5: exit %d ===\n' "$rc"
+        if [ "$interrupted" = 1 ] || [ "$rc" -eq 130 ]; then
+            printf 'm5: interrupted; detaching the screen. Run m5 attach to return.\n'
+            detach_screen
+        else
+            printf 'm5: waiting for the next command. Ctrl-A d detaches.\n'
+        fi
+        interrupted=0
     else
         sleep 1
+        if [ "$interrupted" = 1 ]; then
+            printf 'm5: interrupted; detaching the screen. Run m5 attach to return.\n'
+            detach_screen
+            interrupted=0
+        fi
     fi
 done
 LOOP
@@ -450,10 +468,10 @@ if cd "\$HOME"/$(printf '%q' "$ROOT/$rel"); then
     pycmd=$(printf '%q' "$override")
     if [ -n "\$pycmd" ]; then
         :
-    elif [ -f uv.lock ]; then
-        pycmd='uv run pytest'
     elif [ -f pixi.toml ] || grep -q '^\[tool[.]pixi' pyproject.toml 2>/dev/null; then
         pycmd='pixi run pytest'
+    elif [ -f uv.lock ]; then
+        pycmd='uv run pytest'
     elif [ -x .venv/bin/pytest ]; then
         pycmd='.venv/bin/pytest'
     else
