@@ -17,8 +17,10 @@ Usage: m5 <command> [options]
 
 Commands:
   sync [OPTIONS] [DIR]   mirror DIR (default: .) to m5:~/sync/<path>
-  pytest [ARGS...]       sync the current directory, run pytest on m5 in a
-                         screen session, and attach to it
+  pytest [ARGS...]       sync the current directory, then run pytest on m5.
+                         From a terminal it attaches to the screen session;
+                         otherwise output is streamed, so pipes and
+                         redirections work
   attach                 attach to the m5 screen session, create it if needed
   help                   show this help
 
@@ -442,29 +444,36 @@ cmd_pytest() {
         args_text+=" $(printf '%q' "$a")"
     done
 
-    local cmd
-    cmd=$(cat <<EOF
-cd "\$HOME"/$(printf '%q' "$ROOT/$rel") || exit 1
-pycmd=$(printf '%q' "$override")
-if [ -n "\$pycmd" ]; then
-    :
-elif [ -f uv.lock ]; then
-    pycmd='uv run pytest'
-elif [ -f pixi.toml ] || grep -q '^\[tool[.]pixi' pyproject.toml 2>/dev/null; then
-    pycmd='pixi run pytest'
-elif [ -x .venv/bin/pytest ]; then
-    pycmd='.venv/bin/pytest'
+    local body
+    body=$(cat <<EOF
+if cd "\$HOME"/$(printf '%q' "$ROOT/$rel"); then
+    pycmd=$(printf '%q' "$override")
+    if [ -n "\$pycmd" ]; then
+        :
+    elif [ -f uv.lock ]; then
+        pycmd='uv run pytest'
+    elif [ -f pixi.toml ] || grep -q '^\[tool[.]pixi' pyproject.toml 2>/dev/null; then
+        pycmd='pixi run pytest'
+    elif [ -x .venv/bin/pytest ]; then
+        pycmd='.venv/bin/pytest'
+    else
+        pycmd='pytest'
+    fi
+    eval "\$pycmd$args_text"
 else
-    pycmd='pytest'
+    echo "m5: cannot change to the remote directory" >&2
+    false
 fi
-echo "+ \$pycmd$args_text"
-eval "\$pycmd$args_text"
 EOF
 )
 
-    ensure_session
-    enqueue_command "$cmd"
-    attach_session
+    if [ -t 0 ] && [ -t 1 ]; then
+        ensure_session
+        enqueue_command "$body"
+        attach_session
+    else
+        ssh "$HOST" "zsh -lc $(printf '%q' "$body")"
+    fi
 }
 
 cmd_attach() {
