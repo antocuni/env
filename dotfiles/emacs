@@ -218,7 +218,7 @@ Only toggles if the current state differs from TARGET."
 (require 'pypytrace-mode nil t)
 (menu-bar-mode -1)
 
-(load-file "/home/antocuni/src/pytest-emacs/pytest.el")
+(require 'pytest)
 (require 'capnproto-mode)
 
 (require 'ido)
