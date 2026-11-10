@@ -1,0 +1,488 @@
+#!/bin/bash
+set -euo pipefail
+
+HOST=${M5SYNC_HOST:-${M5_HOST:-m5}}
+ROOT=${M5SYNC_ROOT:-${M5_ROOT:-sync}}
+SESSION=${M5_SESSION:-m5}
+DEFAULT_KEEP=${M5SYNC_KEEP:-${M5_KEEP:-10}}
+
+RESOLVED_SRC=
+RESOLVED_REL=
+tmp_excludes=
+trap '[ -z "$tmp_excludes" ] || rm -f "$tmp_excludes"' EXIT
+
+usage() {
+    cat <<'EOF'
+Usage: m5 <command> [options]
+
+Commands:
+  sync [OPTIONS] [DIR]   mirror DIR (default: .) to m5:~/sync/<path>
+  pytest [ARGS...]       sync the current directory, run pytest on m5 in a
+                         screen session, and attach to it
+  attach                 attach to the m5 screen session, create it if needed
+  help                   show this help
+
+Sync options:
+  -n, --dry-run              show changes, write nothing
+      --no-delete            do not delete remote files
+      --no-default-excludes  do not exclude caches (.venv, node_modules, ...)
+      --no-git-ignore        do not exclude git-ignored files
+  -x, --exclude PATTERN      add an rsync exclude pattern (repeatable)
+      --no-backup            do not back up old remote files
+      --keep N               keep the newest N backup runs (default 10)
+  -q, --quiet                do not list transferred files
+
+Environment:
+  M5_HOST / M5SYNC_HOST  remote host (default: m5)
+  M5_ROOT / M5SYNC_ROOT  remote root under $HOME (default: sync)
+  M5_SESSION             screen session name (default: m5)
+  M5_PYTEST              command run by `m5 pytest`; if unset, uv, pixi, a
+                         local .venv, or plain pytest is used as appropriate
+EOF
+}
+
+die() {
+    echo "m5: $*" >&2
+    exit 2
+}
+
+on_mac() {
+    [ "$(uname -s)" = Darwin ]
+}
+
+resolve_dir() {
+    local dir=${1:-.} src rel
+    if [ ! -d "$dir" ]; then
+        die "not a directory: $dir"
+    fi
+    src=$(cd "$dir" && pwd -P)
+    if [ "$src" = "$HOME" ]; then
+        die "refusing to sync \$HOME itself"
+    fi
+    case "$src" in
+        "$HOME"/*) rel=${src#"$HOME"/} ;;
+        /*)        rel=${src#/} ;;
+        *)         die "cannot map path: $src" ;;
+    esac
+    if [ -z "$rel" ]; then
+        die "refusing to sync the filesystem root"
+    fi
+    case "$rel" in
+        .m5sync-backup|.m5sync-backup/*)
+            die "refusing to sync the backup area: $rel"
+            ;;
+    esac
+    RESOLVED_SRC=$src
+    RESOLVED_REL=$rel
+}
+
+run_sync() {
+    local dry_run=0 do_delete=1 default_excludes=1 git_ignore=1 backup=1 quiet=0
+    local dir=. have_dir=0
+    local extra_excludes=()
+    local KEEP=$DEFAULT_KEEP
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -n|--dry-run)          dry_run=1 ;;
+            -q|--quiet)            quiet=1 ;;
+            --no-delete)           do_delete=0 ;;
+            --no-default-excludes) default_excludes=0 ;;
+            --no-git-ignore)       git_ignore=0 ;;
+            --no-backup)           backup=0 ;;
+            -x|--exclude)
+                [ $# -ge 2 ] || die "$1 requires an argument"
+                extra_excludes+=("$2")
+                shift
+                ;;
+            --exclude=*)           extra_excludes+=("${1#--exclude=}") ;;
+            --keep)
+                [ $# -ge 2 ] || die "--keep requires an argument"
+                KEEP=$2
+                shift
+                ;;
+            --keep=*)              KEEP=${1#--keep=} ;;
+            -h|--help)             usage; return 0 ;;
+            --)                    shift; break ;;
+            -*)                    die "unknown option: $1" ;;
+            *)
+                if [ "$have_dir" = 1 ]; then
+                    die "unexpected argument: $1"
+                fi
+                dir=$1
+                have_dir=1
+                ;;
+        esac
+        shift
+    done
+
+    if [ $# -gt 0 ]; then
+        [ "$have_dir" = 0 ] || die "unexpected argument: $1"
+        dir=$1
+        have_dir=1
+        [ $# -eq 1 ] || die "unexpected argument: $2"
+    fi
+
+    case "$KEEP" in
+        ''|*[!0-9]*) die "--keep must be a positive integer" ;;
+    esac
+    [ "$KEEP" -gt 0 ] || die "--keep must be a positive integer"
+
+    resolve_dir "$dir"
+    local src=$RESOLVED_SRC rel=$RESOLVED_REL
+
+    if [ "$git_ignore" = 1 ]; then
+        local repo
+        repo=$(git -C "$src" rev-parse --show-toplevel 2>/dev/null || true)
+        if [ -n "$repo" ]; then
+            repo=$(cd "$repo" && pwd -P)
+            local src_rel=
+            if [ "$src" != "$repo" ]; then
+                case "$src" in
+                    "$repo"/*) src_rel=${src#"$repo"/} ;;
+                    *)         src_rel= ;;
+                esac
+            fi
+            tmp_excludes=$(mktemp)
+            local entry pattern
+            while IFS= read -r -d '' entry; do
+                if [ -n "$src_rel" ]; then
+                    case "$entry" in
+                        "$src_rel"/*) entry=${entry#"$src_rel"/} ;;
+                        *)            continue ;;
+                    esac
+                fi
+                pattern=${entry//\\/\\\\}
+                pattern=${pattern//\*/\\*}
+                pattern=${pattern//\?/\\?}
+                pattern=${pattern//\[/\\[}
+                printf '/%s\n' "$pattern" >> "$tmp_excludes"
+            done < <(git -C "$repo" ls-files --others --ignored --exclude-standard --directory -z)
+        fi
+    fi
+
+    local remote_rel="$ROOT/$rel"
+    local dest="$HOST:$remote_rel"
+
+    local remote_home
+    remote_home=$(ssh "$HOST" 'command -v rsync >/dev/null 2>&1 || { echo "m5: remote rsync not found" >&2; exit 1; }; printf %s "$HOME"')
+    [ -n "$remote_home" ] || die "cannot get remote home directory"
+    local remote_dest="$remote_home/$remote_rel"
+
+    local timestamp backup_root backup_ts
+    timestamp=$(date +%Y%m%d-%H%M%S)-$$
+    backup_root="$remote_home/$ROOT/.m5sync-backup/$rel"
+    backup_ts="$backup_root/$timestamp"
+
+    local excludes=()
+    if [ "$default_excludes" = 1 ]; then
+        excludes+=(
+            .venv/
+            venv/
+            __pycache__/
+            '*.pyc'
+            .mypy_cache/
+            .pytest_cache/
+            .ruff_cache/
+            .tox/
+            node_modules/
+            .pixi/
+            .DS_Store
+        )
+    fi
+    excludes+=("${extra_excludes[@]}")
+
+    if [ "$quiet" = 0 ]; then
+        echo "source:      $src"
+        echo "destination: $dest"
+        if [ "$backup" = 1 ]; then
+            echo "backup dir:  $HOST:$backup_ts (created if needed)"
+        else
+            echo "backup dir:  disabled"
+        fi
+    fi
+
+    if [ "$dry_run" = 0 ]; then
+        ssh "$HOST" "mkdir -p -- $(printf '%q' "$remote_dest")"
+        if [ "$backup" = 1 ]; then
+            ssh "$HOST" "mkdir -p -- $(printf '%q' "$backup_root")"
+        fi
+    fi
+
+    local rsync_args=(-a)
+    local filter_args=()
+    if [ "$do_delete" = 1 ]; then
+        filter_args+=(--delete)
+    fi
+    local pattern
+    for pattern in "${excludes[@]}"; do
+        filter_args+=("--exclude=$pattern")
+    done
+    if [ -n "$tmp_excludes" ]; then
+        filter_args+=("--exclude-from=$tmp_excludes")
+    fi
+    rsync_args+=("${filter_args[@]}")
+
+    if [ "$dry_run" = 1 ]; then
+        rsync_args+=(-n -i)
+    elif [ "$quiet" = 0 ]; then
+        if [ -t 1 ]; then
+            rsync_args+=(--progress)
+        else
+            rsync_args+=(--itemize-changes)
+        fi
+    fi
+
+    if [ "$dry_run" = 0 ] && [ "$backup" = 1 ]; then
+        local move_list
+        move_list=$(rsync -a -n -i "${filter_args[@]}" "$src/" "$dest/" 2>/dev/null \
+            | awk '
+                /^\*deleting/ {
+                    sub(/^\*deleting[ ]*/, "")
+                    if ($0 != "" && $0 != "." && $0 != "./") print "D " $0
+                    next
+                }
+                /^[<>.c]/ {
+                    line = $0
+                    sub(/^[^ ]+ /, "", line)
+                    if (line != "" && line != "." && line != "./") print "C " line
+                }
+            ' || true)
+        if [ -n "$move_list" ]; then
+            local move_script
+            read -r -d '' move_script <<'REMOTE' || true
+set -euo pipefail
+backup=$1
+dest=$2
+mkdir -p -- "$backup"
+while read -r mode rel; do
+    [ -n "$rel" ] || continue
+    case "$rel" in .|./) continue ;; esac
+    if [ "$mode" = D ]; then
+        case "$rel" in */) continue ;; esac
+    fi
+    rel=${rel%/}
+    src="$dest/$rel"
+    if [ -L "$src" ]; then
+        :
+    elif [ ! -e "$src" ]; then
+        continue
+    elif [ "$mode" = C ] && [ -d "$src" ]; then
+        continue
+    fi
+    out="$backup/$rel"
+    mkdir -p -- "$(dirname -- "$out")"
+    if ! mv -f -- "$src" "$out"; then
+        echo "m5: cannot back up $rel" >&2
+        continue
+    fi
+    d=$(dirname -- "$src")
+    while [ "$d" != "$dest" ] && [ "$d" != / ] && rmdir -- "$d" 2>/dev/null; do
+        d=$(dirname -- "$d")
+    done
+done
+REMOTE
+            printf '%s\n' "$move_list" \
+                | ssh "$HOST" "bash -c $(printf '%q' "$move_script") _ $(printf '%q' "$backup_ts") $(printf '%q' "$remote_dest")"
+        fi
+    fi
+
+    set +e
+    rsync "${rsync_args[@]}" "$src/" "$dest/"
+    local rc=$?
+    set -e
+
+    if [ "$rc" -eq 24 ]; then
+        echo "m5: warning: some source files vanished during the transfer" >&2
+    elif [ "$rc" -ne 0 ]; then
+        exit "$rc"
+    fi
+
+    if [ "$dry_run" = 0 ] && [ "$backup" = 1 ]; then
+        local rotate_script
+        read -r -d '' rotate_script <<'REMOTE' || true
+set -euo pipefail
+root=$1
+keep=$2
+[ -d "$root" ] || exit 0
+find "$root" -mindepth 1 -maxdepth 1 -type d -exec basename {} ';' \
+    | sort -r \
+    | tail -n +$((keep + 1)) \
+    | while IFS= read -r name; do
+        [ -n "$name" ] || continue
+        rm -rf -- "$root/$name"
+      done
+REMOTE
+        ssh "$HOST" "bash -c $(printf '%q' "$rotate_script") _ $(printf '%q' "$backup_root") $KEEP"
+    fi
+}
+
+remote_bash() {
+    local script=$1
+    shift
+    if on_mac; then
+        bash -c "$script" _ "$@"
+    else
+        local qargs= arg
+        for arg in "$@"; do
+            qargs+=" $(printf '%q' "$arg")"
+        done
+        ssh "$HOST" "bash -c $(printf '%q' "$script") _$qargs"
+    fi
+}
+
+session_loop_script() {
+    cat <<'LOOP'
+dir=$HOME/.m5
+queue=$dir/queue
+mkdir -p "$queue"
+own=${STY:-}
+spid=
+case "$own" in
+    [0-9]*.*) spid=${own%%.*} ;;
+esac
+printf 'm5: ready. Ctrl-A d detaches.\n'
+while true; do
+    if [ -n "$spid" ] && ! kill -0 "$spid" 2>/dev/null; then
+        exit 0
+    fi
+    entry=$(ls -1 "$queue" 2>/dev/null | head -n 1)
+    if [ -n "$entry" ] && mv -- "$queue/$entry" "$dir/running.$$" 2>/dev/null; then
+        cmd=$(cat "$dir/running.$$")
+        rm -f -- "$dir/running.$$"
+        printf '\n=== m5: %s ===\n' "$(date '+%Y-%m-%d %H:%M:%S')"
+        ( eval "$cmd" )
+        rc=$?
+        printf '\n=== m5: exit %d ===\n' "$rc"
+    else
+        sleep 1
+    fi
+done
+LOOP
+}
+
+ensure_session() {
+    case "$SESSION" in
+        ''|*[!A-Za-z0-9_.-]*) die "invalid session name: $SESSION" ;;
+    esac
+    local loop version
+    loop=$(session_loop_script)
+    version=$(printf '%s' "$loop" | cksum)
+    remote_bash '
+set -e
+session=$1
+loop=$2
+version=$3
+mkdir -p "$HOME/.m5/queue"
+vfile=$HOME/.m5/loop-version
+running=0
+if screen -ls 2>/dev/null | grep -q "[.]$session[[:space:]]"; then
+    running=1
+fi
+if [ "$running" = 1 ] && [ -f "$vfile" ] && [ "$(cat "$vfile")" = "$version" ]; then
+    exit 0
+fi
+if [ "$running" = 1 ]; then
+    screen -S "$session" -X quit >/dev/null 2>&1 || true
+    i=0
+    while screen -ls 2>/dev/null | grep -q "[.]$session[[:space:]]"; do
+        sleep 0.2
+        i=$((i + 1))
+        [ "$i" -lt 25 ] || break
+    done
+fi
+rm -f "$vfile"
+screen -dmS "$session" zsh -lc "$loop"
+printf "%s\n" "$version" > "$vfile"
+' "$SESSION" "$loop" "$version"
+}
+
+enqueue_command() {
+    local cmd=$1
+    remote_bash '
+set -e
+queue=$HOME/.m5/queue
+mkdir -p "$queue"
+tmp=$(mktemp "$queue/.tmp.XXXXXX")
+printf "%s\n" "$1" > "$tmp"
+mv "$tmp" "$queue/$(date +%s)-$$"
+' "$cmd"
+}
+
+attach_term() {
+    local term=${TERM:-}
+    if [ -n "$term" ] && ssh "$HOST" "infocmp $(printf '%q' "$term") >/dev/null 2>&1"; then
+        printf '%s\n' "$term"
+    else
+        printf '%s\n' xterm-256color
+    fi
+}
+
+attach_session() {
+    if [ ! -t 0 ] || [ ! -t 1 ]; then
+        echo "m5: session '$SESSION' is running; use 'm5 attach' from a terminal" >&2
+        return 0
+    fi
+    if on_mac; then
+        exec screen -x "$SESSION"
+    else
+        local term
+        term=$(attach_term)
+        exec ssh -t "$HOST" "TERM=$(printf '%q' "$term") screen -x $(printf '%q' "$SESSION")"
+    fi
+}
+
+cmd_pytest() {
+    run_sync --quiet .
+
+    local rel=$RESOLVED_REL
+    local override=${M5_PYTEST-}
+    local args_text= a
+    for a in "$@"; do
+        args_text+=" $(printf '%q' "$a")"
+    done
+
+    local cmd
+    cmd=$(cat <<EOF
+cd "\$HOME"/$(printf '%q' "$ROOT/$rel") || exit 1
+pycmd=$(printf '%q' "$override")
+if [ -n "\$pycmd" ]; then
+    :
+elif [ -f uv.lock ]; then
+    pycmd='uv run pytest'
+elif [ -f pixi.toml ] || grep -q '^\[tool[.]pixi' pyproject.toml 2>/dev/null; then
+    pycmd='pixi run pytest'
+elif [ -x .venv/bin/pytest ]; then
+    pycmd='.venv/bin/pytest'
+else
+    pycmd='pytest'
+fi
+echo "+ \$pycmd$args_text"
+eval "\$pycmd$args_text"
+EOF
+)
+
+    ensure_session
+    enqueue_command "$cmd"
+    attach_session
+}
+
+cmd_attach() {
+    ensure_session
+    attach_session
+}
+
+if [ $# -eq 0 ]; then
+    usage >&2
+    exit 2
+fi
+
+cmd=$1
+shift
+case "$cmd" in
+    sync)   run_sync "$@" ;;
+    pytest) cmd_pytest "$@" ;;
+    attach) cmd_attach "$@" ;;
+    help|-h|--help) usage ;;
+    *)      die "unknown command: $cmd" ;;
+esac
