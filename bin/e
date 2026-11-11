@@ -34,6 +34,23 @@ function do_local_code()
     code --reuse-window "${ARGS[@]}" "$@"
 }
 
+function do_local_mac()
+{
+    if [ "$(emacsclient -e '(seq-some #'"'"'display-graphic-p (frame-list))' 2>/dev/null)" = t ]
+    then
+        # there is already a GUI frame: bring Emacs to the front and use it
+        osascript -e 'tell application "Emacs" to activate'
+        emacsclient -n "$@"
+    elif emacsclient -e '(version)' &>/dev/null
+    then
+        # the GUI server is running but has no frame: create a new one
+        emacsclient -c -n "$@"
+    else
+        # start Emacs.app, which starts the server
+        open -a Emacs "$@"
+    fi
+}
+
 function do_remote()
 {
     for FILE in "$@"
@@ -56,5 +73,10 @@ if [ -n "$SSH_CONNECTION" ]; then
 elif [ -f /tmp/vscode ]; then
     do_local_code "$@"
 else
-    do_local "$@"
+    if [ "$(uname -s)" = Darwin ]
+    then
+        do_local_mac "$@"
+    else
+        do_local "$@"
+    fi
 fi
