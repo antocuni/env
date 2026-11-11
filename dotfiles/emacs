@@ -1,3 +1,6 @@
+;;; -*- lexical-binding: t; -*-
+(add-to-list 'warning-suppress-types '(files))
+
 (when (>= emacs-major-version 24)
   (require 'package)
   (add-to-list
@@ -31,7 +34,7 @@
  '(display-fill-column-indicator-column 88)
  '(fill-column 88)
  '(find-file-hook
-   '(auto-revert-find-file-function global-auto-complete-mode-check-buffers recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode global-eldoc-mode-check-buffers global-font-lock-mode-check-buffers epa-file-find-file-hook vc-refresh-state))
+   '(auto-revert-find-file-function recentf-track-opened-file generic-mode-find-file-hook url-handlers-set-buffer-mode epa-file-find-file-hook vc-refresh-state))
  '(flyspell-issue-message-flag nil)
  '(frame-zoom-font-difference 4)
  '(git-link-use-commit t)
@@ -166,7 +169,8 @@
 ; XXX: use this to automatically adjust font size based on frame width
 ; https://blog.patshead.com/2016/04/emacs-automatically-adjust-font-size-when-frame-width-changes.html
 
-(set-frame-font "Inconsolata-14" nil t)
+(setq my-font-spec (if (eq system-type 'darwin) "Inconsolata-20" "Inconsolata-14"))
+(set-frame-font my-font-spec nil t)
 (when nil
   ;; 144 for docked mode, 154 for full-screen on my laptop
   (set-face-attribute 'default (selected-frame) :height 144) ; docked
@@ -199,8 +203,8 @@ Only toggles if the current state differs from TARGET."
 ; Misc options
 ; =======================
 
-(setq load-path (cons "/home/antocuni/env/elisp" load-path))
-(setq load-path (cons "/home/antocuni/pypy/default/rpython/jit/tool/" load-path))
+(setq load-path (cons (expand-file-name "~/env/elisp") load-path))
+(setq load-path (cons (expand-file-name "~/pypy/default/rpython/jit/tool/") load-path))
 (setq minibuffer-max-depth nil)
 ;; WHY: the default value (800k) makes Emacs GC very often. Heavy elisp
 ;; operations (magit rendering a big diff, lsp, ...) allocate a lot of
@@ -671,7 +675,9 @@ the new line indented."
   :ensure t
   :config
   (reformatter-define ruff-format
-    :program "/home/antocuni/anaconda/spy/venv/bin/ruff"
+    :program (if (eq system-type 'darwin)
+                 "/Users/antocuni/anaconda/spy/.venv/bin/ruff"
+               "/home/antocuni/anaconda/spy/venv/bin/ruff")
     :args '("format" "-")
     :stdin t
     :stdout t))
@@ -702,7 +708,7 @@ the new line indented."
 (autoload 'paste-new-from-region "pymacs" nil t)
 (eval-after-load "pymacs"
   '(progn
-     (add-to-list 'pymacs-load-path "/home/antocuni/env/elisp/pymacs")
+     (add-to-list 'pymacs-load-path (expand-file-name "~/env/elisp/pymacs"))
      (pymacs-load "pastemacs" "paste-")
      (setq paste-kill-url t)))
 
@@ -1190,7 +1196,7 @@ Argument REPLACE String used to replace the matched strings in the buffer.
    "Custom behaviours for new frames."
    (with-selected-frame frame
      (when (display-graphic-p)
-       (set-frame-font "Inconsolata-14" nil nil)
+       (set-frame-font my-font-spec nil nil)
        (my-theme-set))))
 
 (my-frame-config (selected-frame))
@@ -1244,8 +1250,10 @@ Argument REPLACE String used to replace the matched strings in the buffer.
     (call-interactively #'git-link)))
 
 
-(add-to-list 'load-path "~/pypy/misc/wat-mode/")
-(require 'wat-mode)
+(let ((wat-mode-dir (expand-file-name "~/pypy/misc/wat-mode/")))
+  (when (file-directory-p wat-mode-dir)
+    (add-to-list 'load-path wat-mode-dir)
+    (require 'wat-mode)))
 
 (defun antocuni-recentf-open-files-in-directory (directory)
   "Open all recent files in the specified DIRECTORY."
