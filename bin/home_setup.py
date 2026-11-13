@@ -188,6 +188,13 @@ def create_symlinks():
         if MAC and ('hexchat' in str(dst) or 'gtk-3.0' in str(dst) or 'icons' in str(dst)):
             continue
         do_symlink(src, dst)
+    if MAC:
+        karabiner = HOME / '.config/karabiner'
+        if karabiner.exists() and not karabiner.is_symlink():
+            print(color('    %s is a real directory: move it away and rerun to link it'
+                        % karabiner, RED))
+        else:
+            do_symlink(ENV / 'mac/karabiner', karabiner)
 
 def apt_install(package_list):
     packages = ' '.join(package_list)
