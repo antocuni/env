@@ -40,7 +40,10 @@ function do_local_mac()
     then
         # there is already a GUI frame: bring Emacs to the front and use it
         osascript -e 'tell application "Emacs" to activate'
-        emacsclient -n "$@"
+        if [ $# -gt 0 ]
+        then
+            emacsclient -n "$@"
+        fi
     elif emacsclient -e '(version)' &>/dev/null
     then
         # the GUI server is running but has no frame: create a new one
