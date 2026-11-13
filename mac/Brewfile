@@ -18,6 +18,7 @@ brew "pixi"
 
 cask "kitty"
 cask "karabiner-elements"
+cask "hammerspoon"
 cask "emacs-app"
 cask "font-inconsolata"
 cask "font-inconsolata-nerd-font"

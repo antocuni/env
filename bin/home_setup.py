@@ -195,6 +195,7 @@ def create_symlinks():
                         % karabiner, RED))
         else:
             do_symlink(ENV / 'mac/karabiner', karabiner)
+        do_symlink(ENV / 'mac/hammerspoon', HOME / '.hammerspoon')
 
 def apt_install(package_list):
     packages = ' '.join(package_list)
