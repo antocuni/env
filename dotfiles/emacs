@@ -504,6 +504,16 @@ Only toggles if the current state differs from TARGET."
 (global-set-key [(control down)] 'my-scroll-up-one)
 (global-set-key [(control up)] 'my-scroll-down-one)
 
+;; ns-win.el binds Home/End to beginning/end-of-buffer on macOS; restore the
+;; Linux behavior (beginning/end of line, C-Home/C-End for the buffer).
+(when (eq system-type 'darwin)
+  (global-set-key [home] 'move-beginning-of-line)
+  (global-set-key [end] 'move-end-of-line)
+  (global-set-key [kp-home] 'move-beginning-of-line)
+  (global-set-key [kp-end] 'move-end-of-line)
+  (global-set-key [(control home)] 'beginning-of-buffer)
+  (global-set-key [(control end)] 'end-of-buffer))
+
 (require 'zoom-frm)
 (define-key ctl-x-map [(control ?+)] 'zoom-in/out)
 (define-key ctl-x-map [(control ?-)] 'zoom-in/out)
