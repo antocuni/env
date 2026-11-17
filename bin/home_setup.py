@@ -196,6 +196,13 @@ def create_symlinks():
         else:
             do_symlink(ENV / 'mac/karabiner', karabiner)
         do_symlink(ENV / 'mac/hammerspoon', HOME / '.hammerspoon')
+        # Cocoa ignores a symlinked DefaultKeyBinding.dict: copy it
+        keybindings = HOME / 'Library/KeyBindings/DefaultKeyBinding.dict'
+        keybindings.parent.mkdir(parents=True, exist_ok=True)
+        if keybindings.is_symlink():
+            keybindings.unlink()
+        shutil.copyfile(ENV / 'mac/DefaultKeyBinding.dict', keybindings)
+        print('    mac/DefaultKeyBinding.dict copied to ~/Library/KeyBindings')
 
 def apt_install(package_list):
     packages = ' '.join(package_list)
