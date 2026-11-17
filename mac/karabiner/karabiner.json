@@ -19,9 +19,7 @@
                                         "type": "device_if"
                                     }
                                 ],
-                                "from": {
-                                    "pointing_button": "button1"
-                                },
+                                "from": { "pointing_button": "button1" },
                                 "to": [
                                     {
                                         "key_code": "spacebar",
@@ -42,9 +40,7 @@
                                         "type": "device_if"
                                     }
                                 ],
-                                "from": {
-                                    "pointing_button": "button2"
-                                },
+                                "from": { "pointing_button": "button2" },
                                 "to": [
                                     {
                                         "key_code": "spacebar",
@@ -65,9 +61,7 @@
                                         "type": "device_if"
                                     }
                                 ],
-                                "from": {
-                                    "pointing_button": "button3"
-                                },
+                                "from": { "pointing_button": "button3" },
                                 "to": [
                                     {
                                         "key_code": "s",
@@ -90,11 +84,7 @@
                                 ],
                                 "from": {
                                     "cooldown_milliseconds": 100,
-                                    "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ]
-                                    },
+                                    "modifiers": { "optional": ["any"] },
                                     "sampling_interval_milliseconds": 50,
                                     "source": "vertical_wheel",
                                     "threshold": 1
@@ -138,17 +128,13 @@
                     "ignore": false
                 },
                 {
-                    "identifiers": {
-                        "is_keyboard": true
-                    },
+                    "identifiers": { "is_keyboard": true },
                     "swap_grave_accent_and_non_us_backslash": true
                 }
             ],
             "name": "Default",
             "selected": true,
-            "virtual_hid_keyboard": {
-                "keyboard_type_v2": "ansi"
-            }
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         },
         {
             "complex_modifications": {
@@ -159,17 +145,9 @@
                             {
                                 "from": {
                                     "key_code": "z",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "$HOME/bin/maximize-window"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "$HOME/bin/maximize-window" }],
                                 "type": "basic"
                             }
                         ]
@@ -178,25 +156,13 @@
                         "description": "Menu key or F13 : show kitty (like super.py term)",
                         "manipulators": [
                             {
-                                "from": {
-                                    "key_code": "application"
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "osascript -e 'tell application \"kitty\" to activate'"
-                                    }
-                                ],
+                                "from": { "key_code": "application" },
+                                "to": [{ "shell_command": "osascript -e 'tell application \"kitty\" to activate'" }],
                                 "type": "basic"
                             },
                             {
-                                "from": {
-                                    "key_code": "f13"
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "osascript -e 'tell application \"kitty\" to activate'"
-                                    }
-                                ],
+                                "from": { "key_code": "f13" },
+                                "to": [{ "shell_command": "osascript -e 'tell application \"kitty\" to activate'" }],
                                 "type": "basic"
                             }
                         ]
@@ -207,17 +173,9 @@
                             {
                                 "from": {
                                     "key_code": "grave_accent_and_tilde",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "PATH=/opt/homebrew/bin:/usr/bin:/bin $HOME/bin/e"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "PATH=/opt/homebrew/bin:/usr/bin:/bin $HOME/bin/e" }],
                                 "type": "basic"
                             }
                         ]
@@ -237,9 +195,7 @@
                                         "type": "device_if"
                                     }
                                 ],
-                                "from": {
-                                    "pointing_button": "button2"
-                                },
+                                "from": { "pointing_button": "button2" },
                                 "to": [
                                     {
                                         "key_code": "spacebar",
@@ -260,9 +216,7 @@
                                         "type": "device_if"
                                     }
                                 ],
-                                "from": {
-                                    "pointing_button": "button3"
-                                },
+                                "from": { "pointing_button": "button3" },
                                 "to": [
                                     {
                                         "key_code": "s",
@@ -285,11 +239,7 @@
                                 ],
                                 "from": {
                                     "cooldown_milliseconds": 100,
-                                    "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ]
-                                    },
+                                    "modifiers": { "optional": ["any"] },
                                     "sampling_interval_milliseconds": 50,
                                     "source": "vertical_wheel",
                                     "threshold": 1
@@ -334,9 +284,7 @@
                 }
             ],
             "name": "Netflix",
-            "virtual_hid_keyboard": {
-                "keyboard_type_v2": "ansi"
-            }
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         },
         {
             "devices": [
@@ -348,44 +296,20 @@
                     },
                     "simple_modifications": [
                         {
-                            "from": {
-                                "apple_vendor_top_case_key_code": "keyboard_fn"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_control"
-                                }
-                            ]
+                            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
+                            "to": [{ "key_code": "left_control" }]
                         },
                         {
-                            "from": {
-                                "key_code": "left_option"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "right_command"
-                                }
-                            ]
+                            "from": { "key_code": "left_option" },
+                            "to": [{ "key_code": "right_command" }]
                         },
                         {
-                            "from": {
-                                "key_code": "right_command"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "f11"
-                                }
-                            ]
+                            "from": { "key_code": "right_command" },
+                            "to": [{ "key_code": "f11" }]
                         },
                         {
-                            "from": {
-                                "key_code": "right_option"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_control"
-                                }
-                            ]
+                            "from": { "key_code": "right_option" },
+                            "to": [{ "key_code": "left_control" }]
                         }
                     ]
                 },
@@ -397,32 +321,18 @@
                     },
                     "simple_modifications": [
                         {
-                            "from": {
-                                "key_code": "left_command"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "right_command"
-                                }
-                            ]
+                            "from": { "key_code": "left_command" },
+                            "to": [{ "key_code": "right_command" }]
                         },
                         {
-                            "from": {
-                                "key_code": "left_option"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_command"
-                                }
-                            ]
+                            "from": { "key_code": "left_option" },
+                            "to": [{ "key_code": "left_command" }]
                         }
                     ]
                 }
             ],
             "name": "citrix linux",
-            "virtual_hid_keyboard": {
-                "keyboard_type_v2": "ansi"
-            }
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         }
     ]
 }
