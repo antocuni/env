@@ -22,8 +22,16 @@ end
 hs.hotkey.bind({"alt"}, 50, showEmacs)
 hs.hotkey.bind({"alt"}, 10, showEmacs)
 
+-- PC keyboard (e.g. Logitech): the Windows key is Command, so Win+` shows Emacs.
+hs.hotkey.bind({"cmd"}, 50, showEmacs)
+hs.hotkey.bind({"cmd"}, 10, showEmacs)
+
 -- F13 : show kitty (like super.py term). Menu key sent by Deskflow arrives as F13.
 hs.hotkey.bind({}, "f13", showKitty)
+
+-- PC keyboard Menu key (between AltGr and right Ctrl). It has no name in
+-- hs.keycodes.map; 110 is its raw key code.
+hs.hotkey.bind({}, 110, showKitty)
 
 -- Built-in keyboard: tapping Right Option alone shows kitty. Holding it, or
 -- using it with another key, still works as a normal Option modifier.
