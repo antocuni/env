@@ -15,18 +15,36 @@ selection=$(sed -n 's/^table_border_color = "\(.*\)"/\1/p' "$themefile")
 
 cfgdir=$(mktemp -d)
 pushed=0
+restore=''
 
 cleanup() {
     if (( pushed )); then
         printf '\033]30101\a'
+    fi
+    if [[ -n $restore ]]; then
+        if [[ -e $cfgdir/original.toml ]]; then
+            mv "$cfgdir/original.toml" "$restore"
+        else
+            rm -f "$restore"
+        fi
     fi
     rm -rf "$cfgdir"
     trap - EXIT INT TERM
 }
 trap cleanup EXIT INT TERM
 
-mkdir -p "$cfgdir/mdfried"
-cp "$themefile" "$cfgdir/mdfried/config.toml"
+if [[ $(uname -s) == Darwin ]]; then
+    # mdfried uses Library/Application Support on macOS and ignores XDG_CONFIG_HOME
+    restore="$HOME/Library/Application Support/rs.mdfried/config.toml"
+    mkdir -p "$(dirname "$restore")"
+    if [[ -e $restore ]]; then
+        cp "$restore" "$cfgdir/original.toml"
+    fi
+    cp "$themefile" "$restore"
+else
+    mkdir -p "$cfgdir/mdfried"
+    cp "$themefile" "$cfgdir/mdfried/config.toml"
+fi
 
 if [[ ${TERM:-} == xterm-kitty || -n ${KITTY_WINDOW_ID:-} ]]; then
     printf '\033]30001\a'

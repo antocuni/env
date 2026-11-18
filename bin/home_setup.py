@@ -156,6 +156,7 @@ def create_symlinks():
             src.name.endswith('~') or
             src.name.endswith('.pyc') or
             src.name == 'kitty' or
+            src.name == 'mdfried' or
             (MAC and src.name in MAC_SKIP)):
             continue
         if src.name.endswith('sshrc'):
@@ -181,6 +182,7 @@ def create_symlinks():
         ('~/env/dotfiles/kitty/tab_bar.py', '~/.config/kitty/tab_bar.py'),
         ('~/env/dotfiles/kitty/themes', '~/.config/kitty/themes'),
         ('~/env/dotfiles/kitty/os-macos.conf', '~/.config/kitty/os-macos.conf'),
+        ('~/env/dotfiles/mdfried/themes', '~/.config/mdfried/themes'),
         ]
     for src, dst in more_links:
         src = Path(src).expanduser()
