@@ -389,6 +389,18 @@ export KILO_DISABLE_TERMINAL_TITLE=1
 
 command -v fzf >/dev/null && eval "$(fzf --bash)"
 
+# kitty's automatic shell integration only reaches the first shell of a window:
+# the integration unsets KITTY_SHELL_INTEGRATION, and its functions and prompt
+# hooks are not exported, so e.g. the bash started by "pixi shell" would not set
+# the tab title.  Load it again in every interactive bash running inside kitty.
+# Keep the options in sync with "shell_integration" in kitty.conf.
+if [[ -n "$KITTY_WINDOW_ID" && "$TERM" == xterm-kitty && $- == *i* \
+      && -r "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash" ]]
+then
+    export KITTY_SHELL_INTEGRATION="no-cursor"
+    source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
+fi
+
 if [ "$(uname -s)" = Darwin ] && [ -r ~/.bashrc.darwin ]
 then
     . ~/.bashrc.darwin
